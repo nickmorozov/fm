@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { cn } from '../../lib/utils';
 import {
     Star, Egg, Key, Shirt, Cat, Image, ChevronDown,
-    Cpu, Swords, Shield, Lock, Coins, Palette, FileJson, HelpCircle, Github, TrendingUp, Hammer, Coffee, Zap, ShoppingCart, Target, Sliders
+    Cpu, Swords, Shield, Lock, Coins, Palette, FileJson, HelpCircle, Github, TrendingUp, Hammer, Coffee, Zap, ShoppingCart, Target, Sliders, Pin, PinOff
 } from 'lucide-react';
 import { GameIcon } from '../UI/GameIcon';
 import { useProfile } from '../../context/ProfileContext';
@@ -15,6 +15,8 @@ import { useGameDataContext } from '../../context/GameDataContext';
 interface SidebarProps {
     isOpen: boolean;
     onClose: () => void;
+    isPinned?: boolean;
+    onTogglePin?: () => void;
 }
 
 const getTodayIdx = () => {
@@ -69,7 +71,7 @@ const CoffeeFountain = () => {
     );
 };
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: SidebarProps) {
     const location = useLocation();
     const { profile } = useProfile();
     const { selectedVersion } = useGameDataContext();
@@ -187,7 +189,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <div
                 className={cn(
                     "fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300",
-                    isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                    isOpen ? "opacity-100" : "opacity-0 pointer-events-none",
+                    isPinned && "lg:opacity-0 lg:pointer-events-none"
                 )}
                 onClick={onClose}
             />
@@ -203,6 +206,22 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     <span className="font-bold text-xl bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
                         ForgeMaster
                     </span>
+                    {onTogglePin && (
+                        <button
+                            onClick={onTogglePin}
+                            title={isPinned ? 'Unpin sidebar' : 'Pin sidebar open'}
+                            aria-label={isPinned ? 'Unpin sidebar' : 'Pin sidebar open'}
+                            aria-pressed={isPinned}
+                            className={cn(
+                                "ml-auto hidden lg:flex items-center justify-center p-1.5 rounded-md transition-all duration-200",
+                                isPinned
+                                    ? "bg-accent-primary/10 text-accent-primary"
+                                    : "text-text-muted hover:bg-white/10 hover:text-text-primary"
+                            )}
+                        >
+                            {isPinned ? <Pin size={16} className="fill-current" /> : <PinOff size={16} />}
+                        </button>
+                    )}
                 </div>
 
                 {/* Links */}
