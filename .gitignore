@@ -4,3 +4,9 @@ dist
 .DS_Store
 pseudocodice_esportato.c
 .env
+
+# Build artifacts
+*.tsbuildinfo
+
+# Test / tooling output
+.playwright-mcp/
