@@ -10,6 +10,7 @@ import { useProfile } from '../../context/ProfileContext';
 import { StatsSummaryPanel } from '../Profile/StatsSummaryPanel';
 import { cn } from '../../lib/utils';
 import { formatVersion } from '../../lib/formatVersion';
+import { usePersistentState } from '../../hooks/usePersistentState';
 import { getAnvilTexturePath } from '../../utils/ascensionUtils';
 
 const FRIENDLY_MESSAGES = (userName: string, hasRealName: boolean) => {
@@ -103,6 +104,7 @@ export default function AppShell() {
     const { selectedVersion, versions, isLoadingVersions } = useGameDataContext();
     const { profile } = useProfile();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isSidebarPinned, setIsSidebarPinned] = usePersistentState('fm_sidebar_pinned', false);
     const [isStatsOpen, setIsStatsOpen] = useState(false);
     const [isHoveringCoffee, setIsHoveringCoffee] = useState(false);
     const [showVersionPopup, setShowVersionPopup] = useState(false);
@@ -123,6 +125,9 @@ export default function AppShell() {
         localStorage.setItem('fm_last_seen_config_version', popupVersion);
         setShowVersionPopup(false);
     };
+
+    // When pinned, the sidebar stays open and pushes content instead of overlaying it.
+    const isSidebarVisible = isSidebarOpen || isSidebarPinned;
 
     const maxAgeVisuals = useMemo(() => {
         // profile.misc.forgeLevel is 0-indexed (0 = Lvl 1 in UI)
@@ -306,14 +311,29 @@ export default function AppShell() {
 
     return (
         <div className="flex h-screen bg-bg-primary text-text-primary overflow-hidden font-sans text-left">
-            {/* Sidebar opens/closes only via the Header menu button (left). The old edge
-                hover-zone auto-opened whenever the cursor grazed the screen edge, which felt random. */}
-            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+            {/* Hover zone to open sidebar (disabled while pinned) */}
+            {!isSidebarPinned && (
+                <div
+                    className="fixed top-0 left-0 bottom-0 w-4 z-[45] group cursor-pointer"
+                    onMouseEnter={() => setIsSidebarOpen(true)}
+                >
+                    <div className="h-full w-full group-hover:bg-accent-primary/5 transition-colors" />
+                </div>
+            )}
+
+            {/* Sidebar Navigation */}
+            <Sidebar
+                isOpen={isSidebarVisible}
+                onClose={() => { if (!isSidebarPinned) setIsSidebarOpen(false); }}
+                isPinned={isSidebarPinned}
+                onTogglePin={() => setIsSidebarPinned(prev => !prev)}
+            />
 
             {/* Main Content Area */}
             <div className={cn(
                 "flex-1 flex flex-col h-full overflow-hidden relative transition-all duration-500 ease-in-out",
-                isStatsOpen && "lg:pr-[450px]"
+                isStatsOpen && "lg:pr-[450px]",
+                isSidebarPinned && "lg:ml-64"
             )}>
                 {/* Header */}
                 <Header
@@ -322,7 +342,7 @@ export default function AppShell() {
                 />
 
                 {/* Page Content */}
-                <main className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar pb-20">
+                <main className="flex-1 overflow-y-auto p-2 sm:p-4 md:p-6 custom-scrollbar pb-20">
                     <Outlet />
 
                     {/* Footer */}
@@ -391,7 +411,7 @@ export default function AppShell() {
                     className={cn(
                         "fixed bottom-8 z-[100] group flex items-center gap-3 py-3 md:py-4 rounded-full overflow-visible transition-all duration-300",
                         maxAgeVisuals.bg,
-                        isSidebarOpen ? "px-3 md:px-4" : "px-5 md:px-6",
+                        isSidebarVisible ? "px-3 md:px-4" : "px-5 md:px-6",
                         // Slide clear of the Character-Stats drawer (450px) when it's open so it
                         // stops overlapping the stats; normal bottom-right otherwise.
                         isStatsOpen ? "right-4 lg:right-[474px]" : "right-8",
@@ -426,7 +446,7 @@ export default function AppShell() {
                     <div className="relative flex items-center gap-2.5 z-10">
                         <Coffee className="w-6 h-6 group-hover:rotate-[15deg] transition-transform duration-300 text-white icon-stroke-sm shrink-0" />
                         <AnimatePresence mode="wait">
-                            {!isSidebarOpen && (
+                            {!isSidebarVisible && (
                                 <motion.span
                                     initial={{ width: 0, opacity: 0, x: -10 }}
                                     animate={{ width: "auto", opacity: 1, x: 0 }}

@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { cn } from '../../lib/utils';
 import {
     Star, Egg, Key, Shirt, Cat, Image, ChevronDown,
-    Cpu, Swords, Shield, Lock, Coins, Palette, FileJson, HelpCircle, Github, TrendingUp, Hammer, Coffee, Zap, ShoppingCart, Target, Sliders,
+    Cpu, Swords, Shield, Lock, Coins, Palette, FileJson, HelpCircle, Github, TrendingUp, Hammer, Coffee, Zap, ShoppingCart, Target, Sliders, Pin, PinOff,
     Trash2, Check, Copy, Trophy, Users
 } from 'lucide-react';
 import { GameIcon } from '../UI/GameIcon';
@@ -16,6 +16,8 @@ import { useGameDataContext } from '../../context/GameDataContext';
 interface SidebarProps {
     isOpen: boolean;
     onClose: () => void;
+    isPinned?: boolean;
+    onTogglePin?: () => void;
 }
 
 const getTodayIdx = () => {
@@ -70,7 +72,7 @@ const CoffeeFountain = () => {
     );
 };
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: SidebarProps) {
     const location = useLocation();
     const { profile, profiles, activeProfileId, switchProfile, createProfile, cloneProfile, deleteProfile } = useProfile();
     const { selectedVersion } = useGameDataContext();
@@ -192,22 +194,42 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <div
                 className={cn(
                     "fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] transition-opacity duration-300",
-                    isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                    isOpen ? "opacity-100" : "opacity-0 pointer-events-none",
+                    isPinned && "lg:opacity-0 lg:pointer-events-none"
                 )}
                 onClick={onClose}
             />
 
             {/* Sidebar Container */}
-            <aside className={cn(
-                "fixed top-0 left-0 bottom-0 w-64 bg-bg-secondary border-r border-border z-[60] transition-transform duration-300 ease-in-out flex flex-col shadow-2xl",
-                isOpen ? "translate-x-0" : "-translate-x-full"
-            )}>
+            <aside
+                onMouseLeave={() => { if (!isPinned) onClose(); }}
+                className={cn(
+                    "fixed top-0 left-0 bottom-0 w-64 bg-bg-secondary border-r border-border z-[60] transition-transform duration-300 ease-in-out flex flex-col shadow-2xl",
+                    isOpen ? "translate-x-0" : "-translate-x-full"
+                )}
+            >
                 {/* Logo */}
                 <div className="h-16 flex items-center gap-3 px-6 border-b border-border bg-bg-secondary/50 backdrop-blur-sm">
                     <GameIcon name="hammer" className="w-8 h-8 animate-hammer-swing" />
                     <span className="font-bold text-xl bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
                         ForgeMaster
                     </span>
+                    {onTogglePin && (
+                        <button
+                            onClick={onTogglePin}
+                            title={isPinned ? 'Unpin sidebar' : 'Pin sidebar open'}
+                            aria-label={isPinned ? 'Unpin sidebar' : 'Pin sidebar open'}
+                            aria-pressed={isPinned}
+                            className={cn(
+                                "ml-auto flex items-center justify-center p-2 rounded-lg border transition-all duration-200",
+                                isPinned
+                                    ? "bg-accent-primary/15 border-accent-primary/40 text-accent-primary"
+                                    : "bg-white/5 border-white/10 text-text-secondary hover:bg-white/10 hover:text-accent-primary hover:border-accent-primary/30"
+                            )}
+                        >
+                            {isPinned ? <Pin size={18} className="fill-current" /> : <PinOff size={18} />}
+                        </button>
+                    )}
                 </div>
 
                 {/* Profile Selector in Sidebar */}
