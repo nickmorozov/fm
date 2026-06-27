@@ -495,13 +495,18 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
         const blob = new Blob([jsonStr], { type: "application/json" });
         const file = new File([blob], filename, { type: "application/json" });
 
-        // Try Native Share (Mobile/Supported Browsers)
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        // Try Native Share, but only on touch devices. Desktop Safari supports
+        // the Web Share API too, where it pops the macOS share sheet instead of
+        // downloading — confusing (Copy grabs file+text, clicking out aborts).
+        // On a fine pointer (desktop) we always fall through to a plain download.
+        const isTouchDevice = typeof window !== 'undefined'
+            && window.matchMedia?.('(pointer: coarse)').matches;
+
+        if (isTouchDevice && navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
                 await navigator.share({
                     files: [file],
                     title: 'Export Profile',
-                    text: 'ForgeMaster Profile Config',
                 });
                 return;
             } catch (err) {
