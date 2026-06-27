@@ -376,8 +376,10 @@ export function TechTreePanel() {
         return <Card className="p-6">Loading Tech Tree...</Card>;
     }
 
-    // Render the layered nodes for a single tree.
-    const renderTreeBody = (treeName: TreeName) => {
+    // Render the layered nodes for a single tree. `fillWidth` lets nodes
+    // stretch to fill the row (single-column view) instead of being capped
+    // at 180px and centered (which leaves big side margins on narrow screens).
+    const renderTreeBody = (treeName: TreeName, fillWidth = false) => {
         const layers = nodesByLayerByTree[treeName] || {};
         const sortedLayers = Object.keys(layers).map(Number).sort((a, b) => a - b);
         const treeLevels = getTreeLevels(treeName);
@@ -419,7 +421,8 @@ export function TechTreePanel() {
                                         <div
                                             key={node.uniqueKey}
                                             className={cn(
-                                                "min-w-[140px] max-w-[180px] flex-1 p-2 sm:p-3 rounded-lg border transition-all",
+                                                "min-w-[140px] flex-1 p-2 sm:p-3 rounded-lg border transition-all",
+                                                !fillWidth && "max-w-[180px]",
                                                 !unlocked
                                                     ? "border-border/50 bg-bg-secondary/50 opacity-50"
                                                     : completed
@@ -618,7 +621,7 @@ export function TechTreePanel() {
                     ))}
                 </div>
             ) : (
-                renderTreeBody(activeTab)
+                renderTreeBody(activeTab, true)
             )}
 
             <ConfirmModal
