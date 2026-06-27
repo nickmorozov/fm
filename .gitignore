@@ -44,3 +44,9 @@ public/__*/
 /.*.mjs
 /*.tsv
 
+
+# Build artifacts
+*.tsbuildinfo
+
+# Test / tooling output
+.playwright-mcp/
