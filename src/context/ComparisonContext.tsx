@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { UserProfile, MountSlot } from '../types/Profile';
 import { useProfile } from './ProfileContext';
 
@@ -53,8 +53,10 @@ interface ComparisonContextType {
     updateTestSkillAscension: (level: number) => void;
     updateOriginalUseSkinWindup: (val: boolean) => void;
     updateTestUseSkinWindup: (val: boolean) => void;
+    testDiffers: boolean;
     keepOriginal: () => void;
     applyTestBuild: () => void;
+    resetTest: () => void;
     loadProfileIntoTest: (sourceProfile: UserProfile) => void;
     isCompactStats: boolean;
     setIsCompactStats: (val: boolean) => void;
@@ -309,6 +311,36 @@ export const ComparisonProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         exitCompareMode();
     }, [testItems, testMount, testPets, testSkills, testForgeAscension, testMountAscension, testPetAscension, testSkillAscension, testUseSkinWindup, updateNestedProfile, exitCompareMode]);
 
+    const testDiffers = useMemo(() => {
+        if (!isComparing) return false;
+        const differs = (a: unknown, b: unknown) => JSON.stringify(a) !== JSON.stringify(b);
+        return (
+            differs(originalItems, testItems) ||
+            differs(originalMount, testMount) ||
+            differs(originalPets, testPets) ||
+            differs(originalSkills, testSkills) ||
+            originalForgeAscension !== testForgeAscension ||
+            originalMountAscension !== testMountAscension ||
+            originalPetAscension !== testPetAscension ||
+            originalSkillAscension !== testSkillAscension ||
+            originalUseSkinWindup !== testUseSkinWindup
+        );
+    }, [isComparing, originalItems, testItems, originalMount, testMount, originalPets, testPets, originalSkills, testSkills, originalForgeAscension, testForgeAscension, originalMountAscension, testMountAscension, originalPetAscension, testPetAscension, originalSkillAscension, testSkillAscension, originalUseSkinWindup, testUseSkinWindup]);
+
+    const resetTest = useCallback(() => {
+        // Reset the entire test build back to the currently-equipped (original) state,
+        // without exiting comparison mode. Deep-clone so test edits don't mutate original.
+        setTestItems(originalItems ? JSON.parse(JSON.stringify(originalItems)) : null);
+        setTestMount(originalMount ? JSON.parse(JSON.stringify(originalMount)) : null);
+        setTestPets(originalPets ? JSON.parse(JSON.stringify(originalPets)) : null);
+        setTestSkills(originalSkills ? JSON.parse(JSON.stringify(originalSkills)) : null);
+        setTestForgeAscension(originalForgeAscension);
+        setTestMountAscension(originalMountAscension);
+        setTestPetAscension(originalPetAscension);
+        setTestSkillAscension(originalSkillAscension);
+        setTestUseSkinWindup(originalUseSkinWindup);
+    }, [originalItems, originalMount, originalPets, originalSkills, originalForgeAscension, originalMountAscension, originalPetAscension, originalSkillAscension, originalUseSkinWindup]);
+
     const loadProfileIntoTest = useCallback((sourceProfile: UserProfile) => {
         // Import build-relevant data from another profile into the test side
         // Does NOT import: techTree, skills.passives, collections, savedItems, misc utilities
@@ -373,8 +405,10 @@ export const ComparisonProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             updateTestSkillAscension,
             updateOriginalUseSkinWindup,
             updateTestUseSkinWindup,
+            testDiffers,
             keepOriginal,
             applyTestBuild,
+            resetTest,
             loadProfileIntoTest,
             isCompactStats,
             setIsCompactStats,
