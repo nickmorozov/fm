@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useProfile } from '../../context/ProfileContext';
 import { useGameData } from '../../hooks/useGameData';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { Card } from '../UI/Card';
 import { ConfirmModal } from '../UI/ConfirmModal';
 import { Search, Lock, Check } from 'lucide-react';
@@ -10,6 +11,17 @@ import { useGameDataContext } from '../../context/GameDataContext';
 const ICON_SIZE = 40;
 
 type TreeName = 'Forge' | 'Power' | 'SkillsPetTech' | 'Clan';
+
+// The three "hero" branches shown side-by-side on wide screens.
+// Clan is intentionally excluded — it always lives in its own tab.
+const HERO_TREES: TreeName[] = ['Forge', 'Power', 'SkillsPetTech'];
+
+const TREE_LABELS: Record<TreeName, string> = {
+    Forge: 'Forge',
+    Power: 'Power',
+    SkillsPetTech: 'Skills & Pets',
+    Clan: 'Clan',
+};
 
 interface TechNode {
     id: number;
@@ -55,7 +67,12 @@ export function TechTreePanel() {
     const { selectedVersion } = useGameDataContext();
     const [activeTab, setActiveTab] = useState<TreeName>('Forge');
     const [searchTerm, setSearchTerm] = useState('');
-    const [pendingReset, setPendingReset] = useState<{ nodeId: number; count: number } | null>(null);
+    const [pendingReset, setPendingReset] = useState<{ nodeId: number; treeName: TreeName; count: number } | null>(null);
+
+    // On wide screens we render the three hero branches as columns. Clan is
+    // always its own tab, so it never participates in the column layout.
+    const isWide = useMediaQuery('(min-width: 1280px)');
+    const showHeroColumns = isWide && activeTab !== 'Clan';
 
     // Pre-calculate GLOBAL stats across all active trees
     const globalStats = useMemo(() => {
@@ -153,46 +170,39 @@ export function TechTreePanel() {
 
     const treeCategories: TreeName[] = ['Forge', 'Power', 'SkillsPetTech', 'Clan'];
 
-    // Get current tree levels
-    const currentTreeLevels = useMemo(() => {
-        return profile.techTree[activeTab] || {};
-    }, [profile.techTree, activeTab]);
+    const getTreeLevels = (treeName: TreeName): Record<number, number> => profile.techTree[treeName] || {};
 
-    // Get nodes for active tab grouped by layer
-    const nodesByLayer = useMemo(() => {
-        const tree = treesData[activeTab];
-        if (!tree?.nodes) return {};
+    // Pre-group every tree's nodes by layer (search-filtered). Doing all trees
+    // up front lets the column layout render three at once without re-deriving.
+    const nodesByLayerByTree = useMemo(() => {
+        const result: Record<string, Record<number, TechNode[]>> = {};
+        const term = searchTerm.toLowerCase();
 
-        let nodes: TechNode[] = tree.nodes.map((n: any) => ({
-            ...n,
-            uniqueKey: `${activeTab}_${n.id}`
-        }));
+        treeCategories.forEach((treeName) => {
+            const tree = treesData[treeName];
+            const layers: Record<number, TechNode[]> = {};
+            if (tree?.nodes) {
+                let nodes: TechNode[] = tree.nodes.map((n: any) => ({
+                    ...n,
+                    uniqueKey: `${treeName}_${n.id}`,
+                }));
 
-        if (searchTerm) {
-            nodes = nodes.filter((n: TechNode) =>
-                n.type.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
+                if (term) {
+                    nodes = nodes.filter((n: TechNode) => n.type.toLowerCase().includes(term));
+                }
 
-        // Group by layer
-        const layers: Record<number, TechNode[]> = {};
-        nodes.forEach(node => {
-            if (!layers[node.layer]) layers[node.layer] = [];
-            layers[node.layer].push(node);
+                nodes.forEach((node) => {
+                    if (!layers[node.layer]) layers[node.layer] = [];
+                    layers[node.layer].push(node);
+                });
+
+                Object.values(layers).forEach((layerNodes) => layerNodes.sort((a, b) => a.id - b.id));
+            }
+            result[treeName] = layers;
         });
 
-        // Sort nodes within each layer by id
-        Object.values(layers).forEach(layerNodes => {
-            layerNodes.sort((a, b) => a.id - b.id);
-        });
-
-        return layers;
-    }, [treesData, activeTab, searchTerm]);
-
-    // Get sorted layer keys
-    const sortedLayers = useMemo(() => {
-        return Object.keys(nodesByLayer).map(Number).sort((a, b) => a - b);
-    }, [nodesByLayer]);
+        return result;
+    }, [treesData, searchTerm]);
 
     // Get sprite style from TechTreeMapping
     const getSpriteStyle = (node: TechNode) => {
@@ -214,29 +224,21 @@ export function TechTreePanel() {
         };
     };
 
-    const getCascadeCount = (nodeId: number): number => {
-        const tree = treesData[activeTab];
+    const getCascadeCount = (nodeId: number, treeName: TreeName): number => {
+        const tree = treesData[treeName];
         if (!tree?.nodes) return 1;
+        const treeLevels = getTreeLevels(treeName);
 
         let count = 1; // Start with the node itself
 
-
-
-        // We need to simulate the traversal on the CURRENT levels
-        // Set visited to avoid potential (though unlikely in current DAG) circular infinite loops
-        // if user data is messed up
         const visited = new Set<number>();
         visited.add(nodeId);
-
-        // This is a bit simpler: we just need to count how many ACTIVE nodes *would* be turned off.
-        // A node is turned off if it depends on a node being turned off.
-        // Removing any single requirement breaks the node.
 
         const countRecursive = (pid: number) => {
             const dependents = tree.nodes.filter((n: any) => n.requirements && n.requirements.includes(pid));
             dependents.forEach((dep: any) => {
                 // If it's active AND not already visited
-                if (currentTreeLevels[dep.id] > 0 && !visited.has(dep.id)) {
+                if (treeLevels[dep.id] > 0 && !visited.has(dep.id)) {
                     visited.add(dep.id);
                     count++;
                     countRecursive(dep.id);
@@ -248,13 +250,13 @@ export function TechTreePanel() {
         return count;
     };
 
-    const autoUnlockRequirements = (nodeId: number, levels: Record<number, number>) => {
-        const tree = treesData[activeTab];
+    const autoUnlockRequirements = (nodeId: number, levels: Record<number, number>, treeName: TreeName) => {
+        const tree = treesData[treeName];
         if (!tree?.nodes) return levels;
 
         const updatedLevels = { ...levels };
         const processed = new Set<number>();
-        
+
         const unlockRecursive = (id: number) => {
             if (processed.has(id)) return;
             processed.add(id);
@@ -276,12 +278,12 @@ export function TechTreePanel() {
         return updatedLevels;
     };
 
-    const executeLevelChange = (nodeId: number, level: number) => {
-        const newTreeLevels = { ...profile.techTree[activeTab], [nodeId]: level };
+    const executeLevelChange = (nodeId: number, level: number, treeName: TreeName) => {
+        const newTreeLevels = { ...getTreeLevels(treeName), [nodeId]: level };
 
         // Cascade Reset logic applied to the new levels object
         if (level === 0) {
-            const tree = treesData[activeTab];
+            const tree = treesData[treeName];
             if (tree && tree.nodes) {
                 const resetDependents = (parentId: number, levels: Record<number, number>) => {
                     const dependents = tree.nodes.filter((n: any) => n.requirements && n.requirements.includes(parentId));
@@ -299,42 +301,43 @@ export function TechTreePanel() {
         updateProfile({
             techTree: {
                 ...profile.techTree,
-                [activeTab]: newTreeLevels
+                [treeName]: newTreeLevels
             }
         });
     };
 
-    const handleLevelChange = (nodeId: number, level: number, max: number) => {
+    const handleLevelChange = (nodeId: number, level: number, max: number, treeName: TreeName) => {
         const val = Math.max(0, Math.min(level, max));
+        const treeLevels = getTreeLevels(treeName);
 
         // If resetting to 0, check for cascade
         if (val === 0) {
-            const count = getCascadeCount(nodeId);
+            const count = getCascadeCount(nodeId, treeName);
             if (count > 1) {
-                setPendingReset({ nodeId, count });
+                setPendingReset({ nodeId, treeName, count });
                 return;
             }
         }
 
         // Auto unlock if trying to increase level on a locked node
-        const treeMap = treesData[activeTab];
+        const treeMap = treesData[treeName];
         const nodeDef = treeMap?.nodes?.find((n: any) => n.id === nodeId);
-        const unlocked = nodeDef ? isNodeUnlocked(nodeDef, currentTreeLevels) : true;
+        const unlocked = nodeDef ? isNodeUnlocked(nodeDef, treeLevels) : true;
 
         if (level > 0 && !unlocked) {
-            const unlockedLevels = autoUnlockRequirements(nodeId, currentTreeLevels);
+            const unlockedLevels = autoUnlockRequirements(nodeId, treeLevels, treeName);
             unlockedLevels[nodeId] = Math.max(unlockedLevels[nodeId] || 0, level);
-            
+
             updateProfile({
                 techTree: {
                     ...profile.techTree,
-                    [activeTab]: unlockedLevels
+                    [treeName]: unlockedLevels
                 }
             });
             return;
         }
 
-        executeLevelChange(nodeId, val);
+        executeLevelChange(nodeId, val, treeName);
     };
 
     // Calculate completion percentages
@@ -373,61 +376,24 @@ export function TechTreePanel() {
         return <Card className="p-6">Loading Tech Tree...</Card>;
     }
 
-    return (
-        <Card className="p-6">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <img src={`${import.meta.env.BASE_URL}Texture2D/${selectedVersion}/TechTreeForge.png`} alt="Tech Tree" className="w-8 h-8 object-contain" />
-                Tech Tree
-            </h2>
+    // Render the layered nodes for a single tree.
+    const renderTreeBody = (treeName: TreeName) => {
+        const layers = nodesByLayerByTree[treeName] || {};
+        const sortedLayers = Object.keys(layers).map(Number).sort((a, b) => a - b);
+        const treeLevels = getTreeLevels(treeName);
 
-            {/* Tab Filters */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
-                    {treeCategories.map((treeKey) => {
-                        const completion = completionData[treeKey];
-                        return (
-                            <button
-                                key={treeKey}
-                                onClick={() => {
-                                    setActiveTab(treeKey);
-                                    setSearchTerm('');
-                                }}
-                                className={cn(
-                                    "px-4 py-2 rounded-lg font-bold text-sm transition-colors whitespace-nowrap flex items-center gap-2",
-                                    activeTab === treeKey
-                                        ? "bg-accent-primary text-white"
-                                        : "bg-bg-input text-text-secondary hover:bg-bg-input/80"
-                                )}
-                            >
-                                <span>{treeKey === 'SkillsPetTech' ? 'Skills & Pets' : treeKey}</span>
-                                {completion && (
-                                    <span className={cn(
-                                        "text-xs px-1.5 py-0.5 rounded",
-                                        activeTab === treeKey ? "bg-black/20 text-white/90" : "bg-black/10 text-text-muted"
-                                    )}>
-                                        {completion.percent.toFixed(2)}%
-                                    </span>
-                                )}
-                            </button>
-                        );
-                    })}
+        if (sortedLayers.length === 0) {
+            return (
+                <div className="text-center py-8 text-text-muted text-sm">
+                    No nodes found{searchTerm ? ` for "${searchTerm}"` : ''} in {TREE_LABELS[treeName]}
                 </div>
-                <div className="relative flex-1">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
-                    <input
-                        placeholder="Search nodes..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-bg-input border border-border rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-accent-primary"
-                        onFocus={(e) => e.target.select()}
-                    />
-                </div>
-            </div>
+            );
+        }
 
-            {/* Tree Structure - By Layer */}
+        return (
             <div className="space-y-2 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                 {sortedLayers.map((layer) => {
-                    const layerNodes = nodesByLayer[layer];
+                    const layerNodes = layers[layer];
 
                     return (
                         <div key={layer} className="flex flex-col items-center">
@@ -443,9 +409,9 @@ export function TechTreePanel() {
                                 {layerNodes.map((node) => {
                                     const effect = treeEffects?.[node.type];
                                     const maxLevel = effect?.MaxLevel || 5;
-                                    const currentLevel = currentTreeLevels[node.id] || 0;
-                                    const unlocked = isNodeUnlocked(node, currentTreeLevels);
-                                    const completed = isNodeCompleted(node.id, currentTreeLevels, maxLevel);
+                                    const currentLevel = treeLevels[node.id] || 0;
+                                    const unlocked = isNodeUnlocked(node, treeLevels);
+                                    const completed = isNodeCompleted(node.id, treeLevels, maxLevel);
                                     const name = node.type.replace(/([A-Z])/g, ' $1').trim();
                                     const spriteStyle = getSpriteStyle(node);
 
@@ -505,7 +471,7 @@ export function TechTreePanel() {
                                             {/* Level Controls */}
                                             <div className="flex items-center justify-between mt-2 bg-bg-input rounded p-1 border border-border/50">
                                                 <button
-                                                    onClick={() => handleLevelChange(node.id, currentLevel - 1, maxLevel)}
+                                                    onClick={() => handleLevelChange(node.id, currentLevel - 1, maxLevel, treeName)}
                                                     disabled={!unlocked || currentLevel === 0}
                                                     className={cn(
                                                         "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
@@ -522,12 +488,12 @@ export function TechTreePanel() {
                                                     <span className="text-text-muted text-xs">/{maxLevel}</span>
                                                 </div>
                                                 <button
-                                                    onClick={() => handleLevelChange(node.id, currentLevel + 1, maxLevel)}
+                                                    onClick={() => handleLevelChange(node.id, currentLevel + 1, maxLevel, treeName)}
                                                     disabled={currentLevel >= maxLevel}
                                                     className={cn(
                                                         "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
                                                         currentLevel < maxLevel
-                                                            ? !unlocked 
+                                                            ? !unlocked
                                                                 ? "bg-orange-500/20 text-orange-400 hover:bg-orange-500/30"
                                                                 : "bg-bg-secondary hover:bg-white/10"
                                                             : "text-text-muted cursor-not-allowed"
@@ -550,11 +516,109 @@ export function TechTreePanel() {
                     );
                 })}
             </div>
+        );
+    };
 
-            {sortedLayers.length === 0 && (
-                <div className="text-center py-8 text-text-muted">
-                    No nodes found for "{activeTab}"
+    const completionBadge = (treeName: TreeName, active: boolean) => {
+        const completion = completionData[treeName];
+        if (!completion) return null;
+        return (
+            <span className={cn(
+                "text-xs px-1.5 py-0.5 rounded",
+                active ? "bg-black/20 text-white/90" : "bg-black/10 text-text-muted"
+            )}>
+                {completion.percent.toFixed(2)}%
+            </span>
+        );
+    };
+
+    return (
+        <Card className="p-6">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <img src={`${import.meta.env.BASE_URL}Texture2D/${selectedVersion}/TechTreeForge.png`} alt="Tech Tree" className="w-8 h-8 object-contain" />
+                Tech Tree
+            </h2>
+
+            {/* Tab Filters */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
+                    {isWide ? (
+                        // Wide layout: the three hero branches collapse into a single
+                        // "Hero Branches" view (rendered as columns below); Clan stays
+                        // its own tab.
+                        <>
+                            <button
+                                onClick={() => { if (activeTab === 'Clan') setActiveTab('Forge'); }}
+                                className={cn(
+                                    "px-4 py-2 rounded-lg font-bold text-sm transition-colors whitespace-nowrap flex items-center gap-2",
+                                    activeTab !== 'Clan'
+                                        ? "bg-accent-primary text-white"
+                                        : "bg-bg-input text-text-secondary hover:bg-bg-input/80"
+                                )}
+                            >
+                                <span>Hero Branches</span>
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('Clan')}
+                                className={cn(
+                                    "px-4 py-2 rounded-lg font-bold text-sm transition-colors whitespace-nowrap flex items-center gap-2",
+                                    activeTab === 'Clan'
+                                        ? "bg-accent-primary text-white"
+                                        : "bg-bg-input text-text-secondary hover:bg-bg-input/80"
+                                )}
+                            >
+                                <span>{TREE_LABELS.Clan}</span>
+                                {completionBadge('Clan', activeTab === 'Clan')}
+                            </button>
+                        </>
+                    ) : (
+                        treeCategories.map((treeKey) => (
+                            <button
+                                key={treeKey}
+                                onClick={() => {
+                                    setActiveTab(treeKey);
+                                    setSearchTerm('');
+                                }}
+                                className={cn(
+                                    "px-4 py-2 rounded-lg font-bold text-sm transition-colors whitespace-nowrap flex items-center gap-2",
+                                    activeTab === treeKey
+                                        ? "bg-accent-primary text-white"
+                                        : "bg-bg-input text-text-secondary hover:bg-bg-input/80"
+                                )}
+                            >
+                                <span>{TREE_LABELS[treeKey]}</span>
+                                {completionBadge(treeKey, activeTab === treeKey)}
+                            </button>
+                        ))
+                    )}
                 </div>
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
+                    <input
+                        placeholder="Search nodes..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-bg-input border border-border rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-accent-primary"
+                        onFocus={(e) => e.target.select()}
+                    />
+                </div>
+            </div>
+
+            {/* Tree Structure */}
+            {showHeroColumns ? (
+                <div className="grid grid-cols-3 gap-4">
+                    {HERO_TREES.map((treeName) => (
+                        <div key={treeName} className="flex flex-col min-w-0">
+                            <div className="flex items-center justify-between gap-2 mb-3 pb-2 border-b border-border">
+                                <span className="font-bold text-sm">{TREE_LABELS[treeName]}</span>
+                                {completionBadge(treeName, false)}
+                            </div>
+                            {renderTreeBody(treeName)}
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                renderTreeBody(activeTab)
             )}
 
             <ConfirmModal
@@ -566,7 +630,7 @@ export function TechTreePanel() {
                 variant="danger"
                 onConfirm={() => {
                     if (pendingReset) {
-                        executeLevelChange(pendingReset.nodeId, 0);
+                        executeLevelChange(pendingReset.nodeId, 0, pendingReset.treeName);
                         setPendingReset(null);
                     }
                 }}
