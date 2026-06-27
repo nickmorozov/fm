@@ -52,7 +52,7 @@ export default function Profile() {
     };
 
     return (
-        <div className="max-w-[100rem] mx-auto space-y-8 animate-fade-in pb-12 px-4 xl:px-8">
+        <div className="max-w-[100rem] mx-auto space-y-8 animate-fade-in pb-12 px-2 sm:px-4 xl:px-8">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border pb-6">
                 <ProfileHeaderPanel />
