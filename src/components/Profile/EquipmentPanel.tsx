@@ -3,7 +3,7 @@ import { useGameDataContext } from '../../context/GameDataContext';
 import { useComparison } from '../../context/ComparisonContext';
 import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
-import { GitCompare } from 'lucide-react';
+import { GitCompare, RotateCcw } from 'lucide-react';
 import { ItemSlot, MountSlot, UserProfile } from '../../types/Profile';
 import { useState, useMemo } from 'react';
 import { ItemSelectorModal } from './ItemSelectorModal';
@@ -79,7 +79,7 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
         updateTestForgeAscension,
         updateOriginalUseSkinWindup,
         updateTestUseSkinWindup,
-        updateOriginalItem, updateTestItem, enterCompareMode,
+        updateOriginalItem, updateTestItem, enterCompareMode, resetTest, testDiffers,
         isCompactStats } = useComparison();
     const { selectedVersion } = useGameDataContext();
     const [selectedSlot, setSelectedSlot] = useState<keyof UserProfile['items'] | null>(null);
@@ -272,6 +272,15 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                         {panelTitle}
                     </h2>
                     <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                        {isComparing && variant === 'test' && testDiffers && (
+                            <button
+                                onClick={resetTest}
+                                title="Reset Test Build to Equipped"
+                                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition-all border bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
+                            >
+                                <RotateCcw className="w-3 h-3" />Reset
+                            </button>
+                        )}
                         <div className="flex items-center gap-2 bg-bg-input/50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-border/50">
                             <AscensionStars
                                 value={globalAscensionLevel}
