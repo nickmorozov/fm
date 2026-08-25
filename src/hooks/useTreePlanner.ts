@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useGameData } from './useGameData';
 import { useProfile } from '../context/ProfileContext';
 import { useTreeMode } from '../context/TreeModeContext';
+import { useTreeModifiers } from './useCalculatedStats';
 import { getWarDayIndex } from '../utils/guildWarUtils';
 import { calculateStats, LibraryData } from '../utils/statEngine';
 import { UserProfile } from '../types/Profile';
@@ -60,7 +61,7 @@ export interface AvailableNode {
 
 
 
-export function useTreePlanner() {
+export function useTreePlanner(warBonusOverride?: number, dayBoostOverride?: number) {
     const { profile, updateProfile, updateNestedProfile } = useProfile();
     const { treeMode } = useTreeMode();
 
@@ -137,6 +138,11 @@ export function useTreePlanner() {
         });
     }, [planQueue, planStartDate, planMetadata]);
 
+    // Clan tech tree boost to war points earned from finishing tech upgrades.
+    // A sandbox override (from the Tree Calculator) takes precedence over the profile value.
+    const treeModifiers = useTreeModifiers();
+    const techUpgradeWarBonus = warBonusOverride ?? (treeModifiers['WarPointsFromTechUpgrade'] || 0);
+
     // Tier -> War Points
     const tierPoints = useMemo(() => {
         const points: Record<number, number> = { 0: 300, 1: 7500, 2: 20000, 3: 35000, 4: 62000 };
@@ -156,8 +162,13 @@ export function useTreePlanner() {
                 });
             });
         }
+        // Apply the clan tech tree war-point boost (+ optional day boost) uniformly.
+        const dayBoost = dayBoostOverride ?? 0;
+        for (const tier of Object.keys(points)) {
+            points[Number(tier)] = points[Number(tier)] * (1 + techUpgradeWarBonus + dayBoost);
+        }
         return points;
-    }, [dayConfig]);
+    }, [dayConfig, techUpgradeWarBonus, dayBoostOverride]);
 
     // War Point Days: which GW days give war points for tech upgrades
     const warPointDays = useMemo((): number[] => {

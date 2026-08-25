@@ -1,6 +1,15 @@
 /**
- * Utility for calculating skin sprite positions and sorting skins based on the 8x8 grid layout.
- * Grid Layout (SkinsUiIcons.png):
+ * Utility for calculating skin sprite positions and sorting skins based on the grid layout.
+ * 
+ * --- HOW TO COMPLETE MANUAL SPRITE MAPPINGS FOR NEW RELEASES ---
+ * For each new release of sets, the sprites in SkinsUiIcons.png are ordered as:
+ * 1. Helmet and Body of the first new set, followed by Helmet and Body of the next new set
+ *    (in sequential order by Set numerical ID).
+ * 2. Standalone/single Helmets released in that group (some may come before the weapons
+ *    and others after, following the asset sheet sequence).
+ * 3. Weapons for the sets (in numerical set ID order, if present).
+ * 
+ * Example Layout (SkinsUiIcons.png):
  * Row 1: Santa(H,A), Snowman(H,A), Ski(H,A), Unnamed(H 100), Unnamed(H 101)
  * Row 2: Druid(H,A), Leprechaun(H,A), Flower(H,A), Unnamed(H 102), Unnamed(H 103)
  * Row 3: Druid(W), Leprechaun(W), Flower(W)
@@ -64,14 +73,19 @@ export const getSkinSortValue = (skin: { SkinId: SkinId }, mapping?: Record<stri
 /**
  * Calculates the sprite position in percentages for CSS background-position.
  */
-export const getSkinSpritePosition = (skin: { SkinId: SkinId }, mapping?: Record<string, number>): string | null => {
+export const getSkinSpritePosition = (
+    skin: { SkinId: SkinId }, 
+    mapping?: Record<string, number>,
+    version?: string
+): string | null => {
     const index = getSkinSortValue(skin, mapping);
 
     const col = index % SKIN_SPRITE_COLS;
     const row = Math.floor(index / SKIN_SPRITE_COLS);
 
-    const bgX = (col * 100) / (SKIN_SPRITE_COLS - 1);
-    const bgY = (row * 100) / (SKIN_SPRITE_ROWS - 1);
+    const isDoubleWidth = version && version >= '2026_07_03_12_39';
+    const bgX = (col * 100) / (isDoubleWidth ? 15 : (SKIN_SPRITE_COLS - 1));
+    const bgY = (row * 100) / (isDoubleWidth ? 15 : (SKIN_SPRITE_ROWS - 1));
 
     if (Number.isNaN(bgX) || Number.isNaN(bgY)) return "0% 0%";
 
@@ -86,10 +100,11 @@ export const getSkinSpriteStyle = (
     mapping?: Record<string, number>,
     version?: string
 ): React.CSSProperties => {
-    const position = getSkinSpritePosition(skin, mapping);
+    const position = getSkinSpritePosition(skin, mapping, version);
+    const isDoubleWidth = version && version >= '2026_07_03_12_39';
     return {
         backgroundImage: `url(${import.meta.env.BASE_URL}Texture2D/${version || ''}/SkinsUiIcons.png)`,
-        backgroundSize: '800% 800%',
+        backgroundSize: isDoubleWidth ? '1600% 1600%' : '800% 800%',
         backgroundPosition: position || 'center',
         imageRendering: 'pixelated' as const
     };

@@ -5,7 +5,7 @@ import { calculateStats, LibraryData, AggregatedStats } from '../utils/statEngin
 import { useTreeMode } from '../context/TreeModeContext';
 import { UserProfile } from '../types/Profile';
 
-export function useGlobalStats(): AggregatedStats | null {
+export function useGlobalStats(excludeSubstats = false): AggregatedStats | null {
     const { profile } = useProfile();
     const { treeMode } = useTreeMode();
 
@@ -22,6 +22,8 @@ export function useGlobalStats(): AggregatedStats | null {
 
     const { data: techTreeLibrary } = useGameData<any>('TechTreeLibrary.json');
     const { data: techTreePositionLibrary } = useGameData<any>('TechTreePositionLibrary.json');
+    const { data: guildPositionLibrary } = useGameData<any>('GuildTechTreePositionLibrary.json');
+    const { data: guildUpgradeLibrary } = useGameData<any>('GuildTechTreeUpgradeLibrary.json');
 
     const { data: itemBalancingLibrary } = useGameData<any>('ItemBalancingLibrary.json');
     const { data: itemBalancingConfig } = useGameData<any>('ItemBalancingConfig.json');
@@ -43,6 +45,8 @@ export function useGlobalStats(): AggregatedStats | null {
         mountUpgradeLibrary,
         techTreeLibrary,
         techTreePositionLibrary,
+        guildTechTreePositionLibrary: guildPositionLibrary,
+        guildTechTreeUpgradeLibrary: guildUpgradeLibrary,
         itemBalancingLibrary,
         itemBalancingConfig,
         weaponLibrary,
@@ -55,6 +59,7 @@ export function useGlobalStats(): AggregatedStats | null {
         petUpgradeLibrary, petBalancingLibrary, petLibrary,
         skillLibrary, skillPassiveLibrary, mountUpgradeLibrary,
         techTreeLibrary, techTreePositionLibrary,
+        guildPositionLibrary, guildUpgradeLibrary,
         itemBalancingLibrary, itemBalancingConfig,
         weaponLibrary, projectilesLibrary, secondaryStatLibrary,
         skinsLibrary, setsLibrary, ascensionConfigsLibrary,
@@ -89,7 +94,7 @@ export function useGlobalStats(): AggregatedStats | null {
         };
 
         if (techTreePositionLibrary && techTreeLibrary) {
-            const trees: ('Forge' | 'Power' | 'SkillsPetTech' | 'Clan')[] = ['Forge', 'Power', 'SkillsPetTech', 'Clan'];
+            const trees: ('Forge' | 'Power' | 'SkillsPetTech')[] = ['Forge', 'Power', 'SkillsPetTech'];
             for (const tree of trees) {
                 const treeData = techTreePositionLibrary[tree];
                 if (treeData?.Nodes) {
@@ -102,11 +107,23 @@ export function useGlobalStats(): AggregatedStats | null {
             }
         }
 
+        if (guildPositionLibrary && guildUpgradeLibrary) {
+            const nodesList: string[] = [];
+            for (const cat of Object.keys(guildPositionLibrary)) {
+                if (guildPositionLibrary[cat]?.Nodes) {
+                    nodesList.push(...guildPositionLibrary[cat].Nodes);
+                }
+            }
+            nodesList.forEach((type, idx) => {
+                maxTree.Clan[idx] = guildUpgradeLibrary[type]?.MaxLevel || 20;
+            });
+        }
+
         return {
             ...profile,
             techTree: maxTree
         };
-    }, [profile, treeMode, techTreePositionLibrary, techTreeLibrary]);
+    }, [profile, treeMode, techTreePositionLibrary, techTreeLibrary, guildPositionLibrary, guildUpgradeLibrary]);
 
     // Calculate stats
     // We memoize the result to avoid recalculating on every render if inputs haven't changed
@@ -115,8 +132,10 @@ export function useGlobalStats(): AggregatedStats | null {
         if (!itemBalancingConfig || !itemBalancingLibrary) {
             return null;
         }
-        return calculateStats(effectiveProfile, libs);
-    }, [effectiveProfile, libs, itemBalancingConfig, itemBalancingLibrary]);
+        // Attribution is enabled here only: this hook runs per render, not in a loop.
+        // The optimizer/sweep hot paths deliberately leave it off.
+        return calculateStats(effectiveProfile, libs, excludeSubstats, { attribution: true });
+    }, [effectiveProfile, libs, itemBalancingConfig, itemBalancingLibrary, excludeSubstats]);
 
     return stats;
 }

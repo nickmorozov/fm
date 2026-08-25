@@ -5,6 +5,7 @@ export interface StatBreakdown {
     base: number;
     levelMulti?: number;
     techMulti?: number;
+    clanTechMulti?: number; // clan-tree portion already included in techMulti (shown for transparency)
     itemMulti?: number;
     ascMulti?: number;
     commonMulti?: number;
@@ -24,7 +25,7 @@ const formatPercent = (val: number) => `+${(val * 100).toFixed(1)}%`;
 const formatMulti = (val: number) => `×${val.toFixed(2)}`;
 
 function BreakdownSection({ data, label, color }: { data: StatBreakdown; label: string; color: string }) {
-    const hasSkillLayer = (data.techMulti && data.techMulti > 0) || (data.itemMulti && data.itemMulti > 0) || (data.ascMulti && data.ascMulti > 1);
+    const hasSkillLayer = (data.techMulti && data.techMulti > 0) || (data.itemMulti && data.itemMulti > 0) || (data.ascMulti && data.ascMulti > 1) || (data.clanTechMulti && data.clanTechMulti > 0);
     const hasCommon = data.commonMulti && data.commonMulti !== 1;
 
     return (
@@ -47,6 +48,12 @@ function BreakdownSection({ data, label, color }: { data: StatBreakdown; label: 
                             <div className="flex justify-between">
                                 <span className="text-text-muted">Skill Tech</span>
                                 <span className="text-green-400">{formatPercent(data.techMulti)}</span>
+                            </div>
+                        )}
+                        {data.clanTechMulti !== undefined && data.clanTechMulti > 0 && (
+                            <div className="flex justify-between pl-2">
+                                <span className="text-text-muted/70">↳ incl. Clan Tree</span>
+                                <span className="text-purple-300">{formatPercent(data.clanTechMulti)}</span>
                             </div>
                         )}
                         {data.itemMulti !== undefined && data.itemMulti > 0 && (

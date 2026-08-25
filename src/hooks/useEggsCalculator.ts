@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { useGameData } from './useGameData';
 import { useProfile } from '../context/ProfileContext';
 import { useTreeMode } from '../context/TreeModeContext';
+import { useTreeModifiers, useClanNodeMax } from './useCalculatedStats';
+import { getWarPointsForTask, isWarPointDay, getDayBoostNodeType } from '../utils/guildWarUtils';
 
 
 export interface EggOptimizationResult {
@@ -34,7 +36,6 @@ export function useEggsCalculator() {
     const { data: guildWarConfig } = useGameData<any>('GuildWarDayConfigLibrary.json');
     const { data: techTreeMapping } = useGameData<any>('TechTreeMapping.json');
     const { data: techTreeLibrary } = useGameData<any>('TechTreeLibrary.json');
-    const { data: dungeonEggData } = useGameData<any>('DungeonRewardEggLibrary.json');
     const { data: petConfig } = useGameData<any>('PetBaseConfig.json');
     const { profile, updateNestedProfile } = useProfile();
     const { treeMode } = useTreeMode();
@@ -168,49 +169,68 @@ export function useEggsCalculator() {
         return times;
     }, [eggLibrary, profile, techTreeLibrary, techTreeMapping, treeMode]);
 
-    // --- Drop Rate Logic (Dynamic from Stage) ---
-    const stageDropRates = useMemo(() => {
-        if (!dungeonEggData) return [];
-
-        // Data index is (Level - 1) string
-        const levelKey = (selectedStage - 1).toString();
-        const dropRates = dungeonEggData[levelKey];
-
-        if (!dropRates) return [];
-
-        const tiers = ['Common', 'Rare', 'Epic', 'Legendary', 'Ultimate', 'Mythic'];
-
-        return tiers.map(tier => {
-            const probability = dropRates[tier] || 0;
-            return {
-                tier,
-                probability
-            };
-        }).filter(item => item.probability > 0 || item.tier === 'Common'); // Keep at least one or filter zeros? Keeping zeros might be informative.
-    }, [dungeonEggData, selectedStage]);
+    /*
+     * Per-stage egg drop rates are gone, and not by omission.
+     *
+     * Up to the 2026_04_09 extraction the game shipped DungeonRewardEggLibrary.json: 100 levels,
+     * each with a Common/Rare/Epic/Legendary/Ultimate/Mythic probability, because the egg dungeon
+     * paid out an egg of a random rarity. No extraction since has contained that file, so this hook
+     * spent every render since asking for a config that was not there and handing back an empty
+     * list, which nothing read.
+     *
+     * The egg dungeon now pays a plain currency instead: DungeonRewardLibrary.json prices its "Pet"
+     * entry in Eggshells (200 base, +0.65 per level), which pages/Dungeons.tsx already reads with
+     * every other dungeon's reward. Rarity has moved to the point of spending, in
+     * EggSummonConfig.json, which useEggSummonCalculator already owns.
+     *
+     * So there is nothing to re-point this at. Reviving it against the summon table would put
+     * summon odds on screen under the words "drop rate", which is a different number.
+     */
 
     // --- War Logic ---
+    // Clan tech tree boosts to war points earned (already effective values, see useGameData).
+    const treeModifiers = useTreeModifiers();
+    const clanMax = useClanNodeMax();
+    const profileHatchWarBonus = treeModifiers['WarPointsFromEggHatch'] || 0;
+    const profilePetMergeWarBonus = treeModifiers['WarPointsFromPetMerge'] || 0;
+
+    // Sandbox: local overrides of the result-altering tree bonuses (see SandboxPanel).
+    const [sandbox, setSandbox] = useState<Record<string, number>>({});
+    const hatchWarBonus = sandbox.warHatch ?? profileHatchWarBonus;
+    const petMergeWarBonus = sandbox.warMerge ?? profilePetMergeWarBonus;
+    // Day boost: WarPointsOnDayN multiplier, only when eggs are active today.
+    const dayActive = isWarPointDay(new Date(), 'eggs', guildWarConfig);
+    const profileDayBoost = dayActive ? (treeModifiers[getDayBoostNodeType()] || 0) : 0;
+    const dayBoost = sandbox.dayBoost ?? profileDayBoost;
+    const sandboxControls = {
+        reset: () => setSandbox({}),
+        fields: [
+            { key: 'warHatch', label: 'War points: egg hatch', value: hatchWarBonus, profileValue: profileHatchWarBonus, min: 0, max: clanMax['WarPointsFromEggHatch'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, warHatch: v })) },
+            { key: 'warMerge', label: 'War points: pet merge', value: petMergeWarBonus, profileValue: profilePetMergeWarBonus, min: 0, max: clanMax['WarPointsFromPetMerge'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, warMerge: v })) },
+            { key: 'dayBoost', label: 'Day war-points boost (today)', value: dayBoost, profileValue: profileDayBoost, min: 0, max: clanMax['WarPointsOnDay1'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, dayBoost: v })) },
+        ],
+    };
+
     const warPoints = useMemo(() => {
         if (!guildWarConfig) return null;
-        // Day 1 seems to be the Summon/Merge day based on task list
-        const dayConfig = guildWarConfig["1"]; // Day 1
-        if (!dayConfig) return null;
 
         const points: Record<string, { hatch: number, merge: number }> = {};
         const rarities = ['Common', 'Rare', 'Epic', 'Legendary', 'Ultimate', 'Mythic'];
 
+        // Read amounts from whatever day holds the task (independent of day layout),
+        // then apply the clan tech tree war-point boosts.
         rarities.forEach(rarity => {
-            const hatchTask = dayConfig.Tasks.find((t: any) => t.Task === `Hatch${rarity}Egg`);
-            const mergeTask = dayConfig.Tasks.find((t: any) => t.Task === `Merge${rarity}Pet`);
+            const baseHatch = getWarPointsForTask(guildWarConfig, `Hatch${rarity}Egg`);
+            const baseMerge = getWarPointsForTask(guildWarConfig, `Merge${rarity}Pet`);
 
             points[rarity] = {
-                hatch: hatchTask?.Rewards?.[0]?.Amount || 0,
-                merge: mergeTask?.Rewards?.[0]?.Amount || 0
+                hatch: baseHatch * (1 + hatchWarBonus + dayBoost),
+                merge: baseMerge * (1 + petMergeWarBonus + dayBoost)
             };
         });
 
         return points;
-    }, [guildWarConfig]);
+    }, [guildWarConfig, hatchWarBonus, petMergeWarBonus, dayBoost]);
 
     // --- Optimization Logic ---
     const { data: forgeConfig } = useGameData<any>('ForgeConfig.json');
@@ -401,9 +421,10 @@ export function useEggsCalculator() {
         // Info / Manual
         selectedStage, setSelectedStage,
         dungeonKeys, setDungeonKeys,
-        stageDropRates,
         todayTotalDrops: dungeonKeys * (2 + eggDungeonBonus), // Corrected Formula: Base(2) + Bonus
         hatchingTimes: hatchValuesProfile, // Use real profile times now
-        warPoints
+        warPoints,
+        warPointBonuses: { hatch: hatchWarBonus, merge: petMergeWarBonus },
+        sandbox: sandboxControls
     };
 }

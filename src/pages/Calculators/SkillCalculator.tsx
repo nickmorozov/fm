@@ -5,11 +5,14 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/UI/Ca
 import { SpriteIcon } from '../../components/UI/SpriteIcon';
 import { Info, Trophy, Zap, Minus, Plus, RefreshCcw, Calculator } from 'lucide-react';
 import { isWarPointDay } from '../../utils/guildWarUtils';
+import { SandboxPanel } from '../../components/UI/SandboxPanel';
+import { useGameData } from '../../hooks/useGameData';
 import { useGameDataContext } from '../../context/GameDataContext';
 
 export default function SkillCalculator() {
     const { selectedVersion } = useGameDataContext();
     const { profile, updateNestedProfile } = useProfile();
+    const { data: warDayConfig } = useGameData<any>('GuildWarDayConfigLibrary.json');
     const {
         level, setLevel,
         progress, setProgress,
@@ -20,8 +23,11 @@ export default function SkillCalculator() {
         levels,
         applyResultsToProfile,
         calculateNeededCurrency,
-        finalCostPerSummon
+        finalCostPerSummon,
+        warPointBonuses,
+        sandbox
     } = useSkillsCalculator();
+    const skillWarBoost = warPointBonuses?.summon || 0;
 
     // Target Calculator State
     const [targetLevel, setTargetLevel] = useState(maxPossibleLevel || 100);
@@ -49,14 +55,20 @@ export default function SkillCalculator() {
                 <p className="text-text-secondary">Calculate expected skills and War Points from your tickets.</p>
 
 
-                {isWarPointDay(new Date(), 'skills') && (
-                    <div className="flex justify-center pt-2">
+                <div className="flex justify-center items-center gap-2 pt-2">
+                    {isWarPointDay(new Date(), 'skills', warDayConfig) && (
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/20 text-accent-primary border border-accent-primary/30 text-[10px] font-black uppercase tracking-wider animate-pulse">
                             <Trophy size={14} />
                             War Points Active: High Value Day
                         </div>
-                    </div>
-                )}
+                    )}
+                    {skillWarBoost > 0 && (
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                            <Trophy size={14} />
+                            Clan Boost: +{(skillWarBoost * 100).toFixed(0)}% War Points
+                        </div>
+                    )}
+                </div>
 
 
                 {techBonuses.extraChance > 0 && (
@@ -68,6 +80,8 @@ export default function SkillCalculator() {
                     </div>
                 )}
             </div>
+
+            <SandboxPanel fields={sandbox.fields} onReset={sandbox.reset} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* INPUTS */}

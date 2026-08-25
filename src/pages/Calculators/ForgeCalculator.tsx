@@ -2,8 +2,10 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { useProfile } from '../../context/ProfileContext';
 import { useTreeMode } from '../../context/TreeModeContext';
 import { useGameData } from '../../hooks/useGameData';
+import { useTreeModifiers, useClanNodeMax } from '../../hooks/useCalculatedStats';
+import { SandboxPanel } from '../../components/UI/SandboxPanel';
 import { ArrowRightLeft, HelpCircle, RefreshCw, Trophy } from 'lucide-react';
-import { isWarPointDay } from '../../utils/guildWarUtils';
+import { isWarPointDay, getDayBoostNodeType, getWarPointsForTask } from '../../utils/guildWarUtils';
 import { cn, getAgeIconStyle } from '../../lib/utils';
 import { AGES } from '../../utils/constants';
 import { useGameDataContext } from '../../context/GameDataContext';
@@ -119,7 +121,7 @@ export default function ForgeCalculator() {
     const [goldInput, setGoldInput] = useState<string>(() => profile.misc.forgeCalculator?.targetGold || '0');
 
     const [autoForgeSummons, setAutoForgeSummons] = useState<number>(() => {
-        return profile.misc.forgeCalculator?.autoForgeSummons || 1;
+        return profile.misc.forgeCalculator?.autoForgeSummons || 5;
     });
 
     const [autoForgeInterval, setAutoForgeInterval] = useState<string>(() => {
@@ -166,6 +168,7 @@ export default function ForgeCalculator() {
     const { data: techTreeLib } = useGameData<TechTreeLibrary>('TechTreeLibrary.json');
     const { data: techTreeMap } = useGameData<any>('TechTreeMapping.json');
     const { data: guildWarConfig } = useGameData<GuildWarDayConfig>('GuildWarDayConfigLibrary.json');
+    const { data: guildWarBaseConfig } = useGameData<any>('GuildWarConfig.json');
     const { data: forgeUpgradeData } = useGameData<any>('ForgeUpgradeLibrary.json');
 
     const maxForgeLevel = useMemo(() => {
@@ -173,6 +176,63 @@ export default function ForgeCalculator() {
         const levels = Object.keys(forgeUpgradeData).map(Number);
         return Math.max(...levels, 1) + 1;
     }, [forgeUpgradeData]);
+
+    // Clan tech tree boost to war points earned from forging (effective value, see useGameData).
+    const treeModifiers = useTreeModifiers();
+    const clanMax = useClanNodeMax();
+    const profileForgeWarBonus = treeModifiers['WarPointsFromForging'] || 0;
+
+    // Sandbox: local override of the result-altering tree bonus (see SandboxPanel).
+    const [sandbox, setSandbox] = useState<Record<string, number>>({});
+    const forgeWarBonus = sandbox.warForging ?? profileForgeWarBonus;
+    const profileForgeSpendBonus = treeModifiers['WarPointsFromForgeSpend'] || 0;
+    const forgeSpendBonus = sandbox.warForgeSpend ?? profileForgeSpendBonus;
+    // Day boost: WarPointsOnDayN multiplier, only when forging is active today.
+    const forgeDayActive = isWarPointDay(new Date(), 'forge', guildWarConfig);
+    const profileDayBoost = forgeDayActive ? (treeModifiers[getDayBoostNodeType()] || 0) : 0;
+    const dayBoost = sandbox.dayBoost ?? profileDayBoost;
+    // Forge-spend day boost applies on the forge-SPEND days (SpendCoins/GemOnForge).
+    const spendDayActive = isWarPointDay(new Date(), 'forgeSpend', guildWarConfig);
+    const profileSpendDayBoost = spendDayActive ? (treeModifiers[getDayBoostNodeType()] || 0) : 0;
+    const spendDayBoost = sandbox.spendDayBoost ?? profileSpendDayBoost;
+    const sandboxControls = {
+        reset: () => setSandbox({}),
+        fields: [
+            { key: 'warForging', label: 'War points: forging', value: forgeWarBonus, profileValue: profileForgeWarBonus, min: 0, max: clanMax['WarPointsFromForging'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, warForging: v })) },
+            { key: 'warForgeSpend', label: 'War points: forge spend', value: forgeSpendBonus, profileValue: profileForgeSpendBonus, min: 0, max: clanMax['WarPointsFromForgeSpend'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, warForgeSpend: v })) },
+            { key: 'dayBoost', label: 'Day boost. Crafting (today)', value: dayBoost, profileValue: profileDayBoost, min: 0, max: clanMax['WarPointsOnDay1'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, dayBoost: v })) },
+            { key: 'spendDayBoost', label: 'Day boost. Forge spend (today)', value: spendDayBoost, profileValue: profileSpendDayBoost, min: 0, max: clanMax['WarPointsOnDay1'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, spendDayBoost: v })) },
+        ],
+    };
+
+    // --- Forge Upgrade War Points (from spending coins/gems on forge upgrades) ---
+    // Coins are derived from the real upgrade costs (ForgeUpgradeLibrary) across the
+    // chosen steps, reduced by the ForgeUpgradeCost tech node.
+    const forgeUpgradeCostReduction = treeModifiers['ForgeUpgradeCost'] || 0;
+    // Starting level follows the simulated-forge slider below; steps are capped at the
+    // number of upgrades remaining from that level to max.
+    const maxForgeSpendSteps = Math.max(1, maxForgeLevel - simulatedForgeLevel);
+    const [forgeSteps, setForgeSteps] = useState<number>(10);
+    const [gemsSpent, setGemsSpent] = useState<number>(0);
+    const effectiveForgeSteps = Math.min(forgeSteps, maxForgeSpendSteps);
+    const forgeSpendWarPoints = useMemo(() => {
+        if (!guildWarConfig) return null;
+        const coinsPerReward = guildWarBaseConfig?.CoinsSpentOnForgeNeededToGrantOneActionReward || 1000;
+        const coinReward = getWarPointsForTask(guildWarConfig, 'SpendCoinsOnForge');
+        const gemReward = getWarPointsForTask(guildWarConfig, 'SpendGemOnForge');
+        // Sum real upgrade coin cost across the steps (simulated level → +steps), node-reduced.
+        let coins = 0;
+        if (forgeUpgradeData) {
+            for (let i = 0; i < effectiveForgeSteps; i++) {
+                const def = forgeUpgradeData[String(simulatedForgeLevel + i)];
+                if (def?.Cost) coins += def.Cost * (1 - forgeUpgradeCostReduction);
+            }
+        }
+        const mult = (1 + forgeSpendBonus + spendDayBoost);
+        const coinPts = Math.floor(coins / coinsPerReward) * coinReward * mult;
+        const gemPts = (gemsSpent || 0) * gemReward * mult;
+        return { coinsPerReward, coinReward, gemReward, coins, coinPts, gemPts, total: coinPts + gemPts };
+    }, [guildWarConfig, guildWarBaseConfig, forgeUpgradeData, simulatedForgeLevel, effectiveForgeSteps, forgeUpgradeCostReduction, gemsSpent, forgeSpendBonus, spendDayBoost]);
 
     // Parse War Points from Config
     const warPointsPerAge = useMemo(() => {
@@ -193,14 +253,14 @@ export default function ForgeCalculator() {
                     if (finalIdx !== -1) {
                         const reward = task.Rewards.find(r => r.$type === "WarPointsReward");
                         if (reward) {
-                            pointsMap[finalIdx] = reward.Amount;
+                            pointsMap[finalIdx] = reward.Amount * (1 + forgeWarBonus + dayBoost);
                         }
                     }
                 }
             });
         });
         return pointsMap;
-    }, [guildWarConfig]);
+    }, [guildWarConfig, forgeWarBonus, dayBoost]);
 
     // 1b. Calculate Global Maximums from Library (The theoretical limits of the game)
     const { globalMaxBonuses, nodeIcons, nodeSteps } = useMemo(() => {
@@ -804,7 +864,7 @@ export default function ForgeCalculator() {
         </div>
     );
 
-    if (!dropChances || !techTreeLib || !techTreeMap || !balancingConfig || !brackets) return <div className="p-10 text-center text-text-muted">Loading Configuration...</div>;
+    if (!dropChances || !techTreeLib || !techTreeMap || !balancingConfig || !brackets) return <div className="p-10 text-center text-text-muted">Loading Configuration</div>;
 
     return (
         <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 pb-20">
@@ -818,16 +878,71 @@ export default function ForgeCalculator() {
                     <p className="text-text-secondary">
                         Plan your forging strategy. Switch modes to calculate costs or rewards.
                     </p>
-                    {isWarPointDay(new Date(), 'forge') && (
-                        <div className="flex pt-3 scale-75 origin-left">
+                    <div className="flex items-center gap-2 pt-3 scale-75 origin-left">
+                        {isWarPointDay(new Date(), 'forge', guildWarConfig) && (
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/20 text-accent-primary border border-accent-primary/30 text-[10px] font-black uppercase tracking-wider animate-pulse">
                                 <Trophy size={14} />
                                 War Points Active: High Value Day
                             </div>
-                        </div>
-                    )}
+                        )}
+                        {forgeWarBonus > 0 && (
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                                <Trophy size={14} />
+                                Clan Boost: +{(forgeWarBonus * 100).toFixed(0)}% War Points
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
+
+            <SandboxPanel fields={sandboxControls.fields} onReset={sandboxControls.reset} />
+
+            {/* Forge Upgrade War Points. Hidden for now (WIP: forge N→M with auto coins/steps/gems + completed toggle) */}
+            {false && (
+            <div className="card p-4 border-accent-primary/20 bg-bg-secondary/30 backdrop-blur-md">
+                <div className="flex items-center gap-2 mb-3">
+                    <Trophy size={16} className="text-accent-primary" />
+                    <h3 className="text-sm font-bold text-white">Forge Upgrade War Points</h3>
+                    <span className="text-[10px] text-text-muted">(spending coins/gems on upgrades)</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Starting forge level</label>
+                        <div className="w-full bg-black/20 border border-white/5 rounded-lg px-3 py-2 text-xs font-bold text-text-secondary">
+                            Lvl {simulatedForgeLevel} <span className="text-text-muted font-normal">(from slider below)</span>
+                        </div>
+                    </div>
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Upgrade steps (max {maxForgeSpendSteps})</label>
+                        <input
+                            type="number" min="1" max={maxForgeSpendSteps} value={effectiveForgeSteps}
+                            onChange={(e) => setForgeSteps(Math.max(1, Math.min(maxForgeSpendSteps, parseInt(e.target.value) || 1)))}
+                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-white outline-none focus:border-accent-primary"
+                        />
+                        <div className="text-[10px] text-text-muted ml-1">
+                            {forgeSpendWarPoints && `≈ ${Math.round(forgeSpendWarPoints?.coins ?? 0).toLocaleString()} coins → `}
+                            <span className="text-emerald-300 font-bold">{forgeSpendWarPoints ? Math.round(forgeSpendWarPoints?.coinPts ?? 0).toLocaleString() : 0} pts</span>
+                        </div>
+                    </div>
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Gems spent on forge</label>
+                        <input
+                            type="number" min="0" value={gemsSpent}
+                            onChange={(e) => setGemsSpent(Math.max(0, parseInt(e.target.value) || 0))}
+                            className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-white outline-none focus:border-accent-primary"
+                        />
+                        <div className="text-[10px] text-text-muted ml-1">
+                            {forgeSpendWarPoints && `${forgeSpendWarPoints?.gemReward ?? 0} pts / gem → `}
+                            <span className="text-emerald-300 font-bold">{forgeSpendWarPoints ? Math.round(forgeSpendWarPoints?.gemPts ?? 0).toLocaleString() : 0} pts</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
+                    <span className="text-xs text-text-secondary uppercase font-bold">Total War Points</span>
+                    <span className="text-lg font-black text-accent-primary font-mono">{forgeSpendWarPoints ? Math.round(forgeSpendWarPoints?.total ?? 0).toLocaleString() : 0}</span>
+                </div>
+            </div>
+            )}
 
             {/* Simulation Level Slider */}
             <div className="card p-4 border-accent-primary/20 bg-bg-secondary/30 backdrop-blur-md">
@@ -966,15 +1081,14 @@ export default function ForgeCalculator() {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
                                             <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Summons / Cycle</label>
-                                            <select
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                max="100"
                                                 value={autoForgeSummons}
-                                                onChange={(e) => setAutoForgeSummons(parseInt(e.target.value))}
+                                                onChange={(e) => setAutoForgeSummons(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
                                                 className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-white outline-none focus:border-accent-primary"
-                                            >
-                                                {new Array(20).fill(1).map((_, i) => i + 1).map(n => (
-                                                    <option key={n} value={n}>{n} Items</option>
-                                                ))}
-                                            </select>
+                                            />
                                         </div>
                                         <div className="space-y-1.5">
                                             <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Cycle Time (s)</label>

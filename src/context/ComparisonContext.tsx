@@ -60,6 +60,8 @@ interface ComparisonContextType {
     loadProfileIntoTest: (sourceProfile: UserProfile) => void;
     isCompactStats: boolean;
     setIsCompactStats: (val: boolean) => void;
+    excludeSubstats: boolean;
+    setExcludeSubstats: (val: boolean) => void;
 }
 
 const ComparisonContext = createContext<ComparisonContextType | undefined>(undefined);
@@ -98,6 +100,12 @@ export const ComparisonProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const [testUseSkinWindup, setTestUseSkinWindup] = useState<boolean | null>(null);
     const [snapshotUseSkinWindup, setSnapshotUseSkinWindup] = useState<boolean | null>(null);
     const [isCompactStats, setIsCompactStats] = useState(true);
+    const [excludeSubstats, setExcludeSubstatsState] = useState(() => localStorage.getItem('fm_exclude_substats') === 'true');
+
+    const setExcludeSubstats = useCallback((val: boolean) => {
+        setExcludeSubstatsState(val);
+        localStorage.setItem('fm_exclude_substats', String(val));
+    }, []);
 
     const enterCompareMode = useCallback(() => {
         const clonedItems = JSON.parse(JSON.stringify(profile.items));
@@ -404,6 +412,8 @@ export const ComparisonProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             loadProfileIntoTest,
             isCompactStats,
             setIsCompactStats,
+            excludeSubstats,
+            setExcludeSubstats,
         }}>
             {children}
         </ComparisonContext.Provider>

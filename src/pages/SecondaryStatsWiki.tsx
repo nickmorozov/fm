@@ -27,7 +27,7 @@ export default function SecondaryStatsWiki() {
     useEffect(() => {
         async function fetchVersions() {
             try {
-                const res = await fetch('./parsed_configs/versions.json');
+                const res = await fetch(`${import.meta.env.BASE_URL}parsed_configs/versions.json`);
                 if (res.ok) {
                     const v = await res.json();
                     v.sort((a: string, b: string) => b.localeCompare(a));
@@ -52,8 +52,8 @@ export default function SecondaryStatsWiki() {
             setLoading(true);
             try {
                 const [baseRes, targetRes] = await Promise.all([
-                    fetch(`./parsed_configs/${baseVersion}/SecondaryStatLibrary.json`),
-                    fetch(`./parsed_configs/${targetVersion}/SecondaryStatLibrary.json`)
+                    fetch(`${import.meta.env.BASE_URL}parsed_configs/${baseVersion}/SecondaryStatLibrary.json`),
+                    fetch(`${import.meta.env.BASE_URL}parsed_configs/${targetVersion}/SecondaryStatLibrary.json`)
                 ]);
 
                 if (baseRes.ok && targetRes.ok) {
@@ -169,7 +169,7 @@ export default function SecondaryStatsWiki() {
                                 <tr>
                                     <td colSpan={5} className="px-6 py-20 text-center">
                                         <RefreshCw className="w-8 h-8 animate-spin mx-auto text-accent-primary opacity-20" />
-                                        <p className="text-sm text-text-muted mt-2">Loading data...</p>
+                                        <p className="text-sm text-text-muted mt-2">Loading data</p>
                                     </td>
                                 </tr>
                             ) : (

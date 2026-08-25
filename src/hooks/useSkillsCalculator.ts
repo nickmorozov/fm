@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { useGameData } from './useGameData';
 import { useProfile } from '../context/ProfileContext';
 import { useTreeMode } from '../context/TreeModeContext';
+import { useTreeModifiers, useClanNodeMax } from './useCalculatedStats';
+import { getWarPointsForTask, isWarPointDay, getDayBoostNodeType } from '../utils/guildWarUtils';
 
 export interface ProbabilityResult {
     rarity: string;
@@ -110,31 +112,54 @@ export function useSkillsCalculator() {
         };
     }, [techTreeLibrary, techTreeMapping, treeMode, simulatedTree, profile]);
 
+    // Clan tech tree boost to war points earned from summoning skills.
+    const treeModifiers = useTreeModifiers();
+    const clanMax = useClanNodeMax();
+    const profileSkillSummonWarBonus = treeModifiers['WarPointsFromSkillSummon'] || 0;
+
+    // Sandbox: local overrides of the result-altering tree bonuses (see SandboxPanel).
+    const [sandbox, setSandbox] = useState<Record<string, number>>({});
+    const costReduction = sandbox.costReduction ?? techBonuses.costReduction;
+    const extraChance = sandbox.extraChance ?? techBonuses.extraChance;
+    const skillSummonWarBonus = sandbox.warSummon ?? profileSkillSummonWarBonus;
+    // Day boost: WarPointsOnDayN multiplier, only when skills are active today.
+    const dayActive = isWarPointDay(new Date(), 'skills', guildWarConfig);
+    const profileDayBoost = dayActive ? (treeModifiers[getDayBoostNodeType()] || 0) : 0;
+    const dayBoost = sandbox.dayBoost ?? profileDayBoost;
+    const sandboxControls = {
+        reset: () => setSandbox({}),
+        fields: [
+            { key: 'costReduction', label: 'Summon cost reduction', value: costReduction, profileValue: techBonuses.costReduction, min: 0, max: 0.9, step: 0.01, onChange: (v: number) => setSandbox(p => ({ ...p, costReduction: v })) },
+            { key: 'extraChance', label: 'Extra skill chance', value: extraChance, profileValue: techBonuses.extraChance, min: 0, max: 1, step: 0.01, onChange: (v: number) => setSandbox(p => ({ ...p, extraChance: v })) },
+            { key: 'warSummon', label: 'War points: skill summon', value: skillSummonWarBonus, profileValue: profileSkillSummonWarBonus, min: 0, max: clanMax['WarPointsFromSkillSummon'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, warSummon: v })) },
+            { key: 'dayBoost', label: 'Day war-points boost (today)', value: dayBoost, profileValue: profileDayBoost, min: 0, max: clanMax['WarPointsOnDay1'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, dayBoost: v })) },
+        ],
+    };
+
     // 7. Constants from unified config
     const unitCost = skillSummonConfig?.SingleSummonCost?.Amount || 40;
     const SKILLS_PER_SUMMON = skillBaseConfig?.SummonCount || 5;
     const BASE_SUMMON_COST = unitCost * SKILLS_PER_SUMMON;
     const levels: any[] = skillSummonConfig?.Levels || [];
     const currency = skillSummonConfig?.SingleSummonCost?.Currency || 'SkillSummonTickets';
-    const finalCostPerSummon = Math.ceil(BASE_SUMMON_COST * (1 - techBonuses.costReduction));
+    const finalCostPerSummon = Math.ceil(BASE_SUMMON_COST * (1 - costReduction));
     const maxPossibleLevel = levels.length || 100;
 
     // 8. War Points
     const warPointsPerSummonSkill = useMemo(() => {
         if (!guildWarConfig) return null;
-        const day0 = guildWarConfig["0"]; // Day 0 is Skill day
-        if (!day0) return null;
 
         const points: Record<string, number> = {};
         const rarities = ['Common', 'Rare', 'Epic', 'Legendary', 'Ultimate', 'Mythic'];
 
+        // Read from whatever day holds the task (independent of day layout) + clan boost.
         rarities.forEach(rarity => {
-            const task = day0.Tasks.find((t: any) => t.Task === `Summon${rarity}Skill`);
-            points[rarity] = task?.Rewards?.[0]?.Amount || 0;
+            const base = getWarPointsForTask(guildWarConfig, `Summon${rarity}Skill`);
+            points[rarity] = base * (1 + skillSummonWarBonus + dayBoost);
         });
 
         return points;
-    }, [guildWarConfig]);
+    }, [guildWarConfig, skillSummonWarBonus, dayBoost]);
 
     // 9. Simulation Results (with level progression like mount/egg calculators)
     const results = useMemo(() => {
@@ -199,7 +224,7 @@ export function useSkillsCalculator() {
             if (probabilities) {
                 ['Common', 'Rare', 'Epic', 'Legendary', 'Ultimate', 'Mythic'].forEach(rarity => {
                     const chance = probabilities[rarity] || 0;
-                    const expectedCount = chance * SKILLS_PER_SUMMON * (1 + techBonuses.extraChance);
+                    const expectedCount = chance * SKILLS_PER_SUMMON * (1 + extraChance);
                     const unitPoints = warPointsPerSummonSkill[rarity] || 0;
                     const pts = expectedCount * unitPoints;
 
@@ -213,7 +238,7 @@ export function useSkillsCalculator() {
             }
 
             // Progress level
-            currentProgress += SKILLS_PER_SUMMON * (1 + techBonuses.extraChance);
+            currentProgress += SKILLS_PER_SUMMON * (1 + extraChance);
             let threshold = levels[Math.min(currentLevel - 1, levels.length - 1)]?.SummonsRequired;
             
             while (threshold && currentProgress >= threshold) {
@@ -284,7 +309,7 @@ export function useSkillsCalculator() {
             simulateAscension
         };
 
-    }, [ticketCount, level, progress, levels, warPointsPerSummonSkill, SKILLS_PER_SUMMON, techBonuses, finalCostPerSummon, BASE_SUMMON_COST, profile?.misc?.simulateAscensionInCalculators]);
+    }, [ticketCount, level, progress, levels, warPointsPerSummonSkill, SKILLS_PER_SUMMON, techBonuses, extraChance, costReduction, finalCostPerSummon, BASE_SUMMON_COST, profile?.misc?.simulateAscensionInCalculators]);
 
     // Apply results
     const applyResultsToProfile = () => {
@@ -323,7 +348,7 @@ export function useSkillsCalculator() {
             }
         }
 
-        const summonsNeeded = Math.ceil(totalGainedNeeded / (SKILLS_PER_SUMMON * (1 + techBonuses.extraChance)));
+        const summonsNeeded = Math.ceil(totalGainedNeeded / (SKILLS_PER_SUMMON * (1 + extraChance)));
         return summonsNeeded * finalCostPerSummon;
     };
 
@@ -340,6 +365,8 @@ export function useSkillsCalculator() {
         currency,
         baseCost: BASE_SUMMON_COST,
         finalCostPerSummon,
-        skillsPerSummon: SKILLS_PER_SUMMON
+        skillsPerSummon: SKILLS_PER_SUMMON,
+        warPointBonuses: { summon: skillSummonWarBonus },
+        sandbox: sandboxControls
     };
 }

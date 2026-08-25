@@ -16,7 +16,7 @@ import { AGES } from '../../utils/constants';
 import { getItemImage, getItemName } from '../../utils/itemAssets';
 import { getStatName } from '../../utils/statNames';
 import { getSkinSpriteStyle } from '../../utils/skinSprites';
-import { useTreeModifiers } from '../../hooks/useCalculatedStats';
+import { useTreeModifiers, useClanTreeModifiers } from '../../hooks/useCalculatedStats';
 import { ItemSelectionCard } from '../UI/ItemSelectionCard';
 import { getItemStats, getPerfection, getStatPerfection } from '../../utils/itemCalculations';
 
@@ -120,6 +120,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
     const { data: ascensionConfigs } = useGameData<any>('AscensionConfigsLibrary.json');
 
     const techModifiers = useTreeModifiers();
+    const clanModifiers = useClanTreeModifiers();
 
     // Calculated forge ascension multiplier
     const forgeAscensionMulti = useMemo(() => {
@@ -403,7 +404,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
     }, [ageIdx, savedPresets, availableItems]);
 
     const selectedItemData = useMemo(() => {
-        if (ageIdx === -1 && selectedSavedItemIndex !== null) return savedPresets[selectedSavedItemIndex];
+        if (ageIdx === -1 && selectedSavedItemIndex !== null) return savedPresets.find((p: any) => p.savedIndex === selectedSavedItemIndex);
         return availableItems.find((item: any) => item.ItemId?.Idx === selectedItemIdx) || availableItems[0];
     }, [availableItems, selectedItemIdx, ageIdx, selectedSavedItemIndex, savedPresets]);
 
@@ -821,7 +822,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                     updateNestedProfile('savedItems', { [slot]: newSaved });
                                 }
                             }}
-                            placeholder="Set a custom name..."
+                            placeholder="Set a custom name"
                             className="bg-bg-input/50 border-border focus:border-accent-primary h-9 text-sm"
                         />
                         <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-text-muted opacity-50" />
@@ -1130,7 +1131,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                             <div className="relative flex-1">
                                 <Target className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                                 <Input
-                                    placeholder="Search presets..."
+                                    placeholder="Search presets"
                                     value={savedSearchQuery}
                                     onChange={(e) => setSavedSearchQuery(e.target.value)}
                                     className="pl-9 h-9 text-sm"
@@ -1260,7 +1261,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                             const fileSlot = IMAGE_SLOT_MAP[slot] || slot;
                             imgPath = getItemImage(AGES[saved.age], fileSlot, saved.idx, autoMapping, selectedVersion) || "";
                             itemName = saved.customName || getItemName(AGES[saved.age], fileSlot, saved.idx, autoMapping) || `Item #${idx}`;
-                            isSelected = selectedSavedItemIndex === listIdx;
+                            isSelected = selectedSavedItemIndex === (saved as any).savedIndex;
                         } else {
                             // Library Item
                             idx = item.ItemId?.Idx || 0;
@@ -1276,7 +1277,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                 key={listIdx}
                                 onClick={() => {
                                     if (ageIdx === -1) {
-                                        setSelectedSavedItemIndex(listIdx);
+                                        setSelectedSavedItemIndex((item as any).savedIndex);
                                         const saved = item as ItemSlot;
                                         setLevel(saved.level);
                                         setManualStats(saved.secondaryStats?.map(s => ({ type: s.statId, value: s.value })) || []);
@@ -1302,7 +1303,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                             >
                                 {ageIdx === -1 && (
                                     <button
-                                        onClick={(e) => handleDeleteSavedItem(listIdx, e)}
+                                        onClick={(e) => handleDeleteSavedItem((item as any).savedIndex, e)}
                                         className="absolute top-1 right-1 z-20 p-1.5 bg-red-500 hover:bg-red-600 rounded-md text-white shadow-sm transition-opacity"
                                         title="Delete Preset"
                                     >
@@ -1319,7 +1320,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                         <Shield className="w-6 h-6 text-text-muted" />
                                     )}
                                 </div>
-                                <span className="text-[9px] text-center text-text-secondary truncate w-full leading-tight select-none">
+                                <span className="text-[9px] text-center text-text-secondary whitespace-nowrap overflow-hidden text-clip w-full leading-tight select-none">
                                     {itemName}
                                 </span>
                             </div>
@@ -1451,7 +1452,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                         <Bookmark className="w-4 h-4" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <span className="text-sm font-medium truncate block">Saved Presets</span>
+                                        <span className="text-sm font-medium whitespace-nowrap overflow-hidden text-clip block">Saved Presets</span>
                                         <span className="text-[10px] text-text-muted">{savedPresets.length} items</span>
                                     </div>
                                 </button>
@@ -1487,7 +1488,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                                 )}
                                             />
                                             <div className="flex-1 min-w-0">
-                                                <span className="text-sm font-medium truncate block">{ageName}</span>
+                                                <span className="text-sm font-medium whitespace-nowrap overflow-hidden text-clip block">{ageName}</span>
                                                 {isUnlocked && (
                                                     <span className="text-[10px] text-text-muted">
                                                         {(dropChance * 100).toFixed(3)}% drop
@@ -1528,7 +1529,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                                 item={saved}
                                                 slotKey={slot}
                                                 slotLabel={slot}
-                                                isSelected={selectedSavedItemIndex === listIdx}
+                                                isSelected={selectedSavedItemIndex === (saved as any).savedIndex}
                                                 isSaved={true}
                                                 itemName={itemName}
                                                 itemImage={imgPath}
@@ -1537,13 +1538,13 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                                     saved,
                                                     slot,
                                                     { itemBalancingLibrary: itemLibrary, itemBalancingConfig, weaponLibrary },
-                                                    { techModifiers, forgeAscensionMulti }
+                                                    { techModifiers, forgeAscensionMulti, clanModifiers }
                                                 )}
                                                 perfection={getPerfection(saved, secondaryStatLibrary)}
                                                 getStatPerfection={(sId, val) => getStatPerfection(sId, val, secondaryStatLibrary)}
                                                 spriteMapping={spriteMapping}
                                                 onClick={() => {
-                                                    setSelectedSavedItemIndex(listIdx);
+                                                    setSelectedSavedItemIndex((saved as any).savedIndex);
                                                     setLevel(saved.level);
                                                     setManualStats(saved.secondaryStats?.map(s => ({ type: s.statId, value: s.value })) || []);
                                                     if (saved.skin) {
@@ -1554,7 +1555,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                                         setSkinStatsList([]);
                                                     }
                                                 }}
-                                                onDelete={(e) => handleDeleteSavedItem(listIdx, e)}
+                                                onDelete={(e) => handleDeleteSavedItem((saved as any).savedIndex, e)}
                                             />
                                         );
                                     }
@@ -1598,7 +1599,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                                     <Shield className="w-6 h-6 text-text-muted" />
                                                 )}
                                             </div>
-                                            <span className="text-[9px] sm:text-[10px] text-center text-text-primary truncate w-full leading-tight select-none">
+                                            <span className="text-[9px] sm:text-[10px] text-center text-text-primary whitespace-nowrap overflow-hidden text-clip w-full leading-tight select-none">
                                                 {itemName}
                                             </span>
                                         </div>

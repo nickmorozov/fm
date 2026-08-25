@@ -20,6 +20,8 @@ export function useTreeModifiers() {
     const { treeMode } = useTreeMode();
     const { data: techTreeLibrary } = useGameData<any>('TechTreeLibrary.json');
     const { data: techTreePositionLibrary } = useGameData<any>('TechTreePositionLibrary.json');
+    const { data: guildPositionLibrary } = useGameData<any>('GuildTechTreePositionLibrary.json');
+    const { data: guildUpgradeLibrary } = useGameData<any>('GuildTechTreeUpgradeLibrary.json');
 
     return useMemo((): TechModifiers => {
         if (!techTreeLibrary || !techTreePositionLibrary) return {};
@@ -29,6 +31,24 @@ export function useTreeModifiers() {
         // Get effective tree levels based on mode
         const getTreeLevels = (tree: 'Forge' | 'Power' | 'SkillsPetTech' | 'Clan'): Record<string, number> => {
             if (treeMode === 'empty') return {};
+
+            if (tree === 'Clan') {
+                if (!guildPositionLibrary || !guildUpgradeLibrary) return {};
+                const nodesList: string[] = [];
+                for (const cat of Object.keys(guildPositionLibrary)) {
+                    if (guildPositionLibrary[cat]?.Nodes) {
+                        nodesList.push(...guildPositionLibrary[cat].Nodes);
+                    }
+                }
+                if (treeMode === 'max') {
+                    const maxLevels: Record<string, number> = {};
+                    nodesList.forEach((type, idx) => {
+                        maxLevels[idx] = guildUpgradeLibrary[type]?.MaxLevel || 20;
+                    });
+                    return maxLevels;
+                }
+                return profile.techTree?.Clan || {};
+            }
 
             const treeData = techTreePositionLibrary[tree];
             if (!treeData?.Nodes) return {};
@@ -94,6 +114,36 @@ export function useTreeModifiers() {
         const trees: ('Forge' | 'Power' | 'SkillsPetTech' | 'Clan')[] = ['Forge', 'Power', 'SkillsPetTech', 'Clan'];
         for (const tree of trees) {
             const treeLevels = getTreeLevels(tree);
+
+            if (tree === 'Clan') {
+                if (!guildPositionLibrary || !guildUpgradeLibrary) continue;
+
+                // Flatten all nodes to index -> type mapping
+                const nodesList: string[] = [];
+                for (const cat of Object.keys(guildPositionLibrary)) {
+                    if (guildPositionLibrary[cat]?.Nodes) {
+                        nodesList.push(...guildPositionLibrary[cat].Nodes);
+                    }
+                }
+
+                for (const [nodeIdStr, level] of Object.entries(treeLevels)) {
+                    if (typeof level !== 'number' || level <= 0) continue;
+                    const nodeId = parseInt(nodeIdStr);
+                    const nodeType = nodesList[nodeId];
+                    if (!nodeType) continue;
+
+                    const upgradeDef = guildUpgradeLibrary[nodeType];
+                    if (!upgradeDef) continue;
+
+                    // ValuePerLevel is already the effective value (x2 normalised at load, see useGameData)
+                    const valPerLevel = upgradeDef.ValuePerLevel || 0;
+                    const totalVal = valPerLevel * level;
+
+                    modifiers[nodeType] = (modifiers[nodeType] || 0) + totalVal;
+                }
+                continue;
+            }
+
             const treeData = techTreePositionLibrary[tree];
             if (!treeData?.Nodes) continue;
 
@@ -122,8 +172,10 @@ export function useTreeModifiers() {
                 if (!nodeData?.Stats) continue;
 
                 const level = treeLevels[nodeId];
-                const baseVal = nodeData.Stats[0]?.Value || 0;
-                const increment = nodeData.Stats[0]?.ValueIncrease || 0;
+                const tier = node.Tier ?? 0;
+                const tierStat = nodeData.StatsByTier?.[tier]?.[0];
+                const baseVal = tierStat?.Value ?? nodeData.Stats[0]?.Value ?? 0;
+                const increment = tierStat?.ValueIncrease ?? nodeData.Stats[0]?.ValueIncrease ?? 0;
                 const totalVal = baseVal + (Math.max(0, level - 1) * increment);
 
                 const key = node.Type;
@@ -132,7 +184,66 @@ export function useTreeModifiers() {
         }
 
         return modifiers;
-    }, [profile, treeMode, techTreeLibrary, techTreePositionLibrary]);
+    }, [profile, treeMode, techTreeLibrary, techTreePositionLibrary, guildPositionLibrary, guildUpgradeLibrary]);
+}
+
+/**
+ * Max effective value per clan node type (MaxLevel × effective ValuePerLevel).
+ * ValuePerLevel is already normalised (x2) at load, so this is the real in-game cap
+ * — used to bound the calculator sandbox sliders to the actual tree limits.
+ */
+export function useClanNodeMax() {
+    const { data: guildUpgradeLibrary } = useGameData<any>('GuildTechTreeUpgradeLibrary.json');
+    return useMemo((): Record<string, number> => {
+        const m: Record<string, number> = {};
+        if (guildUpgradeLibrary) {
+            for (const [type, def] of Object.entries<any>(guildUpgradeLibrary)) {
+                m[type] = (def?.ValuePerLevel || 0) * (def?.MaxLevel || 0);
+            }
+        }
+        return m;
+    }, [guildUpgradeLibrary]);
+}
+
+/**
+ * Clan-tree-only modifiers, keyed by node type. Same values that useTreeModifiers
+ * folds into the combined map — exposed separately so UIs (e.g. stat hovers) can
+ * show the clan contribution as its own line without changing the merged totals.
+ */
+export function useClanTreeModifiers() {
+    const { profile } = useProfile();
+    const { treeMode } = useTreeMode();
+    const { data: guildPositionLibrary } = useGameData<any>('GuildTechTreePositionLibrary.json');
+    const { data: guildUpgradeLibrary } = useGameData<any>('GuildTechTreeUpgradeLibrary.json');
+
+    return useMemo((): TechModifiers => {
+        const modifiers: TechModifiers = {};
+        if (treeMode === 'empty' || !guildPositionLibrary || !guildUpgradeLibrary) return modifiers;
+
+        const nodesList: string[] = [];
+        for (const cat of Object.keys(guildPositionLibrary)) {
+            if (guildPositionLibrary[cat]?.Nodes) nodesList.push(...guildPositionLibrary[cat].Nodes);
+        }
+
+        let levels: Record<string, number>;
+        if (treeMode === 'max') {
+            levels = {};
+            nodesList.forEach((type, idx) => { levels[idx] = guildUpgradeLibrary[type]?.MaxLevel || 20; });
+        } else {
+            levels = profile.techTree?.Clan || {};
+        }
+
+        for (const [nodeIdStr, level] of Object.entries(levels)) {
+            if (typeof level !== 'number' || level <= 0) continue;
+            const nodeType = nodesList[parseInt(nodeIdStr)];
+            if (!nodeType) continue;
+            const upgradeDef = guildUpgradeLibrary[nodeType];
+            if (!upgradeDef) continue;
+            // ValuePerLevel already effective (x2 normalised at load, see useGameData)
+            modifiers[nodeType] = (modifiers[nodeType] || 0) + (upgradeDef.ValuePerLevel || 0) * level;
+        }
+        return modifiers;
+    }, [profile, treeMode, guildPositionLibrary, guildUpgradeLibrary]);
 }
 
 /**

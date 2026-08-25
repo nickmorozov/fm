@@ -2,21 +2,25 @@ import { useProfile } from '../../context/ProfileContext';
 import { useComparison } from '../../context/ComparisonContext';
 import { useGameDataContext } from '../../context/GameDataContext';
 import { Card } from '../UI/Card';
-import { Zap as PowerIcon, Plus, Cat, Sword, RotateCcw } from 'lucide-react';
+import { Zap as PowerIcon, Cat, Sword, RotateCcw, Heart, Scale } from 'lucide-react';
 import { Button } from '../UI/Button';
-import { PetSlot } from '../../types/Profile';
+import { PetSlot, MountSlot } from '../../types/Profile';
 import { useState, useMemo } from 'react';
 import { cn } from '../../lib/utils';
 import { MAX_ACTIVE_PETS } from '../../utils/constants';
+
+/** Artwork well for one of the three slot cards: three across on a phone leaves about 110px each. */
+const SLOT_ART = 'w-12 h-12 sm:w-20 sm:h-20 xl:w-24 xl:h-24';
 import { PetSelectorModal } from './PetSelectorModal';
 import { useGameData } from '../../hooks/useGameData';
 import { SpriteSheetIcon } from '../UI/SpriteSheetIcon';
-import { useTreeModifiers } from '../../hooks/useCalculatedStats';
+import { useTreeModifiers, useClanTreeModifiers } from '../../hooks/useCalculatedStats';
 
 import { InputModal } from '../UI/InputModal';
+import { SectionSyncButton } from './SectionSyncButton';
 import { AscensionStars } from '../UI/AscensionStars';
 import { getAscensionTexturePath } from '../../utils/ascensionUtils';
-import { ItemSelectionCard } from '../UI/ItemSelectionCard';
+import { ItemSelectionCard, EmptyRowCard, CARD_ART_CLASS } from '../UI/ItemSelectionCard';
 import { useProfileOptimizer } from '../../hooks/useProfileOptimizer';
 
 interface PetPanelProps {
@@ -40,7 +44,7 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
         updateTestPetAscension,
         isCompactStats
     } = useComparison();
-    const { optimizePets, isReady } = useProfileOptimizer();
+    const { optimizeLoadout, isReady } = useProfileOptimizer();
     
     const activePets = useMemo(() => {
         if (variant === 'original' && originalPets) return originalPets;
@@ -60,6 +64,8 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
     const [editingPetIdx, setEditingPetIdx] = useState<number | null>(null);
     const [petToSave, setPetToSave] = useState<PetSlot | null>(null);
     const [previousPets, setPreviousPets] = useState<PetSlot[] | null>(null);
+    // undefined = nothing to revert; null = revert to "no mount equipped"
+    const [previousMount, setPreviousMount] = useState<MountSlot | null | undefined>(undefined);
 
     const { data: petLibrary } = useGameData<any>('PetLibrary.json');
     const { data: petBalancing } = useGameData<any>('PetBalancingLibrary.json');
@@ -101,8 +107,11 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
 
     // Get tech tree modifiers for current tree mode
     const techModifiers = useTreeModifiers();
+    const clanModifiers = useClanTreeModifiers();
     const petDamageBonus = techModifiers['PetBonusDamage'] || 0;
     const petHealthBonus = techModifiers['PetBonusHealth'] || 0;
+    const clanPetDamageBonus = clanModifiers['PetBonusDamage'] || 0;
+    const clanPetHealthBonus = clanModifiers['PetBonusHealth'] || 0;
 
     // Pet Ascension multipliers
     const { ascensionDmgMulti, ascensionHpMulti } = useMemo(() => {
@@ -207,16 +216,30 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
         }
     };
 
-    const handleAutoOptimize = (metric: 'dps' | 'power') => {
+    // Optimizer searches saved pets AND saved mounts, so enable when either pool has entries.
+    const autoDisabled = (profile.pets.savedBuilds?.length || 0) < 1 && (profile.mount.savedBuilds?.length || 0) < 1;
+
+    // Only rendered for the default (non-compare) panel. Compare mode drives its
+    // own optimizer from the comparison strip (see StatsSummaryPanel).
+    const handleAutoOptimize = (metric: 'dps' | 'power' | 'lifesteal' | 'balanced') => {
         setPreviousPets([...activePets]);
-        const best = optimizePets(metric);
-        if (best) updatePets(best);
+        setPreviousMount(profile.mount.active);
+
+        const best = optimizeLoadout(metric);
+        if (!best) return;
+
+        updatePets(best.pets);
+        updateNestedProfile('mount', { active: best.mount });
     };
 
     const handleRevert = () => {
         if (previousPets) {
             updatePets(previousPets);
             setPreviousPets(null);
+        }
+        if (previousMount !== undefined) {
+            updateNestedProfile('mount', { active: previousMount });
+            setPreviousMount(undefined);
         }
     };
 
@@ -323,30 +346,53 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                         {panelTitle}
                     </h2>
                     
+                    {variant === 'default' && (
                     <div className="flex items-center gap-1.5 flex-wrap">
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
+                        <Button
+                            variant="outline"
+                            size="sm"
                             className="h-7 px-2 text-[10px] font-bold border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40 text-red-400 gap-1 active:scale-95 transition-all w-fit"
                             onClick={() => handleAutoOptimize('dps')}
-                            disabled={!isReady || (profile.pets.savedBuilds?.length || 0) < 1}
-                            title="Select best 3 saved pets for Max DPS"
+                            disabled={!isReady || autoDisabled}
+                            title="Select best 3 pets + mount for Max DPS"
                         >
                             <Sword className="w-3 h-3" />
                             AUTO DPS
                         </Button>
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
+                        <Button
+                            variant="outline"
+                            size="sm"
                             className="h-7 px-2 text-[10px] font-bold border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40 text-amber-500 gap-1 active:scale-95 transition-all w-fit"
                             onClick={() => handleAutoOptimize('power')}
-                            disabled={!isReady || (profile.pets.savedBuilds?.length || 0) < 1}
-                            title="Select best 3 saved pets for Max Power"
+                            disabled={!isReady || autoDisabled}
+                            title="Select best 3 pets + mount for Max Power"
                         >
                             <PowerIcon className="w-3 h-3" />
                             AUTO POWER
                         </Button>
-                        {previousPets && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-[10px] font-bold border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40 text-purple-400 gap-1 active:scale-95 transition-all w-fit"
+                            onClick={() => handleAutoOptimize('lifesteal')}
+                            disabled={!isReady || autoDisabled}
+                            title="Select best 3 pets + mount for Max Lifesteal/sec"
+                        >
+                            <Heart className="w-3 h-3" />
+                            AUTO LIFESTEAL/SEC
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-[10px] font-bold border-violet-500/20 hover:bg-violet-500/10 hover:border-violet-500/40 text-violet-400 gap-1 active:scale-95 transition-all w-fit"
+                            onClick={() => handleAutoOptimize('balanced')}
+                            disabled={!isReady || autoDisabled}
+                            title="Select best 3 pets + mount for a balance of DPS and HPS (same scoring as the Loadout Optimizer)"
+                        >
+                            <Scale className="w-3 h-3" />
+                            AUTO BALANCED
+                        </Button>
+                        {(previousPets || previousMount !== undefined) && (
                             <Button 
                                 variant="ghost" 
                                 size="sm" 
@@ -358,10 +404,12 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                             </Button>
                         )}
                     </div>
+                    )}
                 </div>
 
-                <div className="flex items-center justify-end">
-                    <AscensionStars 
+                <div className="flex items-center justify-end gap-2">
+                    {variant === 'default' && !isComparing && <SectionSyncButton preset="pet" label="Sync" />}
+                    <AscensionStars
                         value={petAscensionLevel}
                         onChange={handleAscensionChange}
                         size="sm"
@@ -369,27 +417,33 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Container-relative columns: this panel also renders two-up inside the compare grid. */}
+                            {/* Three across, always: there are exactly three slots, so one row holds them all
+                    and the column count never changes with the viewport. The cards shrink to fit
+                    rather than wrapping, which is what keeps the panel one shape on a phone and on
+                    a desktop, and items-stretch levels their heights. */}
+                <div className={cn(
+                    'grid items-stretch gap-2',
+                    // One per row on a phone, three on a desktop. Comparison mode is pinned to one
+                    // for the same reason the equipment row is pinned to two: the panel is half as
+                    // wide as the viewport breakpoint believes.
+                    isComparing ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'
+                )}>
                 {Array.from({ length: MAX_ACTIVE_PETS }).map((_, idx) => {
                     const pet = activePets[idx];
                     const hasDiff = checkDiff(idx);
-                    
+
                     if (!pet) {
                         return (
-                            <div 
+                            <EmptyRowCard
+                                className="min-w-0" artClassName={SLOT_ART}
                                 key={`empty-${idx}`}
+                                label="Empty Slot"
+                                hint="Click to equip"
+                                hasDiff={hasDiff}
                                 onClick={() => setIsModalOpen(true)}
-                                className={cn(
-                                    "h-full min-h-[180px] rounded-xl border-2 border-dashed border-border hover:border-accent-primary/50 cursor-pointer transition-all relative flex flex-col items-center justify-center p-3 bg-bg-input/10 group",
-                                    hasDiff && "ring-2 ring-yellow-500 ring-offset-2 ring-offset-bg-primary"
-                                )}
-                            >
-                                <div className="p-3 bg-bg-secondary/50 rounded-full mb-2 group-hover:scale-110 transition-transform border border-white/5">
-                                    <Plus className="w-6 h-6 text-text-muted opacity-50" />
-                                </div>
-                                <span className="text-sm text-text-muted font-bold">Empty Slot</span>
-                                <span className="text-[10px] text-text-muted/40 uppercase tracking-widest mt-1">Click to equip</span>
-                            </div>
+                                icon={<Cat className="w-10 h-10 text-text-muted" />}
+                            />
                         );
                     }
 
@@ -431,8 +485,10 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
 
                     return (
                         <ItemSelectionCard
+                            className="min-w-0" artClassName={SLOT_ART}
                             key={idx}
                             item={pet}
+                            layout="row"
                             variant={isCompactStats ? 'compact' : 'default'}
                             slotKey={`pet-${idx}`}
                             slotLabel={`Pet Slot ${idx + 1}`}
@@ -443,24 +499,28 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                             hasDiff={hasDiff}
                             isSaved={isSaved}
                             globalAscensionLevel={petAscensionLevel}
-                            onAscensionChange={handleAscensionChange}
+                            /* Pet ascension is one global number: the single editor is in the panel
+                               header, the card shows the star count read-only. */
                             stats={{
                                 damage: damage,
                                 health: health,
                                 damageMulti: (1 + petDamageBonus) * (ascensionDmgMulti || 1),
                                 healthMulti: (1 + petHealthBonus) * (ascensionHpMulti || 1),
                                 details: {
-                                    damage: { base: baseDamage, techMulti: (1 + petDamageBonus), ascMulti: (ascensionDmgMulti || 1) },
-                                    health: { base: baseHealth, techMulti: (1 + petHealthBonus), ascMulti: (ascensionHpMulti || 1) }
+                                    damage: { base: baseDamage, techMulti: (1 + petDamageBonus), clanTechMulti: clanPetDamageBonus, ascMulti: (ascensionDmgMulti || 1) },
+                                    health: { base: baseHealth, techMulti: (1 + petHealthBonus), clanTechMulti: clanPetHealthBonus, ascMulti: (ascensionHpMulti || 1) }
                                 },
                                 isMelee: false
                             }}
-                            customStats={(
-                                <div className={cn(
-                                    "text-[9px] font-black uppercase tracking-widest text-center w-full mt-1 px-2 py-0.5 rounded bg-black/20 border border-white/5",
-                                    petType === 'Damage' ? 'text-red-400 border-red-400/20' :
-                                        petType === 'Health' ? 'text-green-400 border-green-400/20' : 'text-blue-400 border-blue-400/20'
-                                )}>{petType}</div>
+                            /* The pet's role used to be a full-width bar of its own. It is one word,
+                               so it rides beside the name with the rarity. */
+                            tags={(
+                                <span className={cn(
+                                    "text-[8px] font-black uppercase tracking-wider px-1 rounded border",
+                                    petType === 'Damage' ? 'text-red-400 border-red-400/30 bg-red-400/10' :
+                                        petType === 'Health' ? 'text-green-400 border-green-400/30 bg-green-400/10'
+                                            : 'text-blue-400 border-blue-400/30 bg-blue-400/10'
+                                )} title="Pet type">{petType}</span>
                             )}
                             perfection={getPerfection(pet)}
                             getStatPerfection={getStatPerfection}
@@ -474,10 +534,11 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                                         sheetWidth={spriteInfo.config.texture_size.width}
                                         sheetHeight={spriteInfo.config.texture_size.height}
                                         iconIndex={spriteInfo.spriteIndex}
-                                        className="w-10 h-10"
+                                        className={CARD_ART_CLASS}
+                                        smooth
                                     />
                                 ) : (
-                                    <Cat className={cn("w-8 h-8 opacity-50", `text-rarity-${pet.rarity.toLowerCase()}`)} />
+                                    <Cat className={cn("w-10 h-10 opacity-50", `text-rarity-${pet.rarity.toLowerCase()}`)} />
                                 )
                             )}
                             onClick={() => setEditingPetIdx(idx)}

@@ -5,11 +5,14 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/UI/Ca
 import { SpriteIcon } from '../../components/UI/SpriteIcon';
 import { Trophy, Info, Minus, Plus, RefreshCcw, Calculator } from 'lucide-react';
 import { isWarPointDay } from '../../utils/guildWarUtils';
+import { SandboxPanel } from '../../components/UI/SandboxPanel';
+import { useGameData } from '../../hooks/useGameData';
 import { useGameDataContext } from '../../context/GameDataContext';
 
 export default function MountCalculator() {
     const { selectedVersion } = useGameDataContext();
     const { profile, updateNestedProfile } = useProfile();
+    const { data: warDayConfig } = useGameData<any>('GuildWarDayConfigLibrary.json');
     const {
         level: currentLevel, setLevel,
         progress: currentProgress, setProgress,
@@ -20,8 +23,11 @@ export default function MountCalculator() {
         levels,
         applyResultsToProfile,
         calculateNeededCurrency,
-        finalCostPerSummon
+        finalCostPerSummon,
+        warPointBonuses,
+        sandbox
     } = useMountsCalculator();
+    const mountWarBoost = Math.max(warPointBonuses?.summon || 0, warPointBonuses?.merge || 0);
 
     // Target Calculator State
     const [targetLevel, setTargetLevel] = useState(maxPossibleLevel || 100);
@@ -46,14 +52,20 @@ export default function MountCalculator() {
                     Mount Calculator
                 </h1>
                 <p className="text-text-secondary">Simulate level-ups and rarity drops from your winders.</p>
-                {isWarPointDay(new Date(), 'mounts') && (
-                    <div className="flex justify-center pt-2">
+                <div className="flex justify-center items-center gap-2 pt-2">
+                    {isWarPointDay(new Date(), 'mounts', warDayConfig) && (
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/20 text-accent-primary border border-accent-primary/30 text-[10px] font-black uppercase tracking-wider animate-pulse">
                             <Trophy size={14} />
                             War Points Active: High Value Day
                         </div>
-                    </div>
-                )}
+                    )}
+                    {mountWarBoost > 0 && (
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                            <Trophy size={14} />
+                            Clan Boost: +{(mountWarBoost * 100).toFixed(0)}% War Points
+                        </div>
+                    )}
+                </div>
 
                 {/* Tech Status Tag */}
                 <div className="flex justify-center gap-3 text-xs pt-3">
@@ -71,6 +83,8 @@ export default function MountCalculator() {
                     )}
                 </div>
             </div>
+
+            <SandboxPanel fields={sandbox.fields} onReset={sandbox.reset} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* INPUTS */}

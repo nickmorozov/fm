@@ -3,11 +3,19 @@
     "name": "Lucian",
     "email": "medrihanlucian@gmail.com",
     "login": "1vcian",
-    "additions": 4823204,
-    "deletions": 1056875,
-    "commits": 325,
+    "additions": 6506257,
+    "deletions": 1073845,
+    "commits": 410,
     "avatar_url": "https://avatars.githubusercontent.com/u/15808247?v=4",
     "html_url": "https://github.com/1vcian"
+  },
+  {
+    "name": "Athos",
+    "email": "athosgiovanni@gmail.com",
+    "login": null,
+    "additions": 2325,
+    "deletions": 206,
+    "commits": 3
   },
   {
     "name": "simon-m",

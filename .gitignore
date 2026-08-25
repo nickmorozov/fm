@@ -10,3 +10,43 @@ pseudocodice_esportato.c
 
 # Test / tooling output
 .playwright-mcp/
+# Local env overrides (Vite). `.env.example` is committed on purpose; real values never are.
+.env.local
+.env.*.local
+
+# Reverse-engineering toolkit (xapk -> il2cpp dump -> config parser -> assets).
+# Local-only: heavy tool binaries + game archives, never part of the published app.
+reverseForge/
+
+# Server-side infrastructure and its operator notes. Deployment config, not application code.
+#
+# WORTH KNOWING: `supabase/migrations/*.sql` is the definition of the live database, and once it is
+# ignored here this is its only copy — no history, no backup. Keep it somewhere backed up.
+#
+# The client half of the feature stays tracked (src/services/clanApi.ts, the contexts, the Auth and
+# Clan components, pushClient.ts, public/sw.js, the manifest): it ships in the bundle regardless, and
+# dropping it would only break the build for anyone who clones the project.
+supabase/
+docs/
+!docs/attack-timing.md
+
+# ---- Local tooling and scratch output. Never application code, never shipped. ----
+#
+# The harness pages below drive the OCR readers from `reverseForge/` (ignored above) and are not
+# build entries: vite builds `index.html` only, and nothing under `src/` imports them. A clone does
+# not need them and the published site must not carry them. They stay on disk, just untracked.
+/ocr-harness.html
+/techtree_mapper.html
+/src/harness/
+
+# One-off probe pages and the image dumps they write.
+__*probe*.html
+*_probe.html
+public/__*/
+
+# Headless-browser screenshots and one-off measurement scripts, written beside the app while
+# something is being checked. Nothing legitimate lives loose at the repo root.
+/*.png
+/.*.mjs
+/*.tsv
+

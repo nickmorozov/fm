@@ -10,18 +10,22 @@ import { ItemSelectorModal } from './ItemSelectorModal';
 import { MountSelectorModal } from './MountSelectorModal';
 import { PetSelectorModal } from './PetSelectorModal';
 import { InputModal } from '../UI/InputModal';
+import { SectionSyncButton } from './SectionSyncButton';
 import { AscensionStars } from '../UI/AscensionStars';
-import { ItemSelectionCard } from '../UI/ItemSelectionCard';
+import { ItemSelectionCard, EmptyRowCard, CARD_ART_CLASS } from '../UI/ItemSelectionCard';
 import { getAscensionTexturePath } from '../../utils/ascensionUtils';
 import { cn, getInventoryIconStyle } from '../../lib/utils';
 import { getItemImage } from '../../utils/itemAssets';
 import { useGameData } from '../../hooks/useGameData';
 import { AGES } from '../../utils/constants';
-import { useTreeModifiers } from '../../hooks/useCalculatedStats';
+import { useTreeModifiers, useClanTreeModifiers } from '../../hooks/useCalculatedStats';
 
 import { SpriteSheetIcon } from '../UI/SpriteSheetIcon';
 
 import { getItemStats, getPerfection, getStatPerfection } from '../../utils/itemCalculations';
+
+/** Artwork well for a card in the five-across row: five cards share the width three would get. */
+const ITEM_ART = 'w-12 h-12 sm:w-16 sm:h-16 xl:w-20 xl:h-20';
 
 const SLOTS: { key: keyof UserProfile['items']; label: string }[] = [
     { key: 'Helmet', label: 'Helmet' },
@@ -146,6 +150,7 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
     const { data: spriteMapping } = useGameData<any>('ManualSpriteMapping.json');
 
     const techModifiers = useTreeModifiers();
+    const clanModifiers = useClanTreeModifiers();
 
     const forgeAscensionMulti = useMemo(() => {
         let total = 0;
@@ -281,6 +286,13 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                                 <RotateCcw className="w-3 h-3" />Reset
                             </button>
                         )}
+                        {variant === 'default' && !isComparing && (
+                            <div className="flex items-center gap-1.5">
+                                <SectionSyncButton preset="item" label="Sync" />
+                                <SectionSyncButton preset="mount" label="Mount" />
+                                <SectionSyncButton preset="skin" label="Skins" />
+                            </div>
+                        )}
                         <div className="flex items-center gap-2 bg-bg-input/50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-border/50">
                             <AscensionStars
                                 value={globalAscensionLevel}
@@ -294,8 +306,11 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                                 }}
                                 size="sm"
                             />
+                            {/* `xs:` is not a breakpoint in tailwind.config.js, so this chip used to be
+                                hidden at every width. It is the panel-level forge ascension
+                                multiplier: the same fact the cards used to restate one per card. */}
                             {forgeAscensionMulti > 0 && (
-                                <div className="hidden xs:block text-[9px] sm:text-[10px] font-mono font-bold text-amber-400 bg-amber-400/10 px-1 sm:px-1.5 py-0.5 rounded border border-amber-400/20">
+                                <div className="text-[9px] sm:text-[10px] font-mono font-bold text-amber-400 bg-amber-400/10 px-1 sm:px-1.5 py-0.5 rounded border border-amber-400/20">
                                     x{(forgeAscensionMulti).toFixed(1)}
                                 </div>
                             )}
@@ -336,39 +351,48 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                         </div>
                     </label>
                 )}
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {/* Wrapped flex, not a fixed column count: this same panel renders full width on the
+                    Profile page and two-up inside the compare grid, so the cards have to reflow to
+                    the container. basis-[330px] is the width the row card needs to keep the name,
+                    the stat line and a pair of substats on one line each; grow lets a short last
+                    row spread out, and max-w caps a lone card so it cannot stretch into a strip. */}
+                <div className={cn(
+                    'grid items-stretch gap-2',
+                    // Two per row on a phone, five on a desktop, like the game's own equipment
+                    // screen. Comparison mode is pinned to two whatever the window is doing: it
+                    // renders two of these panels side by side, so the panel gets half the width
+                    // while a viewport breakpoint still thinks it has all of it, which is what
+                    // squeezed five cards into 150px each and broke every name onto its own letter.
+                    isComparing ? 'grid-cols-2' : 'grid-cols-2 lg:grid-cols-5'
+                )}>
                     {SLOTS.map((slot) => {
                         const equipped = items[slot.key];
                         const itemImage = getEquippedImage(slot.key, equipped);
-                        const inventoryStyle = getInventoryIconStyle(slot.key, 48, selectedVersion);
+                        // InventoryTextures.png is a 4x4 sheet of 128px cells, so 64px is the
+                        // largest honest size for the silhouette on a 2x screen.
+                        const inventoryStyle = getInventoryIconStyle(slot.key, 64, selectedVersion);
                         const hasDiff = itemsDiffer(slot.key);
 
                         if (!equipped) {
                             return (
-                                <div
+                                <EmptyRowCard
+                                    className="min-w-0" artClassName={ITEM_ART}
                                     key={slot.key}
+                                    label={slot.label}
+                                    hint="Empty Slot"
+                                    hasDiff={hasDiff}
                                     onClick={() => setSelectedSlot(slot.key)}
-                                    className={cn(
-                                        "h-full min-h-[160px] rounded-xl border-2 border-dashed border-border hover:border-accent-primary/50 cursor-pointer transition-colors relative flex flex-col items-center justify-center p-1.5 gap-1 group bg-bg-input/30",
-                                        hasDiff && "ring-2 ring-yellow-500 ring-offset-2 ring-offset-bg-primary"
-                                    )}
-                                >
-                                    {inventoryStyle ? (
-                                        <div style={inventoryStyle} className="opacity-30 group-hover:opacity-50 transition-opacity mb-2" />
-                                    ) : (
-                                        <div className="w-12 h-12 bg-bg-input rounded-lg mb-2" />
-                                    )}
-                                    <span className="text-sm text-text-muted font-bold text-center">{slot.label}</span>
-                                    <span className="text-xs text-text-muted/50 text-center">Empty Slot</span>
-                                </div>
+                                    icon={inventoryStyle ? <div style={inventoryStyle} /> : undefined}
+                                />
                             );
                         }
 
                         return (
                             <ItemSelectionCard
+                                className="min-w-0" artClassName={ITEM_ART}
                                 key={slot.key}
                                 item={equipped}
+                                layout="row"
                                 variant={isCompactStats ? 'compact' : 'default'}
                                 slotKey={slot.key}
                                 slotLabel={slot.label}
@@ -378,24 +402,20 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                                 itemName={getItemName(slot.key, equipped)}
                                 itemImage={itemImage}
                                 stats={getItemStats(
-                                    equipped, 
-                                    slot.key, 
-                                    { itemBalancingLibrary, itemBalancingConfig, weaponLibrary }, 
-                                    { techModifiers, forgeAscensionMulti }
+                                    equipped,
+                                    slot.key,
+                                    { itemBalancingLibrary, itemBalancingConfig, weaponLibrary },
+                                    { techModifiers, forgeAscensionMulti, clanModifiers }
                                 )}
                                 perfection={getPerfection(equipped, secondaryStatLibrary)}
                                 getStatPerfection={(sId, val) => getStatPerfection(sId, val, secondaryStatLibrary)}
                                 spriteMapping={spriteMapping}
                                 onClick={() => setSelectedSlot(slot.key)}
                                 onUnequip={(e) => handleUnequip(slot.key, e)}
-                                onAscensionChange={(val) => {
-                                    if (isComparing) {
-                                        if (variant === 'original') updateOriginalForgeAscension(val);
-                                        else if (variant === 'test') updateTestForgeAscension(val);
-                                    } else {
-                                        updateNestedProfile('misc', { forgeAscensionLevel: val });
-                                    }
-                                }}
+                                /* No onAscensionChange: forge ascension is one global number, so the
+                                   old card rendered the same 4-button control 8 times over. The card
+                                   now shows the star count read-only and the single editor lives in
+                                   the panel header above. */
                                 onSave={(e) => {
                                     e.stopPropagation();
                                     setItemToSave({ slot: slot.key, item: equipped });
@@ -461,8 +481,11 @@ function MountSlotWidget({ variant, isCompact }: { variant: string; isCompact: b
     }, [variant, originalMount, testMount, profile.mount.active]);
 
     const techModifiers = useTreeModifiers();
+    const clanModifiers = useClanTreeModifiers();
     const mountDamageBonus = techModifiers['MountDamage'] || 0;
     const mountHealthBonus = techModifiers['MountHealth'] || 0;
+    const clanMountDamageBonus = clanModifiers['MountDamage'] || 0;
+    const clanMountHealthBonus = clanModifiers['MountHealth'] || 0;
 
     const isSaved = useMemo(() => {
         if (!mount || !profile.mount.savedBuilds) return false;
@@ -589,8 +612,8 @@ function MountSlotWidget({ variant, isCompact }: { variant: string; isCompact: b
             damageMulti: techDmgMulti * ascDmgMulti,
             healthMulti: techHpMulti * ascHpMulti,
             details: {
-                damage: { base: damage, techMulti: techDmgMulti, ascMulti: ascDmgMulti },
-                health: { base: health, techMulti: techHpMulti, ascMulti: ascHpMulti }
+                damage: { base: damage, techMulti: techDmgMulti, clanTechMulti: clanMountDamageBonus, ascMulti: ascDmgMulti },
+                health: { base: health, techMulti: techHpMulti, clanTechMulti: clanMountHealthBonus, ascMulti: ascHpMulti }
             },
             ascLevel 
         };
@@ -600,7 +623,16 @@ function MountSlotWidget({ variant, isCompact }: { variant: string; isCompact: b
     const mountData = mount ? getMountStats() : null;
     const mountStats = mountData ? { damage: mountData.damage, health: mountData.health } : null;
     const currentAscension = mountData?.ascLevel || 0;
-    const isDifferent = variant === 'test' && testMount?.id !== originalMount?.id;
+    // Full-content diff (matches the pet cards), so an auto-optimized swap to a
+    // different level/stat variant of the same mount id also flags as changed.
+    const isDifferent = variant === 'test' && (() => {
+        const cur = testMount;
+        const orig = originalMount;
+        if (!cur && !orig) return false;
+        if (!cur || !orig) return true;
+        return cur.id !== orig.id || cur.rarity !== orig.rarity || cur.level !== orig.level ||
+            JSON.stringify(cur.secondaryStats) !== JSON.stringify(orig.secondaryStats);
+    })();
 
     const perfection = useMemo(() => {
         if (!mount || !secondaryStatLibrary) return null;
@@ -609,12 +641,16 @@ function MountSlotWidget({ variant, isCompact }: { variant: string; isCompact: b
 
     return (
         <>
-            <div className="col-span-2 sm:col-span-2 md:col-span-2 h-full">
+            {/* This widget is the ninth child of the equipment row, so the flex sizing has to sit
+                here rather than on the card inside it. */}
+            <div className="col-span-2 min-w-0">
                 {mount ? (
                     <ItemSelectionCard
+                        artClassName={ITEM_ART}
                         item={mount as any}
                         slotKey="Mount"
                         slotLabel="Mount"
+                        layout="row"
                         variant={isCompact ? 'compact' : 'default'}
                         isSelected={false}
                         hasDiff={isDifferent}
@@ -649,18 +685,19 @@ function MountSlotWidget({ variant, isCompact }: { variant: string; isCompact: b
                                     sheetWidth={spriteInfo.config.texture_size.width}
                                     sheetHeight={spriteInfo.config.texture_size.height}
                                     iconIndex={spriteInfo.spriteIndex}
-                                    className="w-12 h-12"
+                                    className={CARD_ART_CLASS}
+                                    smooth
                                 />
                         )}
                     />
                 ) : (
-                    <div
+                    <EmptyRowCard
+                        artClassName={ITEM_ART}
+                        label="Mount"
+                        hint="Click to select"
                         onClick={() => setIsModalOpen(true)}
-                        className="h-full rounded-xl border-2 border-dashed border-border hover:border-accent-primary/50 cursor-pointer transition-colors relative flex flex-col items-center justify-center gap-3 p-3 bg-bg-input/30 min-h-[160px]"
-                    >
-                        <div style={getInventoryIconStyle('Mount', 48, selectedVersion) || {}} className="opacity-30" />
-                        <span className="text-sm text-text-muted">Click to select Mount</span>
-                    </div>
+                        icon={<div style={getInventoryIconStyle('Mount', 64, selectedVersion) || {}} />}
+                    />
                 )}
             </div>
             <MountSelectorModal 

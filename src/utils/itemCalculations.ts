@@ -16,6 +16,7 @@ export interface ItemStatsResult {
             base: number;
             levelMulti?: number;
             techMulti?: number;
+            clanTechMulti?: number;
             ascMulti?: number;
             skinMulti?: number;
             meleeMulti?: number;
@@ -24,6 +25,7 @@ export interface ItemStatsResult {
             base: number;
             levelMulti?: number;
             techMulti?: number;
+            clanTechMulti?: number;
             ascMulti?: number;
             skinMulti?: number;
         };
@@ -79,6 +81,28 @@ export const getPerfection = (item: ItemSlot, secondaryStatLibrary: any): number
 };
 
 /**
+ * Average perfection across a set of gear (items, pets, mount) — anything carrying
+ * secondaryStats. Entries without secondary stats (or nulls) are skipped, so the
+ * result is the mean of each piece's own perfection. Returns null if nothing qualifies.
+ */
+export const getAveragePerfection = (
+    entries: ({ secondaryStats?: { statId: string; value: number }[] } | null | undefined)[],
+    secondaryStatLibrary: any
+): number | null => {
+    let total = 0;
+    let count = 0;
+    for (const entry of entries) {
+        if (!entry) continue;
+        const p = getPerfection(entry as ItemSlot, secondaryStatLibrary);
+        if (p !== null) {
+            total += p;
+            count++;
+        }
+    }
+    return count > 0 ? total / count : null;
+};
+
+/**
  * Calculates perfection for a single stat
  */
 export const getStatPerfection = (statIdx: string, value: number, secondaryStatLibrary: any): number | null => {
@@ -104,13 +128,14 @@ export const getItemStats = (
     modifiers: {
         techModifiers: Record<string, number>;
         forgeAscensionMulti: number;
+        clanModifiers?: Record<string, number>;
     }
 ): ItemStatsResult => {
     const defaultResult = { damage: 0, health: 0, bonus: 0, damageMulti: 0, healthMulti: 0, skinBonuses: { damage: 0, health: 0 }, isMelee: true };
     if (!item || !libraries.itemBalancingLibrary || !libraries.itemBalancingConfig) return defaultResult;
 
     const { itemBalancingLibrary, itemBalancingConfig, weaponLibrary } = libraries;
-    const { techModifiers, forgeAscensionMulti } = modifiers;
+    const { techModifiers, forgeAscensionMulti, clanModifiers } = modifiers;
 
     const jsonType = SLOT_TO_JSON_TYPE[slotKey] || slotKey;
     const key = `{'Age': ${item.age}, 'Type': '${jsonType}', 'Idx': ${item.idx}}`;
@@ -132,6 +157,7 @@ export const getItemStats = (
     const meleeBaseMulti = itemBalancingConfig.PlayerMeleeDamageMultiplier || 1.6;
     const bonusKey = SLOT_TO_TECH_BONUS[slotKey];
     const techBonus = techModifiers[bonusKey] || 0;
+    const clanTechBonus = (clanModifiers && clanModifiers[bonusKey]) || 0;
 
     let damageMulti = (1 + techBonus) * (forgeAscensionMulti || 1);
     let healthMulti = (1 + techBonus) * (forgeAscensionMulti || 1);
@@ -174,6 +200,7 @@ export const getItemStats = (
             base: baseDamage,
             levelMulti,
             techMulti,
+            clanTechMulti: clanTechBonus,
             ascMulti,
             skinMulti: 1,
             meleeMulti
@@ -182,6 +209,7 @@ export const getItemStats = (
             base: baseHealth,
             levelMulti,
             techMulti,
+            clanTechMulti: clanTechBonus,
             ascMulti,
             skinMulti: 1,
         }

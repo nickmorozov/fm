@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { useGameData } from './useGameData';
 import { useProfile } from '../context/ProfileContext';
 import { useTreeMode } from '../context/TreeModeContext';
+import { useTreeModifiers, useClanNodeMax } from './useCalculatedStats';
+import { getWarPointsForTask, isWarPointDay, getDayBoostNodeType } from '../utils/guildWarUtils';
 
 export function useMountsCalculator() {
     const { profile, updateProfile } = useProfile();
@@ -74,10 +76,37 @@ export function useMountsCalculator() {
         };
     }, [techTreeLibrary, techTreeMapping, treeMode, profile]);
 
+    // Clan tech tree boosts to war points earned (already effective values, see useGameData).
+    const treeModifiers = useTreeModifiers();
+    const clanMax = useClanNodeMax();
+    const profileSummonWarBonus = treeModifiers['WarPointsFromMountSummon'] || 0;
+    const profileMergeWarBonus = treeModifiers['WarPointsFromMountMerge'] || 0;
+
+    // Sandbox: local overrides of the result-altering tree bonuses (see SandboxPanel).
+    const [sandbox, setSandbox] = useState<Record<string, number>>({});
+    const costReduction = sandbox.costReduction ?? techBonuses.costReduction;
+    const extraChance = sandbox.extraChance ?? techBonuses.extraChance;
+    const mountSummonWarBonus = sandbox.warSummon ?? profileSummonWarBonus;
+    const mountMergeWarBonus = sandbox.warMerge ?? profileMergeWarBonus;
+    // Day boost: WarPointsOnDayN multiplier, only when mounts are active today.
+    const dayActive = isWarPointDay(new Date(), 'mounts', guildWarDayConfigLibrary);
+    const profileDayBoost = dayActive ? (treeModifiers[getDayBoostNodeType()] || 0) : 0;
+    const dayBoost = sandbox.dayBoost ?? profileDayBoost;
+    const sandboxControls = {
+        reset: () => setSandbox({}),
+        fields: [
+            { key: 'costReduction', label: 'Summon cost reduction', value: costReduction, profileValue: techBonuses.costReduction, min: 0, max: 0.9, step: 0.01, onChange: (v: number) => setSandbox(p => ({ ...p, costReduction: v })) },
+            { key: 'extraChance', label: 'Extra mount chance', value: extraChance, profileValue: techBonuses.extraChance, min: 0, max: 1, step: 0.01, onChange: (v: number) => setSandbox(p => ({ ...p, extraChance: v })) },
+            { key: 'warSummon', label: 'War points: mount summon', value: mountSummonWarBonus, profileValue: profileSummonWarBonus, min: 0, max: clanMax['WarPointsFromMountSummon'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, warSummon: v })) },
+            { key: 'warMerge', label: 'War points: mount merge', value: mountMergeWarBonus, profileValue: profileMergeWarBonus, min: 0, max: clanMax['WarPointsFromMountMerge'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, warMerge: v })) },
+            { key: 'dayBoost', label: 'Day war-points boost (today)', value: dayBoost, profileValue: profileDayBoost, min: 0, max: clanMax['WarPointsOnDay1'] || 0.4, step: 0.02, onChange: (v: number) => setSandbox(p => ({ ...p, dayBoost: v })) },
+        ],
+    };
+
     // 4. Constants from config — read from unified Levels array
     const BASE_COST = mountSummonConfig?.SingleSummonCost?.Amount || 50;
-    const MOUNTS_PER_SUMMON = 1 + techBonuses.extraChance;
-    const finalCostPerSummon = Math.ceil(BASE_COST * (1 - techBonuses.costReduction));
+    const MOUNTS_PER_SUMMON = 1 + extraChance;
+    const finalCostPerSummon = Math.ceil(BASE_COST * (1 - costReduction));
     const levels: any[] = mountSummonConfig?.Levels || [];
     const maxPossibleLevel = levels.length || 100;
     const currency = mountSummonConfig?.SingleSummonCost?.Currency || 'ClockWinders';
@@ -88,18 +117,17 @@ export function useMountsCalculator() {
             return null;
         }
 
+        // Read amounts from whatever day holds the task (independent of day layout),
+        // then apply the clan tech tree war-point boosts.
         const pointsBreakdown: Record<string, { summon: number; merge: number }> = {};
-        const day2 = guildWarDayConfigLibrary["2"]; // Day 2 is usually Mount day
-        if (day2) {
-            ['Common', 'Rare', 'Epic', 'Legendary', 'Ultimate', 'Mythic'].forEach(rarity => {
-                const summonTask = day2.Tasks.find((t: any) => t.Task === `Summon${rarity}Mount`);
-                const mergeTask = day2.Tasks.find((t: any) => t.Task === `Merge${rarity}Mount`);
-                pointsBreakdown[rarity] = {
-                    summon: summonTask?.Rewards?.[0]?.Amount || 0,
-                    merge: mergeTask?.Rewards?.[0]?.Amount || 0
-                };
-            });
-        }
+        ['Common', 'Rare', 'Epic', 'Legendary', 'Ultimate', 'Mythic'].forEach(rarity => {
+            const baseSummon = getWarPointsForTask(guildWarDayConfigLibrary, `Summon${rarity}Mount`);
+            const baseMerge = getWarPointsForTask(guildWarDayConfigLibrary, `Merge${rarity}Mount`);
+            pointsBreakdown[rarity] = {
+                summon: baseSummon * (1 + mountSummonWarBonus + dayBoost),
+                merge: baseMerge * (1 + mountMergeWarBonus + dayBoost)
+            };
+        });
 
         const totalPaidSummons = Math.floor(windersCount / Math.max(1, finalCostPerSummon));
 
@@ -259,7 +287,7 @@ export function useMountsCalculator() {
             return levels[idx] || {};
         }
 
-    }, [windersCount, level, progress, levels, guildWarDayConfigLibrary, techBonuses, finalCostPerSummon, BASE_COST, MOUNTS_PER_SUMMON, profile?.misc?.simulateAscensionInCalculators]);
+    }, [windersCount, level, progress, levels, guildWarDayConfigLibrary, techBonuses, finalCostPerSummon, BASE_COST, MOUNTS_PER_SUMMON, mountSummonWarBonus, mountMergeWarBonus, dayBoost, profile?.misc?.simulateAscensionInCalculators]);
 
 
 
@@ -317,6 +345,8 @@ export function useMountsCalculator() {
         currency,
         baseCost: BASE_COST,
         finalCostPerSummon,
-        mountsPerSummon: MOUNTS_PER_SUMMON
+        mountsPerSummon: MOUNTS_PER_SUMMON,
+        warPointBonuses: { summon: mountSummonWarBonus, merge: mountMergeWarBonus },
+        sandbox: sandboxControls
     };
 }

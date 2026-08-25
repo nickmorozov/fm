@@ -1,48 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useEggsCalculator } from '../hooks/useEggsCalculator';
 import { useEggSummonCalculator } from '../hooks/useEggSummonCalculator';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/UI/Card';
 import { cn } from '../lib/utils';
-import { Calculator, Plus, Egg, Info, Minus, RefreshCcw } from 'lucide-react';
+import { Calculator, Plus, Egg, Info, Minus, RefreshCcw, Trophy } from 'lucide-react';
+import { SandboxPanel } from '../components/UI/SandboxPanel';
 import { useProfile } from '../context/ProfileContext';
 import { SpriteIcon } from '../components/UI/SpriteIcon';
-import { getAscensionTexturePath } from '../utils/ascensionUtils';
 import { useGameDataContext } from '../context/GameDataContext';
-
-function EggIcon({ rarity, size = 48, className, ascensionLevel = 0 }: { rarity: string; size?: number; className?: string; ascensionLevel?: number }) {
-
-    const rarityIndex: Record<string, number> = {
-        'Common': 0, 'Rare': 1, 'Epic': 2,
-        'Legendary': 3, 'Ultimate': 4, 'Mythic': 5
-    };
-    const { selectedVersion } = useGameDataContext();
-
-    const idx = rarityIndex[rarity] ?? 0;
-    const col = idx % 4;
-    const row = Math.floor(idx / 4);
-
-    // For a 4x4 grid, we use standard CSS sprite percentage positioning
-    const xPos = (col / 3) * 100;
-    const yPos = (row / 3) * 100;
-
-    const texturePath = getAscensionTexturePath('Eggs', ascensionLevel, selectedVersion);
-
-    return (
-        <div
-            className={cn("inline-block shrink-0", className)}
-            style={{
-                width: size,
-                height: size,
-                backgroundImage: `url(${texturePath})`,
-                backgroundPosition: `${xPos}% ${yPos}%`,
-                backgroundSize: '400% 400%', // 4x4 grid means the background image is 400% of the container size
-                backgroundRepeat: 'no-repeat',
-                imageRendering: 'pixelated'
-            }}
-            title={rarity}
-        />
-    );
-}
+import { EggIcon } from '../components/UI/EggIcon';
+import { PlannerAlarms } from '../components/Planner/PlannerAlarms';
+import { eggLanes } from '../utils/plannerSchedule';
 
 export default function Eggs() {
     const { profile, updateNestedProfile } = useProfile();
@@ -52,8 +20,11 @@ export default function Eggs() {
         availableSlots, setAvailableSlots, maxSlots,
         optimization,
         hatchValues,
-        warPoints
+        warPoints,
+        warPointBonuses,
+        sandbox
     } = useEggsCalculator();
+    const eggWarBoost = Math.max(warPointBonuses?.hatch || 0, warPointBonuses?.merge || 0);
     const { selectedVersion } = useGameDataContext();
 
     const eggSummon = useEggSummonCalculator();
@@ -78,6 +49,23 @@ export default function Eggs() {
     useEffect(() => {
         setCheckedItems({});
     }, [timelineHash]);
+
+    /**
+     * The hatch plan, reduced to "what finishes in which slot, and how long after THAT SLOT comes
+     * free".
+     *
+     * `optimization.timeline` is `TimelineEvent[][]` — one lane per hatch slot, `startTime`/`endTime`
+     * in MINUTES from an implicit zero, with no `Date` anywhere. Each lane's zero is the moment that
+     * slot comes free, which is exactly what that slot's own alarm anchor supplies, so the lanes go
+     * to `PlannerAlarms` as lanes and each one is timed from its own reading. Keyed on `timelineHash`
+     * rather than on `optimization` so a re-render that did not change the schedule does not look
+     * like a new plan to the queue.
+     */
+    const alarmLanes = useMemo(
+        () => eggLanes(optimization?.timeline || []),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [timelineHash],
+    );
 
     // Format Helpers
     const formatTime = (seconds: number) => {
@@ -110,7 +98,17 @@ export default function Eggs() {
                     Egg Calculator
                 </h1>
                 <p className="text-text-secondary">Optimize your egg hatching for Guild Wars</p>
+                {eggWarBoost > 0 && (
+                    <div className="flex justify-center pt-2">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                            <Trophy size={14} />
+                            Clan Boost: +{(eggWarBoost * 100).toFixed(0)}% War Points
+                        </div>
+                    </div>
+                )}
             </div>
+
+            <SandboxPanel fields={sandbox.fields} onReset={sandbox.reset} />
 
             {/* Tabs */}
             <div className="flex justify-center gap-2 sm:gap-4 mb-6 flex-wrap">
@@ -603,6 +601,22 @@ export default function Eggs() {
                             </CardContent>
                         </Card>
 
+                        {/* Alarms. Renders nothing at all when the build has no backend or nobody is
+                            signed in — push is sign-in-only, by the owner's decision.
+
+                            `slotCount` comes from `availableSlots` and NOT from the timeline: the
+                            panel has to go on asking about slot 4 while the plan for it is empty,
+                            and the player changing their slot count must add or drop an anchor
+                            without disturbing the ones already set. */}
+                        <PlannerAlarms
+                            planner="eggs"
+                            route="#/eggs"
+                            lanes={alarmLanes}
+                            slotCount={availableSlots}
+                            laneLabel={(i) => `slot ${i + 1}`}
+                            assumption="Each slot is timed from its own reading, so the only thing still assumed is that you reload a slot the moment its egg pops and follow the order shown for that slot."
+                        />
+
                         <Card className="p-6 bg-gradient-to-r from-bg-secondary via-bg-secondary/80 to-bg-secondary border-accent-primary/20">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -617,8 +631,8 @@ export default function Eggs() {
                                             {/* Points Info */}
                                             {warPoints && warPoints[rarity] && (
                                                 <div className="absolute top-1 left-0 right-0 flex justify-center gap-2 text-[9px] font-mono text-text-tertiary opacity-80">
-                                                    <span>H:<span className="text-text-primary ml-0.5">{warPoints[rarity].hatch}</span></span>
-                                                    <span>M:<span className="text-text-primary ml-0.5">{warPoints[rarity].merge}</span></span>
+                                                    <span>H:<span className="text-text-primary ml-0.5">{Math.round(warPoints[rarity].hatch)}</span></span>
+                                                    <span>M:<span className="text-text-primary ml-0.5">{Math.round(warPoints[rarity].merge)}</span></span>
                                                 </div>
                                             )}
                                             <EggIcon rarity={rarity} size={48} ascensionLevel={profile.misc.petAscensionLevel || 0} />

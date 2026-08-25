@@ -3,7 +3,8 @@ import { useLocation } from 'react-router-dom';
 import {
     Swords, Heart, Shield, Zap, Target, Gauge,
     TrendingUp, Clock, Coins, Star, Crosshair, TreeDeciduous, Sparkles,
-    ArrowUp, ArrowDown, X, Check, ArrowRight, Hash, Minimize2, Layout, Download
+    ArrowUp, ArrowDown, X, Check, ArrowRight, Hash, Minimize2, Layout, Download,
+    ArrowLeftRight, Info, Sword, Scale, RotateCcw, Layers
 } from 'lucide-react';
 import { Button } from '../UI/Button';
 import { AnimatedClock } from '../UI/AnimatedClock';
@@ -18,8 +19,14 @@ import { useProfile } from '../../context/ProfileContext';
 import { useGameData } from '../../hooks/useGameData';
 import { calculateStats, LibraryData, AggregatedStats } from '../../utils/statEngine';
 import { useTreeMode } from '../../context/TreeModeContext';
-import { UserProfile } from '../../types/Profile';
+import { UserProfile, PetSlot, MountSlot } from '../../types/Profile';
+import { useProfileOptimizer } from '../../hooks/useProfileOptimizer';
+import { getAveragePerfection } from '../../utils/itemCalculations';
+import { PerfectionMeter } from '../UI/PerfectionMeter';
 import { DpsBreakdownModal } from './DpsBreakdownModal';
+import { LifestealBreakdownModal } from './LifestealBreakdownModal';
+import { StatSourcesModal, MultiplierBreakdown } from './StatSourcesModal';
+import { TOTAL_DAMAGE_KEY, TOTAL_HEALTH_KEY, TOTAL_POWER_KEY } from '../../types/statAttribution';
 
 interface StatRowProps {
     icon: React.ReactNode;
@@ -27,11 +34,32 @@ interface StatRowProps {
     value: string | number;
     subValue?: string;
     count?: number;
+    perf?: number;
     color?: string;
     onInfoPointsClick?: () => void;
+    /** Opens the per-source breakdown modal. Distinct from onInfoPointsClick's DETAILS pill. */
+    onInfoClick?: () => void;
 }
 
-function StatRow({ icon, label, value, subValue, count, color = 'text-accent-primary', onInfoPointsClick }: StatRowProps) {
+// Small neutral "i" that opens the stat's source breakdown
+function InfoDot({ onClick, className }: { onClick: () => void; className?: string }) {
+    return (
+        <button
+            onClick={(e) => { e.stopPropagation(); onClick(); }}
+            className={cn(
+                "w-4 h-4 rounded-full border border-border/60 bg-bg-secondary/80 flex items-center justify-center",
+                "text-text-muted hover:text-accent-primary hover:border-accent-primary/50 transition-colors active:scale-95 shrink-0",
+                className
+            )}
+            title="Show stat sources"
+            aria-label="Show stat sources"
+        >
+            <Info className="w-2.5 h-2.5" />
+        </button>
+    );
+}
+
+function StatRow({ icon, label, value, subValue, count, perf, color = 'text-accent-primary', onInfoPointsClick, onInfoClick }: StatRowProps) {
     return (
         <div className="flex flex-col justify-between p-2.5 bg-bg-input/30 rounded-lg border border-border/30 hover:bg-bg-input/50 transition-colors min-h-[5rem]">
             <div className="flex items-center gap-2 w-full">
@@ -41,6 +69,7 @@ function StatRow({ icon, label, value, subValue, count, color = 'text-accent-pri
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
                         <div className="text-sm font-medium text-text-primary leading-tight break-words">{label}</div>
+                        {onInfoClick && <InfoDot onClick={onInfoClick} />}
                         {onInfoPointsClick && (
                             <button
                                 onClick={(e) => {
@@ -56,7 +85,10 @@ function StatRow({ icon, label, value, subValue, count, color = 'text-accent-pri
                         )}
                     </div>
                     {count !== undefined && count > 0 && (
-                        <div className="text-[11px] text-text-muted">({count} Stats)</div>
+                        <div className="text-[11px] text-text-muted mt-0.5">
+                            {count} {count === 1 ? 'Slot' : 'Slots'}
+                            {perf !== undefined && ` (${perf.toFixed(1)}% Perfection)`}
+                        </div>
                     )}
                 </div>
             </div>
@@ -71,14 +103,23 @@ function StatRow({ icon, label, value, subValue, count, color = 'text-accent-pri
 }
 
 // Compact stat for grid layouts
-function CompactStat({ icon, label, value, subValue, color = 'text-accent-primary' }: StatRowProps) {
+function CompactStat({ icon, label, value, subValue, count, perf, color = 'text-accent-primary', onInfoClick }: StatRowProps) {
     return (
-        <div className="flex flex-col justify-between p-2.5 bg-bg-input/30 rounded-lg border border-border/30 hover:bg-bg-input/50 transition-colors min-h-[4.5rem]">
-            <div className="flex items-center gap-1.5 mb-1">
-                <div className={cn("w-5 h-5 rounded flex items-center justify-center", color)}>
+        <div className="relative flex flex-col justify-between p-2.5 bg-bg-input/30 rounded-lg border border-border/30 hover:bg-bg-input/50 transition-colors min-h-[4.5rem]">
+            {onInfoClick && <InfoDot onClick={onInfoClick} className="absolute top-1 right-1" />}
+            <div className="flex items-center gap-1.5 mb-1 min-w-0 pr-4">
+                <div className={cn("w-5 h-5 rounded flex items-center justify-center bg-bg-secondary shrink-0", color)}>
                     {icon}
                 </div>
-                <span className="text-sm text-text-muted break-words leading-tight">{label}</span>
+                <div className="flex flex-col min-w-0">
+                    <span className="text-sm text-text-muted break-words leading-tight block">{label}</span>
+                    {count !== undefined && count > 0 && (
+                        <span className="text-[9px] text-text-muted leading-none mt-0.5">
+                            {count} {count === 1 ? 'Slot' : 'Slots'}
+                            {perf !== undefined && ` (${perf.toFixed(1)}% Perf)`}
+                        </span>
+                    )}
+                </div>
             </div>
             <div className="flex flex-col items-end mt-auto">
                 <div className={cn("font-mono font-bold text-base", color)}>
@@ -140,7 +181,7 @@ function formatDelta(original: number, comparison: number, isCompact: boolean): 
     };
 }
 
-interface ComparisonStatRowProps {
+export interface ComparisonStatRowProps {
     icon: React.ReactNode;
     label: string;
     originalValue: number;
@@ -156,7 +197,7 @@ interface ComparisonStatRowProps {
     className?: string;
 }
 
-function ComparisonStatRow({
+export function ComparisonStatRow({
     icon,
     label,
     originalValue,
@@ -330,7 +371,7 @@ function ComparisonStatRow({
     );
 }
 
-export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = false, defaultTab = 'general' }: { variant?: 'sidebar' | 'horizontal-strip', onClose?: () => void, hideActions?: boolean, defaultTab?: 'general' | 'metrics' | 'hits' }) {
+export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = false, defaultTab = 'general' }: { variant?: 'sidebar' | 'horizontal-strip', onClose?: () => void, hideActions?: boolean, defaultTab?: 'general' | 'metrics' | 'hits' | 'passives' }) {
     const isStrip = variant === 'horizontal-strip';
     const location = useLocation();
     const isSubstatsPage = location.pathname.includes('/calculators/substats');
@@ -343,10 +384,39 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
         setModalData({ stats: s, profile: p, variant: v });
         setShowDpsModal(true);
     };
+
+    const [showLifestealModal, setShowLifestealModal] = useState(false);
+    const openLifestealModal = (s: AggregatedStats, p: UserProfile, v: 'default' | 'original' | 'test' = 'default') => {
+        setModalData({ stats: s, profile: p, variant: v });
+        setShowLifestealModal(true);
+    };
+    // Per-source breakdown modal: one piece of state shared by all 16 stat cards
+    const [sourceModal, setSourceModal] = useState<
+        { key: string; label: string; total: string; format: (v: number) => string; multiplier?: MultiplierBreakdown } | null
+    >(null);
+    const infoProps = (
+        key: string, label: string, total: string,
+        format: (v: number) => string = formatPercent,
+        multiplier?: MultiplierBreakdown
+    ) => ({
+        onInfoClick: () => setSourceModal({ key, label, total, format, multiplier })
+    });
+
+    // Builds the same multiplier breakdown the total cards show in their subtitle,
+    // so the modal's numbers match the card by construction (mirrors formatDetailedBreakdown).
+    const mulBreakdown = (label: string, totalMultiplier: number, b: any): MultiplierBreakdown => {
+        const parts: { label: string; value: string }[] = [];
+        if (b?.base > 0) parts.push({ label: 'Base', value: `+${formatPercent(b.base, 1)}` });
+        if (b?.substats > 0) parts.push({ label: 'Items', value: `+${formatPercent(b.substats, 1)}` });
+        if (b?.tree > 0) parts.push({ label: 'Tree', value: `+${formatPercent(b.tree, 1)}` });
+        if (b?.ascension > 0) parts.push({ label: 'Asc', value: `+${formatPercent(b.ascension, 1)}` });
+        if (b?.skins > 0) parts.push({ label: 'Skins', value: `+${formatPercent(b.skins, 1)}` });
+        if (b?.sets > 0) parts.push({ label: 'Sets', value: `+${formatPercent(b.sets, 1)}` });
+        return { label, total: formatPercent(totalMultiplier || 1, 0), parts };
+    };
+
     const [openSection, setOpenSection] = useState<string | null>(null);
-    const [viewTab, setViewTab] = useState<'general' | 'metrics' | 'hits'>(defaultTab);
-    const stats = useGlobalStats();
-    const techModifiers = useTreeModifiers();
+    const [viewTab, setViewTab] = useState<'general' | 'metrics' | 'hits' | 'passives'>(defaultTab);
     const {
         isComparing,
         originalItems,
@@ -367,14 +437,69 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
         testSkills,
         originalUseSkinWindup,
         testUseSkinWindup,
+        updateTestPet,
+        updateTestMount,
         exitCompareMode,
         keepOriginal,
         applyTestBuild,
         loadProfileIntoTest,
         isCompactStats,
-        setIsCompactStats
+        setIsCompactStats,
+        excludeSubstats,
+        setExcludeSubstats
     } = useComparison();
+    const stats = useGlobalStats(excludeSubstats);
+    const fullStats = useGlobalStats(false);
+    const techModifiers = useTreeModifiers() as Record<string, number>;
     const { profile, profiles, activeProfileId } = useProfile();
+
+    // --- Auto-optimize the Test build (drives the strip's AUTO buttons) --------
+    const { optimizeLoadout, isReady: optimizerReady } = useProfileOptimizer();
+    // undefined = nothing to revert; null = revert to "no mount equipped"
+    const [previousTestPets, setPreviousTestPets] = useState<PetSlot[] | null>(null);
+    const [previousTestMount, setPreviousTestMount] = useState<MountSlot | null | undefined>(undefined);
+    // On: score saved builds at their own level. Off: score everything at level 1.
+    const [respectSavedLevels, setRespectSavedLevels] = useState(true);
+
+    // Saved builds are global, so the optimizer has candidates whenever either pool is non-empty.
+    const autoOptimizeDisabled = !optimizerReady
+        || ((profile.pets.savedBuilds?.length || 0) < 1 && (profile.mount.savedBuilds?.length || 0) < 1);
+
+    const handleAutoOptimizeTest = (metric: 'dps' | 'power' | 'lifesteal' | 'balanced') => {
+        // Evaluate against the Test build's own items/mount/ascensions, keeping
+        // everything the Test side doesn't override (tech tree, passives, saved builds).
+        const testBase: UserProfile = {
+            ...profile,
+            items: testItems ?? profile.items,
+            mount: { ...profile.mount, active: testMount ?? profile.mount.active },
+            pets: { ...profile.pets, active: testPets ?? profile.pets.active },
+            skills: { ...profile.skills, equipped: testSkills ?? profile.skills.equipped },
+            misc: {
+                ...profile.misc,
+                forgeAscensionLevel: testForgeAscension ?? profile.misc.forgeAscensionLevel,
+                mountAscensionLevel: testMountAscension ?? profile.misc.mountAscensionLevel,
+                petAscensionLevel: testPetAscension ?? profile.misc.petAscensionLevel,
+                skillAscensionLevel: testSkillAscension ?? profile.misc.skillAscensionLevel,
+                useSkinWindup: testUseSkinWindup ?? profile.misc.useSkinWindup,
+            },
+        };
+
+        setPreviousTestPets(testPets ? [...testPets] : null);
+        setPreviousTestMount(testMount);
+
+        const best = optimizeLoadout(metric, testBase, respectSavedLevels);
+        if (!best) return;
+
+        updateTestPet(best.pets);
+        updateTestMount(best.mount);
+    };
+
+    const handleRevertTest = () => {
+        if (previousTestPets) updateTestPet(previousTestPets);
+        if (previousTestMount !== undefined) updateTestMount(previousTestMount);
+        setPreviousTestPets(null);
+        setPreviousTestMount(undefined);
+    };
 
     const { treeMode, setTreeMode } = useTreeMode();
 
@@ -395,6 +520,16 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
     const { data: skinsLibrary } = useGameData<any>('SkinsLibrary.json');
     const { data: setsLibrary } = useGameData<any>('SetsLibrary.json');
     const { data: ascensionConfigsLibrary } = useGameData<any>('AscensionConfigsLibrary.json');
+
+    // Average perfection across all gear (items + pets + mount) for each compare side.
+    const originalPerfection = useMemo(() => originalItems ? getAveragePerfection(
+        [...Object.values(originalItems), ...(originalPets || []), originalMount],
+        secondaryStatLibrary
+    ) : null, [originalItems, originalPets, originalMount, secondaryStatLibrary]);
+    const testPerfection = useMemo(() => testItems ? getAveragePerfection(
+        [...Object.values(testItems), ...(testPets || []), testMount],
+        secondaryStatLibrary
+    ) : null, [testItems, testPets, testMount, secondaryStatLibrary]);
 
     const treeModeLabels: Record<typeof treeMode, string> = {
         empty: 'Empty Tree',
@@ -428,9 +563,9 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
         skinsLibrary, setsLibrary, ascensionConfigsLibrary
     ]);
 
-    const { originalStats, testStats, originalProfile, testProfile } = useMemo(() => {
+    const { originalStats, testStats, originalFullStats, testFullStats, originalProfile, testProfile } = useMemo(() => {
         if (!isComparing || !originalItems || !testItems || !itemBalancingConfig || !itemBalancingLibrary) {
-            return { originalStats: null, testStats: null, originalProfile: null, testProfile: null };
+            return { originalStats: null, testStats: null, originalFullStats: null, testFullStats: null, originalProfile: null, testProfile: null };
         }
 
         let effectiveTechTree = profile.techTree;
@@ -485,10 +620,19 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
             }
         };
 
-        const origStats = calculateStats(originalProfile, libs);
-        const testStats = calculateStats(testProfile, libs);
+        const origStats = calculateStats(originalProfile, libs, excludeSubstats);
+        const testStats = calculateStats(testProfile, libs, excludeSubstats);
+        const origFullStats = calculateStats(originalProfile, libs, false);
+        const testFullStats = calculateStats(testProfile, libs, false);
 
-        return { originalStats: origStats, testStats: testStats, originalProfile, testProfile };
+        return { 
+            originalStats: origStats, 
+            testStats: testStats, 
+            originalFullStats: origFullStats,
+            testFullStats: testFullStats,
+            originalProfile, 
+            testProfile 
+        };
     }, [
         isComparing, originalItems, testItems, itemBalancingConfig, itemBalancingLibrary,
         profile, originalMount, testMount, originalForgeAscension, originalMountAscension,
@@ -496,22 +640,71 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
         originalPets, testPets, originalSkills, testSkills,
         originalPetAscension, testPetAscension, originalSkillAscension, testSkillAscension,
         originalUseSkinWindup, testUseSkinWindup,
-        treeMode, techTreePositionLibrary, techTreeLibrary, libs
+        treeMode, techTreePositionLibrary, techTreeLibrary, libs, excludeSubstats
     ]);
 
-    if (!stats) {
+    const activePerfectionDetails = useMemo(() => {
+        if (!secondaryStatLibrary) return {};
+
+        const totals: Record<string, { sum: number; count: number }> = {};
+
+        const addStatsFromSlot = (statsList?: { statId: string; value: number }[]) => {
+            if (!statsList) return;
+            statsList.forEach(s => {
+                const libStat = secondaryStatLibrary[s.statId];
+                if (libStat && libStat.UpperRange > 0) {
+                    const maxVal = libStat.UpperRange * 100;
+                    const perf = (s.value / maxVal) * 100;
+                    if (!totals[s.statId]) {
+                        totals[s.statId] = { sum: 0, count: 0 };
+                    }
+                    totals[s.statId].sum += Math.min(100, perf);
+                    totals[s.statId].count += 1;
+                }
+            });
+        };
+
+        // Scan items
+        const itemSlots: (keyof UserProfile['items'])[] = ['Weapon', 'Helmet', 'Body', 'Gloves', 'Belt', 'Necklace', 'Ring', 'Shoe'];
+        itemSlots.forEach(slot => {
+            const item = profile.items[slot];
+            if (item) addStatsFromSlot(item.secondaryStats);
+        });
+
+        // Scan pets
+        profile.pets.active.forEach(pet => {
+            if (pet) addStatsFromSlot(pet.secondaryStats);
+        });
+
+        // Scan mount
+        if (profile.mount.active) {
+            addStatsFromSlot(profile.mount.active.secondaryStats);
+        }
+
+        const result: Record<string, { count: number; avgPerfection: number }> = {};
+        Object.entries(totals).forEach(([statId, info]) => {
+            result[statId] = {
+                count: info.count,
+                avgPerfection: info.sum / info.count
+            };
+        });
+
+        return result;
+    }, [profile, secondaryStatLibrary]);
+
+    if (!stats || !fullStats) {
         return (
             <Card className="h-full flex items-center justify-center">
                 <div className="text-center">
                     <AnimatedClock className="w-12 h-12 mx-auto mb-4 text-accent-primary" />
                     <div className="animate-spin w-8 h-8 border-4 border-accent-primary border-t-transparent rounded-full mx-auto" />
-                    <p className="mt-4 text-text-muted font-bold animate-pulse">Calculating Stats...</p>
+                    <p className="mt-4 text-text-muted font-bold animate-pulse">Calculating Stats</p>
                 </div>
             </Card>
         );
     }
 
-    const calculateDpsDetails = (s: typeof stats) => {
+    const calculateDpsDetails = (s: AggregatedStats) => {
         const cappedCrit = Math.min(s.criticalChance, 1);
         const cappedDouble = Math.min(s.doubleDamageChance, 1);
         const critMult = 1 + cappedCrit * (s.criticalDamage - 1);
@@ -523,7 +716,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
         return { total: weapon + skills, weapon, skills, realTotal: realWeapon + skills, realWeapon };
     };
 
-    const calculateHpsDetails = (s: typeof stats, dps: number) => {
+    const calculateHpsDetails = (s: AggregatedStats, dps: number) => {
         const regen = s.totalHealth * s.healthRegen;
         const lifesteal = dps * s.lifeSteal;
         const skills = s.skillHps;
@@ -546,23 +739,23 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
         };
     };
 
-    const currentDpsDetails = calculateDpsDetails(stats);
+    const currentDpsDetails = calculateDpsDetails(fullStats);
     const weaponDps = currentDpsDetails.weapon;
     const effectiveDps = currentDpsDetails.total;
-    const currentHpsDetails = calculateHpsDetails(stats, weaponDps);
-    const currentRealHpsDetails = calculateHpsDetails(stats, currentDpsDetails.realWeapon);
+    const currentHpsDetails = calculateHpsDetails(fullStats, weaponDps);
+    const currentRealHpsDetails = calculateHpsDetails(fullStats, currentDpsDetails.realWeapon);
     
     const effectiveHps = currentHpsDetails.total;
     const realHps = currentRealHpsDetails.total;
     
     const treeBonusEntries = Object.entries(techModifiers).filter(([_, v]) => v > 0);
 
-    const originalDpsDetails = originalStats ? calculateDpsDetails(originalStats) : { total: 0, weapon: 0, skills: 0, realTotal: 0, realWeapon: 0 };
-    const testDpsDetails = testStats ? calculateDpsDetails(testStats) : { total: 0, weapon: 0, skills: 0, realTotal: 0, realWeapon: 0 };
-    const originalHpsDetails = originalStats ? calculateHpsDetails(originalStats, originalDpsDetails.weapon) : { total: 0, regen: 0, lifesteal: 0, skills: 0 };
-    const originalRealHpsDetails = originalStats ? calculateHpsDetails(originalStats, originalDpsDetails.realWeapon) : { total: 0, regen: 0, lifesteal: 0, skills: 0 };
-    const testHpsDetails = testStats ? calculateHpsDetails(testStats, testDpsDetails.weapon) : { total: 0, regen: 0, lifesteal: 0, skills: 0 };
-    const testRealHpsDetails = testStats ? calculateHpsDetails(testStats, testDpsDetails.realWeapon) : { total: 0, regen: 0, lifesteal: 0, skills: 0 };
+    const originalDpsDetails = originalFullStats ? calculateDpsDetails(originalFullStats) : { total: 0, weapon: 0, skills: 0, realTotal: 0, realWeapon: 0 };
+    const testDpsDetails = testFullStats ? calculateDpsDetails(testFullStats) : { total: 0, weapon: 0, skills: 0, realTotal: 0, realWeapon: 0 };
+    const originalHpsDetails = originalFullStats ? calculateHpsDetails(originalFullStats, originalDpsDetails.weapon) : { total: 0, regen: 0, lifesteal: 0, skills: 0 };
+    const originalRealHpsDetails = originalFullStats ? calculateHpsDetails(originalFullStats, originalDpsDetails.realWeapon) : { total: 0, regen: 0, lifesteal: 0, skills: 0 };
+    const testHpsDetails = testFullStats ? calculateHpsDetails(testFullStats, testDpsDetails.weapon) : { total: 0, regen: 0, lifesteal: 0, skills: 0 };
+    const testRealHpsDetails = testFullStats ? calculateHpsDetails(testFullStats, testDpsDetails.realWeapon) : { total: 0, regen: 0, lifesteal: 0, skills: 0 };
 
     const originalDps = originalDpsDetails.total;
     const testDps = testDpsDetails.total;
@@ -599,12 +792,45 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     />
                     <ComparisonStatRow
                         isCompact={isCompactStats}
+                        icon={<Swords className="w-4 h-4" />}
+                        label="Melee DMG"
+                        originalValue={originalStats.meleeDamage}
+                        testValue={testStats.meleeDamage}
+                        color="text-amber-400"
+                    />
+                    <ComparisonStatRow
+                        isCompact={isCompactStats}
+                        icon={<Crosshair className="w-4 h-4" />}
+                        label="Ranged DMG"
+                        originalValue={originalStats.rangedDamage}
+                        testValue={testStats.rangedDamage}
+                        color="text-sky-400"
+                    />
+                    <ComparisonStatRow
+                        isCompact={isCompactStats}
                         icon={<Heart className="w-4 h-4" />}
                         label="Health"
                         originalValue={originalStats.totalHealth}
                         testValue={testStats.totalHealth}
                         color="text-green-400"
                     />
+                </div>
+            )}
+            {viewTab === 'passives' && (
+                <div className="space-y-3">
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Star className="w-4 h-4 text-yellow-400" />} label="Crit %" originalValue={originalStats.criticalChance || 0} testValue={testStats.criticalChance || 0} formatFn={formatPercent} color="text-yellow-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<TrendingUp className="w-4 h-4 text-yellow-500" />} label="Crit Damage" originalValue={originalStats.criticalDamage || 0} testValue={testStats.criticalDamage || 0} formatFn={formatMultiplier} color="text-yellow-500" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Shield className="w-4 h-4 text-blue-400" />} label="Block %" originalValue={originalStats.blockChance || 0} testValue={testStats.blockChance || 0} formatFn={formatPercent} color="text-blue-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Zap className="w-4 h-4 text-purple-400" />} label="Double %" originalValue={originalStats.doubleDamageChance || 0} testValue={testStats.doubleDamageChance || 0} formatFn={formatPercent} color="text-purple-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Heart className="w-4 h-4 text-purple-400" />} label="Life Steal %" originalValue={originalStats.lifeSteal || 0} testValue={testStats.lifeSteal || 0} formatFn={formatPercent} color="text-purple-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Heart className="w-4 h-4 text-purple-400" />} label="Health Regen %" originalValue={originalStats.healthRegen || 0} testValue={testStats.healthRegen || 0} formatFn={formatPercent} color="text-purple-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<TrendingUp className="w-4 h-4 text-orange-400" />} label="Attack Speed" originalValue={originalStats.attackSpeedMultiplier || 0} testValue={testStats.attackSpeedMultiplier || 0} formatFn={formatMultiplier} color="text-orange-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<TrendingUp className="w-4 h-4 text-emerald-400" />} label="Skill CDR %" originalValue={originalStats.skillCooldownReduction || 0} testValue={testStats.skillCooldownReduction || 0} formatFn={formatPercent} color="text-emerald-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Swords className="w-4 h-4 text-red-400" />} label="Damage %" originalValue={originalStats.secondaryDamageMulti || 0} testValue={testStats.secondaryDamageMulti || 0} formatFn={formatPercent} color="text-red-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Heart className="w-4 h-4 text-green-400" />} label="Health %" originalValue={originalStats.secondaryHealthMulti || 0} testValue={testStats.secondaryHealthMulti || 0} formatFn={formatPercent} color="text-green-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Swords className="w-4 h-4 text-amber-400" />} label="Melee DMG %" originalValue={originalStats.meleeDamageMultiplier || 0} testValue={testStats.meleeDamageMultiplier || 0} formatFn={formatPercent} color="text-amber-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Crosshair className="w-4 h-4 text-sky-400" />} label="Ranged DMG %" originalValue={originalStats.rangedDamageMultiplier || 0} testValue={testStats.rangedDamageMultiplier || 0} formatFn={formatPercent} color="text-sky-400" />
+                    <ComparisonStatRow isCompact={isCompactStats} icon={<Swords className="w-4 h-4 text-red-400" />} label="Skill Damage %" originalValue={originalStats.skillDamageMultiplier || 0} testValue={testStats.skillDamageMultiplier || 0} formatFn={formatMultiplier} color="text-red-400" />
                 </div>
             )}
 
@@ -632,13 +858,13 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     { label: 'Skills', value: testDpsDetails.skills }
                                 ]}
                                 onOriginalDetailsClick={() => {
-                                    if (originalStats && originalProfile) {
-                                        openDpsModal(originalStats, originalProfile, 'original');
+                                    if (originalFullStats && originalProfile) {
+                                        openDpsModal(originalFullStats, originalProfile, 'original');
                                     }
                                 }}
                                 onTestDetailsClick={() => {
-                                    if (testStats && testProfile) {
-                                        openDpsModal(testStats, testProfile, 'test');
+                                    if (testFullStats && testProfile) {
+                                        openDpsModal(testFullStats, testProfile, 'test');
                                     }
                                 }}
                             />
@@ -659,6 +885,24 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     { label: 'Lifesteal', value: testHpsDetails.lifesteal },
                                     { label: 'Skills', value: testHpsDetails.skills }
                                 ]}
+                            />
+                            <ComparisonStatRow
+                                isCompact={isCompactStats}
+                                icon={<Heart className="w-4 h-4 text-purple-400" />}
+                                label="Lifesteal/sec"
+                                originalValue={originalHpsDetails.lifesteal}
+                                testValue={testHpsDetails.lifesteal}
+                                color="text-purple-400"
+                                onOriginalDetailsClick={() => {
+                                    if (originalFullStats && originalProfile) {
+                                        openLifestealModal(originalFullStats, originalProfile, 'original');
+                                    }
+                                }}
+                                onTestDetailsClick={() => {
+                                    if (testFullStats && testProfile) {
+                                        openLifestealModal(testFullStats, testProfile, 'test');
+                                    }
+                                }}
                             />
                         </div>
                     </div>
@@ -686,13 +930,13 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     { label: 'Skills', value: testDpsDetails.skills }
                                 ]}
                                 onOriginalDetailsClick={() => {
-                                    if (originalStats && originalProfile) {
-                                        openDpsModal(originalStats, originalProfile, 'original');
+                                    if (originalFullStats && originalProfile) {
+                                        openDpsModal(originalFullStats, originalProfile, 'original');
                                     }
                                 }}
                                 onTestDetailsClick={() => {
-                                    if (testStats && testProfile) {
-                                        openDpsModal(testStats, testProfile, 'test');
+                                    if (testFullStats && testProfile) {
+                                        openDpsModal(testFullStats, testProfile, 'test');
                                     }
                                 }}
                             />
@@ -714,6 +958,24 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     { label: 'Skills', value: testRealHpsDetails.skills }
                                 ]}
                             />
+                            <ComparisonStatRow
+                                isCompact={isCompactStats}
+                                icon={<Heart className="w-4 h-4 text-purple-500" />}
+                                label="Lifesteal/sec"
+                                originalValue={originalRealHpsDetails.lifesteal}
+                                testValue={testRealHpsDetails.lifesteal}
+                                color="text-purple-500"
+                                onOriginalDetailsClick={() => {
+                                    if (originalFullStats && originalProfile) {
+                                        openLifestealModal(originalFullStats, originalProfile, 'original');
+                                    }
+                                }}
+                                onTestDetailsClick={() => {
+                                    if (testFullStats && testProfile) {
+                                        openLifestealModal(testFullStats, testProfile, 'test');
+                                    }
+                                }}
+                            />
                         </div>
                     </div>
                 </>
@@ -731,8 +993,8 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 isCompact={true}
                                 icon={<Swords className="w-4 h-4" />}
                                 label="Normal"
-                                originalValue={originalStats.hitDamage}
-                                testValue={testStats.hitDamage}
+                                originalValue={originalFullStats.hitDamage}
+                                testValue={testFullStats.hitDamage}
                                 color="text-red-400"
                                 className="!p-1.5 !bg-transparent !border-0"
                             />
@@ -740,8 +1002,8 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 isCompact={true}
                                 icon={<Sparkles className="w-4 h-4" />}
                                 label="Critical"
-                                originalValue={originalStats.hitDamageCrit}
-                                testValue={testStats.hitDamageCrit}
+                                originalValue={originalFullStats.hitDamageCrit}
+                                testValue={testFullStats.hitDamageCrit}
                                 color="text-yellow-400"
                                 className="!p-1.5 !bg-transparent !border-0"
                             />
@@ -749,7 +1011,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     </div>
 
                     {/* All Buffs Card */}
-                    {(testStats.hitDamageBuffed !== testStats.hitDamage || originalStats.hitDamageBuffed !== originalStats.hitDamage) && (
+                    {(testFullStats.hitDamageBuffed !== testFullStats.hitDamage || originalFullStats.hitDamageBuffed !== originalFullStats.hitDamage) && (
                         <div className="bg-orange-500/5 rounded-xl border border-orange-500/10 overflow-hidden ring-1 ring-orange-500/10">
                             <div className="px-3 py-1.5 bg-orange-500/10 border-b border-orange-500/10">
                                 <span className="text-[10px] font-bold uppercase tracking-wider text-orange-400">All Buffs Active</span>
@@ -759,8 +1021,8 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     isCompact={true}
                                     icon={<Zap className="w-4 h-4" />}
                                     label="Normal"
-                                    originalValue={originalStats.hitDamageBuffed}
-                                    testValue={testStats.hitDamageBuffed}
+                                    originalValue={originalFullStats.hitDamageBuffed}
+                                    testValue={testFullStats.hitDamageBuffed}
                                     color="text-orange-400"
                                     className="!p-1.5 !bg-transparent !border-0"
                                 />
@@ -768,8 +1030,8 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     isCompact={true}
                                     icon={<Sparkles className="w-4 h-4" />}
                                     label="Critical"
-                                    originalValue={originalStats.hitDamageBuffedCrit}
-                                    testValue={testStats.hitDamageBuffedCrit}
+                                    originalValue={originalFullStats.hitDamageBuffedCrit}
+                                    testValue={testFullStats.hitDamageBuffedCrit}
                                     color="text-orange-500"
                                     className="!p-1.5 !bg-transparent !border-0"
                                 />
@@ -828,6 +1090,17 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             <Swords className="w-3 h-3" />
                             <span className="hidden sm:block text-[8px] font-black uppercase tracking-tighter">Hits</span>
                         </button>
+                        <button
+                            onClick={() => setViewTab('passives')}
+                            className={cn(
+                                "p-1.5 rounded-full transition-all flex items-center sm:gap-1.5 sm:px-2",
+                                viewTab === 'passives' ? "bg-yellow-500 text-white scale-105 shadow-md" : "text-text-muted hover:text-text-primary"
+                            )}
+                            title="Secondary Stats"
+                        >
+                            <Sparkles className="w-3 h-3" />
+                            <span className="hidden sm:block text-[8px] font-black uppercase tracking-tighter">Stats</span>
+                        </button>
                     </div>
                 </div>
 
@@ -868,6 +1141,12 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-red-400" />} label="Damage" originalValue={originalStats?.totalDamage ?? 0} testValue={testStats?.totalDamage ?? 0} color="text-red-400" />
                             </div>
                             <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-amber-400" />} label="Melee DMG" originalValue={originalStats?.meleeDamage ?? 0} testValue={testStats?.meleeDamage ?? 0} color="text-amber-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Crosshair className="w-4 h-4 text-sky-400" />} label="Ranged DMG" originalValue={originalStats?.rangedDamage ?? 0} testValue={testStats?.rangedDamage ?? 0} color="text-sky-400" />
+                            </div>
+                            <div className="shrink-0">
                                 <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-green-400" />} label="Health" originalValue={originalStats?.totalHealth ?? 0} testValue={testStats?.totalHealth ?? 0} color="text-green-400" />
                             </div>
                         </>
@@ -878,6 +1157,8 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Zap className="w-4 h-4 text-orange-400" />} label="Theo DPS" originalValue={originalDps} testValue={testDps} color="text-orange-400" onTestDetailsClick={() => { if (testStats && testProfile) { setModalData({ stats: testStats, profile: testProfile, variant: 'test' }); setShowDpsModal(true); } }} />
                                 <div className="w-px h-6 bg-white/10" />
                                 <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-emerald-400" />} label="Theo HPS" originalValue={originalHps} testValue={testHps} color="text-emerald-400" />
+                                <div className="w-px h-6 bg-white/10" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-purple-400" />} label="Theo LS/s" originalValue={originalHpsDetails.lifesteal} testValue={testHpsDetails.lifesteal} color="text-purple-400" onOriginalDetailsClick={() => { if (originalFullStats && originalProfile) { openLifestealModal(originalFullStats, originalProfile, 'original'); } }} onTestDetailsClick={() => { if (testFullStats && testProfile) { openLifestealModal(testFullStats, testProfile, 'test'); } }} />
                             </div>
 
                             {/* Grouped Real-Time */}
@@ -885,6 +1166,47 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Zap className="w-4 h-4 text-orange-500" />} label="Real DPS" originalValue={originalDpsDetails.realTotal} testValue={testDpsDetails.realTotal} color="text-orange-500" onTestDetailsClick={() => { if (testStats && testProfile) { setModalData({ stats: testStats, profile: testProfile, variant: 'test' }); setShowDpsModal(true); } }} />
                                 <div className="w-px h-6 bg-orange-500/10" />
                                 <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-emerald-500" />} label="Real HPS" originalValue={originalRealHps} testValue={testRealHps} color="text-emerald-500" />
+                                <div className="w-px h-6 bg-orange-500/10" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-purple-500" />} label="Real LS/s" originalValue={originalRealHpsDetails.lifesteal} testValue={testRealHpsDetails.lifesteal} color="text-purple-500" onOriginalDetailsClick={() => { if (originalFullStats && originalProfile) { openLifestealModal(originalFullStats, originalProfile, 'original'); } }} onTestDetailsClick={() => { if (testFullStats && testProfile) { openLifestealModal(testFullStats, testProfile, 'test'); } }} />
+                            </div>
+                        </>
+                    ) : viewTab === 'passives' ? (
+                        <>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Star className="w-4 h-4 text-yellow-400" />} label="Crit %" originalValue={originalStats?.criticalChance ?? 0} testValue={testStats?.criticalChance ?? 0} formatFn={formatPercent} color="text-yellow-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-yellow-500" />} label="Crit DMG" originalValue={originalStats?.criticalDamage ?? 0} testValue={testStats?.criticalDamage ?? 0} formatFn={formatMultiplier} color="text-yellow-500" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Shield className="w-4 h-4 text-blue-400" />} label="Block %" originalValue={originalStats?.blockChance ?? 0} testValue={testStats?.blockChance ?? 0} formatFn={formatPercent} color="text-blue-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Zap className="w-4 h-4 text-purple-400" />} label="Double %" originalValue={originalStats?.doubleDamageChance ?? 0} testValue={testStats?.doubleDamageChance ?? 0} formatFn={formatPercent} color="text-purple-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-purple-400" />} label="Lifesteal %" originalValue={originalStats?.lifeSteal ?? 0} testValue={testStats?.lifeSteal ?? 0} formatFn={formatPercent} color="text-purple-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-purple-400" />} label="Regen %" originalValue={originalStats?.healthRegen ?? 0} testValue={testStats?.healthRegen ?? 0} formatFn={formatPercent} color="text-purple-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-orange-400" />} label="Atk Speed" originalValue={originalStats?.attackSpeedMultiplier ?? 0} testValue={testStats?.attackSpeedMultiplier ?? 0} formatFn={formatMultiplier} color="text-orange-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-emerald-400" />} label="Skill CDR" originalValue={originalStats?.skillCooldownReduction ?? 0} testValue={testStats?.skillCooldownReduction ?? 0} formatFn={formatPercent} color="text-emerald-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-red-400" />} label="Damage %" originalValue={originalStats?.secondaryDamageMulti ?? 0} testValue={testStats?.secondaryDamageMulti ?? 0} formatFn={formatPercent} color="text-red-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-green-400" />} label="Health %" originalValue={originalStats?.secondaryHealthMulti ?? 0} testValue={testStats?.secondaryHealthMulti ?? 0} formatFn={formatPercent} color="text-green-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-amber-400" />} label="Melee DMG %" originalValue={originalStats?.meleeDamageMultiplier ?? 0} testValue={testStats?.meleeDamageMultiplier ?? 0} formatFn={formatPercent} color="text-amber-400" />
+                            </div>
+                            <div className="shrink-0">
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Crosshair className="w-4 h-4 text-sky-400" />} label="Ranged DMG %" originalValue={originalStats?.rangedDamageMultiplier ?? 0} testValue={testStats?.rangedDamageMultiplier ?? 0} formatFn={formatPercent} color="text-sky-400" />
                             </div>
                         </>
                     ) : (
@@ -934,7 +1256,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     }
                                 }}
                             >
-                                <option value="" disabled>Load Profile...</option>
+                                <option value="" disabled>Load Profile</option>
                                 {profiles.filter(p => p.id !== activeProfileId).map(p => (
                                     <option key={p.id} value={p.id}>{p.name}</option>
                                 ))}
@@ -959,13 +1281,116 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                 </div>
                 )}
 
-                <DpsBreakdownModal 
-                    isOpen={showDpsModal} 
-                    onClose={() => setShowDpsModal(false)} 
-                    stats={modalData?.stats || stats} 
-                    profile={modalData?.profile || profile} 
+                {isComparing && !actualHideActions && (
+                <div className="flex flex-wrap items-center gap-2 w-full pt-2 sm:justify-between">
+                    {/* Equipped build perfection (far left) */}
+                    <div className="order-1 flex-1 sm:order-none sm:flex-none flex flex-col gap-1 px-2.5 py-1.5 rounded-lg border border-border bg-bg-input/30 sm:min-w-[120px] shrink-0">
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted/70 text-center">Equipped Perfection</span>
+                        <PerfectionMeter value={originalPerfection} className="gap-2" />
+                    </div>
+
+                    {/* Auto Test Build controls (center) */}
+                    <div className="order-3 w-full sm:order-none sm:w-auto grid grid-cols-5 gap-1 sm:flex sm:items-center sm:justify-center sm:gap-1.5 sm:flex-wrap">
+                    <span className="hidden sm:inline text-[9px] font-bold uppercase tracking-widest text-text-muted/60 mr-0.5">Auto Test Build</span>
+                    <button
+                        onClick={() => setRespectSavedLevels(v => !v)}
+                        role="switch"
+                        aria-checked={respectSavedLevels}
+                        title="On: score saved builds at their own level. Off: score everything at level 1, so only secondary stats decide. Equipping always keeps the saved level."
+                        className={cn(
+                            "h-7 px-2 text-[10px] font-bold rounded border gap-1 inline-flex items-center justify-center active:scale-95 transition-all w-full sm:w-fit",
+                            respectSavedLevels
+                                ? "border-accent-primary/40 bg-accent-primary/10 text-accent-primary"
+                                : "border-border bg-bg-input/30 text-text-muted hover:text-text-primary"
+                        )}
+                    >
+                        <Layers className="w-3 h-3" />
+                        <span className="hidden sm:inline">{respectSavedLevels ? 'SAVED LVL' : 'LVL 1'}</span>
+                        <span className="sm:hidden">{respectSavedLevels ? 'LVL' : 'L1'}</span>
+                    </button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-2 text-[10px] font-bold border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40 text-red-400 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                        onClick={() => handleAutoOptimizeTest('dps')}
+                        disabled={autoOptimizeDisabled}
+                        title="Set best 3 pets + mount for Max DPS on the Test build"
+                    >
+                        <Sword className="w-3 h-3" />
+                        <span className="hidden sm:inline">AUTO DPS</span>
+                        <span className="sm:hidden">DPS</span>
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-2 text-[10px] font-bold border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40 text-amber-500 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                        onClick={() => handleAutoOptimizeTest('power')}
+                        disabled={autoOptimizeDisabled}
+                        title="Set best 3 pets + mount for Max Power on the Test build"
+                    >
+                        <Zap className="w-3 h-3" />
+                        <span className="hidden sm:inline">AUTO POWER</span>
+                        <span className="sm:hidden">PWR</span>
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-2 text-[10px] font-bold border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40 text-purple-400 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                        onClick={() => handleAutoOptimizeTest('lifesteal')}
+                        disabled={autoOptimizeDisabled}
+                        title="Set best 3 pets + mount for Max Lifesteal/sec on the Test build"
+                    >
+                        <Heart className="w-3 h-3" />
+                        <span className="hidden sm:inline">AUTO LIFESTEAL/SEC</span>
+                        <span className="sm:hidden">LS/S</span>
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-2 text-[10px] font-bold border-violet-500/20 hover:bg-violet-500/10 hover:border-violet-500/40 text-violet-400 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                        onClick={() => handleAutoOptimizeTest('balanced')}
+                        disabled={autoOptimizeDisabled}
+                        title="Set best 3 pets + mount for a balance of DPS and HPS on the Test build (same scoring as the Loadout Optimizer)"
+                    >
+                        <Scale className="w-3 h-3" />
+                        <span className="hidden sm:inline">AUTO BALANCED</span>
+                        <span className="sm:hidden">BAL</span>
+                    </Button>
+                    {(previousTestPets || previousTestMount !== undefined) && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-[10px] font-bold text-text-muted hover:text-white gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                            onClick={handleRevertTest}
+                        >
+                            <RotateCcw className="w-3 h-3" />
+                            REVERT
+                        </Button>
+                    )}
+                    </div>
+
+                    {/* Test build perfection (far right) */}
+                    <div className="order-2 flex-1 sm:order-none sm:flex-none flex flex-col gap-1 px-2.5 py-1.5 rounded-lg border border-accent-primary/30 bg-accent-primary/5 sm:min-w-[120px] shrink-0">
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-accent-primary/80 text-center">Test Perfection</span>
+                        <PerfectionMeter value={testPerfection} className="gap-2" />
+                    </div>
+                </div>
+                )}
+
+                <DpsBreakdownModal
+                    isOpen={showDpsModal}
+                    onClose={() => setShowDpsModal(false)}
+                    stats={modalData?.stats || stats}
+                    profile={modalData?.profile || profile}
                     variant={modalData?.variant || 'default'}
-                    skillLibrary={skillLibrary} 
+                    skillLibrary={skillLibrary}
+                />
+                <LifestealBreakdownModal
+                    isOpen={showLifestealModal}
+                    onClose={() => setShowLifestealModal(false)}
+                    stats={modalData?.stats || stats}
+                    profile={modalData?.profile || profile}
+                    variant={modalData?.variant || 'default'}
                 />
             </div>
         );
@@ -973,24 +1398,68 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
 
     // Main unified Sidebar/Drawer rendering
     return (
-        <Card className="h-full flex flex-col overflow-hidden shadow-2xl border-border/50 bg-bg-primary">
+        <Card className={cn(
+            "h-full flex flex-col overflow-hidden shadow-2xl transition-all duration-300",
+            excludeSubstats
+                ? "border-purple-500/20 bg-gradient-to-b from-purple-950/5 to-bg-primary"
+                : "border-orange-500/20 bg-gradient-to-b from-orange-950/5 to-bg-primary"
+        )}>
             {/* Unified Header */}
-            <div className="p-5 border-b border-border bg-bg-secondary/30">
-                <div className="flex items-center justify-between mb-4">
+            <div className={cn(
+                "p-5 border-b transition-all duration-300",
+                excludeSubstats
+                    ? "border-purple-500/20 bg-purple-950/10"
+                    : "border-orange-500/20 bg-orange-950/10"
+            )}>
+                <div 
+                    onClick={() => setExcludeSubstats(!excludeSubstats)}
+                    className="flex items-center justify-between mb-4 cursor-pointer select-none hover:opacity-90 transition-opacity"
+                    title="Click to toggle between Sheet Stats (excludes substats) and Combat Stats (includes substats)"
+                >
                     <h3 className="text-xl font-black uppercase tracking-wider flex items-center gap-3">
-                        <AnimatedClock className="w-8 h-8 text-accent-primary" />
-                        <span className="bg-gradient-to-r from-white to-text-muted bg-clip-text text-transparent">
-                            Character Stats
-                        </span>
+                        <AnimatedClock className="w-8 h-8 text-accent-primary animate-pulse" />
+                        <div className="flex flex-col">
+                            <span className="bg-gradient-to-r from-white to-text-muted bg-clip-text text-transparent leading-none">
+                                Character Stats
+                            </span>
+                            <span className={cn(
+                                "text-[9px] font-bold tracking-wider mt-1 uppercase",
+                                excludeSubstats ? "text-purple-400" : "text-orange-400"
+                            )}>
+                                {excludeSubstats ? "New Stats (Substats Off)" : "Old Stats (Substats On)"}
+                            </span>
+                        </div>
                     </h3>
-                    {onClose && (
+                    <div className="flex items-center gap-2">
+                        {/* Substats Exclusion Toggle */}
                         <button
-                            onClick={onClose}
-                            className="p-2 hover:bg-white/10 rounded-full transition-colors text-text-muted hover:text-white"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setExcludeSubstats(!excludeSubstats);
+                            }}
+                            className={cn(
+                                "p-2 rounded-lg border transition-all shadow-md active:scale-95",
+                                excludeSubstats
+                                    ? "bg-purple-500/10 text-purple-400 border-purple-500/30 hover:bg-purple-500/20"
+                                    : "bg-orange-500/10 text-orange-400 border-orange-500/30 hover:bg-orange-500/20"
+                            )}
+                            title={excludeSubstats ? "Current: New Stats (Click to switch to Old)" : "Current: Old Stats (Click to switch to New)"}
                         >
-                            <X className="w-6 h-6" />
+                            <ArrowLeftRight className="w-4 h-4" />
                         </button>
-                    )}
+
+                        {onClose && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onClose();
+                                }}
+                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-text-muted hover:text-white"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Tree Mode Selection - Top Level Segmented Control */}
@@ -1070,7 +1539,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                                 }
                                             }}
                                         >
-                                            <option value="" disabled>Load...</option>
+                                            <option value="" disabled>Load</option>
                                             {profiles.filter(p => p.id !== activeProfileId).map(p => (
                                                 <option key={p.id} value={p.id}>{p.name}</option>
                                             ))}
@@ -1114,11 +1583,24 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
             <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6">
                 {(isComparing && originalStats && testStats) ? (
                     <div className="space-y-6">
-                        <div className="flex bg-bg-secondary border border-border/50 rounded-xl p-1 shadow-lg">
+                        {/* Substats Toggle Mode Warning/Notice */}
+                        <div className={cn(
+                            "p-2.5 rounded-xl border text-xs text-center flex items-center justify-center gap-2 shadow-sm font-semibold select-none cursor-pointer active:scale-98 transition-transform",
+                            excludeSubstats
+                                ? "bg-purple-500/5 text-purple-400 border-purple-500/20"
+                                : "bg-orange-500/5 text-orange-400 border-orange-500/20"
+                        )}
+                        onClick={() => setExcludeSubstats(!excludeSubstats)}
+                        title="Click to toggle calculation basis between New Stats and Old Stats"
+                        >
+                            <ArrowLeftRight className="w-4 h-4 shrink-0" />
+                            <span>Comparing: {excludeSubstats ? 'New Stats (Substats Excluded)' : 'Old Stats (Substats Included)'}</span>
+                        </div>
+                        <div className="flex bg-bg-secondary border border-border/50 rounded-xl p-1 shadow-lg flex-wrap gap-1">
                             <button
                                 onClick={() => setViewTab('general')}
                                 className={cn(
-                                    "flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-wider",
+                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider min-w-[70px]",
                                     viewTab === 'general' ? "bg-accent-primary text-white shadow-md" : "text-text-muted hover:text-text-primary"
                                 )}
                             >
@@ -1128,7 +1610,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             <button
                                 onClick={() => setViewTab('metrics')}
                                 className={cn(
-                                    "flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-wider",
+                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider min-w-[70px]",
                                     viewTab === 'metrics' ? "bg-orange-500 text-white shadow-md" : "text-text-muted hover:text-text-primary"
                                 )}
                             >
@@ -1138,12 +1620,22 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             <button
                                 onClick={() => setViewTab('hits')}
                                 className={cn(
-                                    "flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-wider",
+                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider min-w-[70px]",
                                     viewTab === 'hits' ? "bg-red-500 text-white shadow-md" : "text-text-muted hover:text-text-primary"
                                 )}
                             >
                                 <Swords className="w-3.5 h-3.5" />
                                 <span>Hits</span>
+                            </button>
+                            <button
+                                onClick={() => setViewTab('passives')}
+                                className={cn(
+                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider min-w-[70px]",
+                                    viewTab === 'passives' ? "bg-yellow-500 text-white shadow-md" : "text-text-muted hover:text-text-primary"
+                                )}
+                            >
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>Stats</span>
                             </button>
                         </div>
                         {comparisonContent}
@@ -1157,6 +1649,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 label="Total Power"
                                 value={formatValue(stats.power)}
                                 color="text-purple-400"
+                                {...infoProps(TOTAL_POWER_KEY, 'Total Power', formatValue(stats.power), formatValue)}
                             />
                             {(() => {
                                 const formatDetailedBreakdown = (b: any) => {
@@ -1177,6 +1670,19 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                             value={formatValue(stats.totalDamage)}
                                             subValue={`${formatPercent(stats.damageMultiplier || 1, 0)} Total (${formatDetailedBreakdown(stats.damageBreakdown) || 'Base Only'})`}
                                             color="text-red-400"
+                                            {...infoProps(TOTAL_DAMAGE_KEY, 'Total Damage', formatValue(stats.totalDamage), formatValue, mulBreakdown('Damage Multiplier', stats.damageMultiplier, stats.damageBreakdown))}
+                                        />
+                                        <StatRow
+                                            icon={<Swords className="w-4 h-4" />}
+                                            label="Melee DMG"
+                                            value={formatValue(stats.meleeDamage)}
+                                            color="text-amber-400"
+                                        />
+                                        <StatRow
+                                            icon={<Crosshair className="w-4 h-4" />}
+                                            label="Ranged DMG"
+                                            value={formatValue(stats.rangedDamage)}
+                                            color="text-sky-400"
                                         />
                                         <StatRow
                                             icon={<Heart className="w-4 h-4" />}
@@ -1184,6 +1690,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                             value={formatValue(stats.totalHealth)}
                                             subValue={`${formatPercent(stats.healthMultiplier || 1, 0)} Total (${formatDetailedBreakdown(stats.healthBreakdown) || 'Base Only'})`}
                                             color="text-green-400"
+                                            {...infoProps(TOTAL_HEALTH_KEY, 'Total Health', formatValue(stats.totalHealth), formatValue, mulBreakdown('Health Multiplier', stats.healthMultiplier, stats.healthBreakdown))}
                                         />
                                     </>
                                 );
@@ -1210,6 +1717,14 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                         subValue={`Regen: ${formatCompactNumber(currentHpsDetails.regen)}, LifeSteal: ${formatCompactNumber(currentHpsDetails.lifesteal)}, Skills: ${formatCompactNumber(currentHpsDetails.skills)}${currentHpsDetails.blockBenefit > 0 ? `, Block Benefit: +${formatCompactNumber(currentHpsDetails.blockBenefit)}` : ''}`}
                                         color="text-emerald-400"
                                     />
+                                    <StatRow
+                                        icon={<Heart className="w-4 h-4" />}
+                                        label="Lifesteal/sec"
+                                        value={formatValue(currentHpsDetails.lifesteal)}
+                                        subValue={`Weapon DPS × LifeSteal ${formatPercent(fullStats.lifeSteal)}`}
+                                        color="text-purple-400"
+                                        onInfoPointsClick={() => setShowLifestealModal(true)}
+                                    />
                                 </div>
                             </div>
 
@@ -1223,8 +1738,8 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     <StatRow
                                         icon={<Zap className="w-4 h-4" />}
                                         label="Real-Time DPS"
-                                        value={formatValue(stats.realTotalDps)}
-                                        subValue={`Weapon: ${formatCompactNumber(stats.realWeaponDps)}, Skills: ${formatCompactNumber(stats.skillDps + (stats.skillBuffDps || 0))}`}
+                                        value={formatValue(fullStats.realTotalDps)}
+                                        subValue={`Weapon: ${formatCompactNumber(fullStats.realWeaponDps)}, Skills: ${formatCompactNumber(fullStats.skillDps + (fullStats.skillBuffDps || 0))}`}
                                         color="text-orange-500"
                                         onInfoPointsClick={() => setShowDpsModal(true)}
                                     />
@@ -1234,6 +1749,14 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                         value={formatValue(realHps)}
                                         subValue={`Regen: ${formatCompactNumber(currentRealHpsDetails.regen)}, LifeSteal: ${formatCompactNumber(currentRealHpsDetails.lifesteal)}, Skills: ${formatCompactNumber(currentRealHpsDetails.skills)}${currentRealHpsDetails.blockBenefit > 0 ? `, Block Benefit: +${formatCompactNumber(currentRealHpsDetails.blockBenefit)}` : ''}`}
                                         color="text-emerald-500"
+                                    />
+                                    <StatRow
+                                        icon={<Heart className="w-4 h-4" />}
+                                        label="Lifesteal/sec"
+                                        value={formatValue(currentRealHpsDetails.lifesteal)}
+                                        subValue={`Weapon DPS × LifeSteal ${formatPercent(fullStats.lifeSteal)}`}
+                                        color="text-purple-500"
+                                        onInfoPointsClick={() => setShowLifestealModal(true)}
                                     />
                                 </div>
                             </div>
@@ -1251,28 +1774,28 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 <StatRow
                                     icon={<Swords className="w-4 h-4" />}
                                     label="Base Hit"
-                                    value={formatValue(stats.hitDamage)}
-                                    subValue={`Crit: ${formatValue(stats.hitDamageCrit)}`}
+                                    value={formatValue(fullStats.hitDamage)}
+                                    subValue={`Crit: ${formatValue(fullStats.hitDamageCrit)}`}
                                     color="text-red-400"
                                 />
-                                {stats.hitDamageBuffed !== stats.hitDamage && (
+                                {fullStats.hitDamageBuffed !== fullStats.hitDamage && (
                                     <StatRow
                                         icon={<Sparkles className="w-4 h-4" />}
                                         label="All Buffs Active"
-                                        value={formatValue(stats.hitDamageBuffed)}
-                                        subValue={`Crit: ${formatValue(stats.hitDamageBuffedCrit)}`}
+                                        value={formatValue(fullStats.hitDamageBuffed)}
+                                        subValue={`Crit: ${formatValue(fullStats.hitDamageBuffedCrit)}`}
                                         color="text-orange-500"
                                     />
                                 )}
 
                                 {/* Grouped Buff Scenarios Card */}
-                                {stats.buffHitMetrics && stats.buffHitMetrics.length > 0 && (
+                                {fullStats.buffHitMetrics && fullStats.buffHitMetrics.length > 0 && (
                                     <div className="mt-2 bg-black/20 rounded-xl border border-white/5 overflow-hidden">
                                         <div className="px-3 py-1.5 bg-white/5 border-b border-white/5">
                                             <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Buff Scenarios</span>
                                         </div>
                                         <div className="divide-y divide-white/5">
-                                            {stats.buffHitMetrics.map((metric, idx) => (
+                                            {fullStats.buffHitMetrics.map((metric, idx) => (
                                                 <div key={`buff-${idx}`} className="px-3 py-2 flex items-center justify-between gap-4">
                                                     <div className="flex flex-col min-w-0">
                                                         <span className="text-xs font-medium text-text-primary">{metric.name}</span>
@@ -1314,38 +1837,113 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                                 label="Crit %"
                                                 value={formatPercent(stats.criticalChance || 0)}
                                                 subValue={formatBreakdown(stats.critChanceBreakdown) ?? undefined}
+                                                count={activePerfectionDetails['CriticalChance']?.count}
+                                                perf={activePerfectionDetails['CriticalChance']?.avgPerfection}
                                                 color="text-yellow-400"
+                                                {...infoProps('CriticalChance', 'Crit %', formatPercent(stats.criticalChance || 0))}
                                             />
                                             <CompactStat
                                                 icon={<TrendingUp className="w-3 h-3" />}
                                                 label="Crit Damage"
                                                 value={formatMultiplier(stats.criticalDamage || 0)}
                                                 subValue={formatBreakdown(stats.critDamageBreakdown, true) ?? undefined}
+                                                count={activePerfectionDetails['CriticalMulti']?.count}
+                                                perf={activePerfectionDetails['CriticalMulti']?.avgPerfection}
                                                 color="text-yellow-500"
+                                                {...infoProps('CriticalMulti', 'Crit Damage', formatMultiplier(stats.criticalDamage || 0), formatMultiplier)}
                                             />
-                                            <CompactStat icon={<Shield className="w-3 h-3" />} label="Block %" value={formatPercent(stats.blockChance || 0)} color="text-blue-400" />
+                                            <CompactStat
+                                                icon={<Shield className="w-3 h-3" />}
+                                                label="Block %"
+                                                value={formatPercent(stats.blockChance || 0)}
+                                                count={activePerfectionDetails['BlockChance']?.count}
+                                                perf={activePerfectionDetails['BlockChance']?.avgPerfection}
+                                                color="text-blue-400"
+                                                {...infoProps('BlockChance', 'Block %', formatPercent(stats.blockChance || 0))}
+                                            />
                                             <CompactStat
                                                 icon={<Zap className="w-3 h-3" />}
                                                 label="Double %"
                                                 value={formatPercent(stats.doubleDamageChance || 0)}
                                                 subValue={formatBreakdown(stats.doubleDamageBreakdown) ?? undefined}
+                                                count={activePerfectionDetails['DoubleDamageChance']?.count}
+                                                perf={activePerfectionDetails['DoubleDamageChance']?.avgPerfection}
                                                 color="text-purple-400"
+                                                {...infoProps('DoubleDamageChance', 'Double %', formatPercent(stats.doubleDamageChance || 0))}
                                             />
-                                            <CompactStat icon={<Heart className="w-3 h-3" />} label="Life Steal %" value={formatPercent(stats.lifeSteal || 0)} color="text-purple-400" />
-                                            <CompactStat icon={<Heart className="w-3 h-3" />} label="Health Regen %" value={formatPercent(stats.healthRegen || 0)} color="text-purple-400" />
+                                            <CompactStat
+                                                icon={<Heart className="w-3 h-3" />}
+                                                label="Life Steal %"
+                                                value={formatPercent(stats.lifeSteal || 0)}
+                                                count={activePerfectionDetails['LifeSteal']?.count}
+                                                perf={activePerfectionDetails['LifeSteal']?.avgPerfection}
+                                                color="text-purple-400"
+                                                {...infoProps('LifeSteal', 'Life Steal %', formatPercent(stats.lifeSteal || 0))}
+                                            />
+                                            <CompactStat
+                                                icon={<Heart className="w-3 h-3" />}
+                                                label="Health Regen %"
+                                                value={formatPercent(stats.healthRegen || 0)}
+                                                count={activePerfectionDetails['HealthRegen']?.count}
+                                                perf={activePerfectionDetails['HealthRegen']?.avgPerfection}
+                                                color="text-purple-400"
+                                                {...infoProps('HealthRegen', 'Health Regen %', formatPercent(stats.healthRegen || 0))}
+                                            />
                                             <CompactStat
                                                 icon={<TrendingUp className="w-3 h-3" />}
                                                 label="Attack Speed"
                                                 value={formatMultiplier(stats.attackSpeedMultiplier)}
                                                 subValue={formatBreakdown(stats.attackSpeedBreakdown, true) ?? undefined}
+                                                count={activePerfectionDetails['AttackSpeed']?.count}
+                                                perf={activePerfectionDetails['AttackSpeed']?.avgPerfection}
                                                 color="text-orange-400"
+                                                {...infoProps('AttackSpeed', 'Attack Speed', formatMultiplier(stats.attackSpeedMultiplier), formatMultiplier)}
                                             />
                                             <CompactStat
                                                 icon={<TrendingUp className="w-3 h-3" />}
                                                 label="Skill CDR %"
                                                 value={formatPercent(stats.skillCooldownReduction)}
                                                 subValue={formatBreakdown(stats.skillCooldownBreakdown) ?? undefined}
+                                                count={activePerfectionDetails['SkillCooldownMulti']?.count}
+                                                perf={activePerfectionDetails['SkillCooldownMulti']?.avgPerfection}
                                                 color="text-emerald-400"
+                                                {...infoProps('SkillCooldownMulti', 'Skill CDR %', formatPercent(stats.skillCooldownReduction))}
+                                            />
+                                            <CompactStat
+                                                icon={<Swords className="w-3 h-3" />}
+                                                label="Damage %"
+                                                value={formatPercent(stats.secondaryDamageMulti || 0)}
+                                                count={activePerfectionDetails['DamageMulti']?.count}
+                                                perf={activePerfectionDetails['DamageMulti']?.avgPerfection}
+                                                color="text-red-400"
+                                                {...infoProps('DamageMulti', 'Damage %', formatPercent(stats.secondaryDamageMulti || 0))}
+                                            />
+                                            <CompactStat
+                                                icon={<Heart className="w-3 h-3" />}
+                                                label="Health %"
+                                                value={formatPercent(stats.secondaryHealthMulti || 0)}
+                                                count={activePerfectionDetails['HealthMulti']?.count}
+                                                perf={activePerfectionDetails['HealthMulti']?.avgPerfection}
+                                                color="text-green-400"
+                                                {...infoProps('HealthMulti', 'Health %', formatPercent(stats.secondaryHealthMulti || 0))}
+                                            />
+                                            <CompactStat
+                                                icon={<Swords className="w-3 h-3" />}
+                                                label="Melee DMG %"
+                                                value={formatPercent(stats.meleeDamageMultiplier || 0)}
+                                                count={activePerfectionDetails['MeleeDamageMulti']?.count}
+                                                perf={activePerfectionDetails['MeleeDamageMulti']?.avgPerfection}
+                                                color="text-amber-400"
+                                                {...infoProps('MeleeDamageMulti', 'Melee DMG %', formatPercent(stats.meleeDamageMultiplier || 0))}
+                                            />
+                                            <CompactStat
+                                                icon={<Crosshair className="w-3 h-3" />}
+                                                label="Ranged DMG %"
+                                                value={formatPercent(stats.rangedDamageMultiplier || 0)}
+                                                count={activePerfectionDetails['RangedDamageMulti']?.count}
+                                                perf={activePerfectionDetails['RangedDamageMulti']?.avgPerfection}
+                                                color="text-sky-400"
+                                                {...infoProps('RangedDamageMulti', 'Ranged DMG %', formatPercent(stats.rangedDamageMultiplier || 0))}
                                             />
                                         </div>
                                     );
@@ -1363,7 +1961,10 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                         if (b.ascension > 0) parts.push(`Asc: +${formatPercent(b.ascension, 1)}`);
                                         return parts.join(', ');
                                     })()}
+                                    count={activePerfectionDetails['SkillDamageMulti']?.count}
+                                    perf={activePerfectionDetails['SkillDamageMulti']?.avgPerfection}
                                     color="text-red-400"
+                                    {...infoProps('SkillDamageMulti', 'Skill Damage %', formatMultiplier(stats.skillDamageMultiplier), formatMultiplier)}
                                 />
                                 <StatRow
                                     icon={<Swords className="w-3 h-3" />}
@@ -1411,6 +2012,22 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     subValue={`Regen: ${formatCompactNumber(currentRealHpsDetails.regen)}, Life: ${formatCompactNumber(currentRealHpsDetails.lifesteal)}, Skills: ${formatCompactNumber(currentRealHpsDetails.skills)}`}
                                     color="text-emerald-500"
                                 />
+                                <StatRow
+                                    icon={<Heart className="w-4 h-4 text-purple-400" />}
+                                    label="Theo Lifesteal/sec"
+                                    value={formatCompactNumber(currentHpsDetails.lifesteal)}
+                                    subValue={`Weapon DPS × LifeSteal ${formatPercent(fullStats.lifeSteal)}`}
+                                    color="text-purple-400"
+                                    onInfoPointsClick={() => setShowLifestealModal(true)}
+                                />
+                                <StatRow
+                                    icon={<Heart className="w-4 h-4 text-purple-500" />}
+                                    label="Real Lifesteal/sec"
+                                    value={formatCompactNumber(currentRealHpsDetails.lifesteal)}
+                                    subValue={`Weapon DPS × LifeSteal ${formatPercent(fullStats.lifeSteal)}`}
+                                    color="text-purple-500"
+                                    onInfoPointsClick={() => setShowLifestealModal(true)}
+                                />
 
                                 <StatRow
                                     icon={<Clock className="w-4 h-4" />}
@@ -1442,7 +2059,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 </div>
                                 <StatRow icon={<Target className="w-4 h-4" />} label="Atk Range" value={`${stats.weaponAttackRange.toFixed(1)}m`} color="text-cyan-400" />
                                 <StatRow icon={<Clock className="w-4 h-4" />} label="Windup" value={`${stats.weaponWindupTime.toFixed(2)}s`} color="text-amber-400" />
-                                <StatRow icon={<Target className="w-4 h-4" />} label="Is Aiming" value={stats.isAiming ? 'Yes' : 'No'} color="text-cyan-400" />
+                                 <StatRow icon={<Target className="w-4 h-4" />} label="Is Aiming" value={stats.isAiming ? 'Yes' : 'No'} color="text-cyan-400" />
                                 {stats.hasProjectile && (
                                     <>
                                         <StatRow
@@ -1497,7 +2114,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 <div className="grid grid-cols-2 gap-2">
                                     {treeBonusEntries.map(([key, value]) => (
                                         <div key={key} className="p-2 bg-bg-input/30 rounded-lg border border-border/30">
-                                            <div className="text-[10px] text-text-muted truncate mb-1" title={key}>{key}</div>
+                                            <div className="text-[10px] text-text-muted whitespace-nowrap overflow-hidden text-clip mb-1" title={key}>{key}</div>
                                             <div className="font-mono font-bold text-green-400 text-xs">+{(value * 100).toFixed(1)}%</div>
                                         </div>
                                     ))}
@@ -1515,10 +2132,27 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
             <DpsBreakdownModal
                 isOpen={showDpsModal}
                 onClose={() => { setShowDpsModal(false); setModalData(null); }}
-                stats={modalData?.stats || stats}
+                stats={modalData?.stats || fullStats}
                 profile={modalData?.profile || profile}
                 variant={modalData?.variant || 'default'}
                 skillLibrary={skillLibrary}
+            />
+            <LifestealBreakdownModal
+                isOpen={showLifestealModal}
+                onClose={() => { setShowLifestealModal(false); setModalData(null); }}
+                stats={modalData?.stats || fullStats}
+                profile={modalData?.profile || profile}
+                variant={modalData?.variant || 'default'}
+            />
+            <StatSourcesModal
+                isOpen={!!sourceModal}
+                onClose={() => setSourceModal(null)}
+                statKey={sourceModal?.key ?? null}
+                label={sourceModal?.label ?? ''}
+                totalDisplay={sourceModal?.total ?? ''}
+                stats={stats}
+                formatValue={sourceModal?.format ?? formatPercent}
+                multiplier={sourceModal?.multiplier}
             />
         </Card>
     );

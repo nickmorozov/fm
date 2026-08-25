@@ -31,7 +31,7 @@ export default function BaseDrops() {
     useEffect(() => {
         async function fetchVersions() {
             try {
-                const res = await fetch('./parsed_configs/versions.json');
+                const res = await fetch(`${import.meta.env.BASE_URL}parsed_configs/versions.json`);
                 if (res.ok) {
                     const v = await res.json();
                     v.sort((a: string, b: string) => b.localeCompare(a));
@@ -65,7 +65,7 @@ export default function BaseDrops() {
                 await Promise.all(Object.entries(RELEVANT_FILES).map(async ([_, fileName]) => {
                     if (results[fileName]) return;
                     try {
-                        const res = await fetch(`./parsed_configs/${v}/${fileName}`);
+                        const res = await fetch(`${import.meta.env.BASE_URL}parsed_configs/${v}/${fileName}`);
                         if (res.ok) {
                             results[fileName] = await res.json();
                         }
@@ -123,7 +123,7 @@ export default function BaseDrops() {
         if (isLoading && !targetData) return (
             <div className="p-20 flex flex-col items-center justify-center gap-4">
                 <RefreshCw className="w-8 h-8 animate-spin text-accent-primary" />
-                <span className="text-text-muted">Fetching drop table data...</span>
+                <span className="text-text-muted">Fetching drop table data</span>
             </div>
         );
 

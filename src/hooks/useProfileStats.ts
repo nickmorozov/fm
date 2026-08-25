@@ -10,6 +10,8 @@ export function useProfileStats() {
     const { data: secondaryStats } = useGameData<any>('SecondaryStatLibrary.json');
     const { data: techTree } = useGameData<any>('TechTreeLibrary.json');
     const { data: petLibrary } = useGameData<any>('PetLibrary.json');
+    const { data: guildPositionLibrary } = useGameData<any>('GuildTechTreePositionLibrary.json');
+    const { data: guildUpgradeLibrary } = useGameData<any>('GuildTechTreeUpgradeLibrary.json');
 
     const stats: StatMap = useMemo(() => {
         if (!itemBalancing || !techTree) return {}; // Wait for critical libs
@@ -18,9 +20,11 @@ export function useProfileStats() {
             itemBalancingLibrary: itemBalancing,
             secondaryStatLibrary: secondaryStats,
             techTreeLibrary: techTree,
-            petLibrary
+            petLibrary,
+            guildTechTreePositionLibrary: guildPositionLibrary || undefined,
+            guildTechTreeUpgradeLibrary: guildUpgradeLibrary || undefined
         });
-    }, [profile, itemBalancing, secondaryStats, techTree, petLibrary]);
+    }, [profile, itemBalancing, secondaryStats, techTree, petLibrary, guildPositionLibrary, guildUpgradeLibrary]);
 
     return stats;
 }

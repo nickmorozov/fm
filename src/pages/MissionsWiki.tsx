@@ -45,7 +45,8 @@ interface MissionReward {
 
 interface MissionAllMemberReward {
     Level: number;
-    Hammers: number;
+    Hammers?: number;
+    Reward?: { Amount: number; Type: string; $type: string };
 }
 
 interface MissionBaseConfig {
@@ -138,7 +139,7 @@ export default function MissionsWiki() {
         return (
             <div className="flex flex-col items-center justify-center py-20 text-text-muted animate-pulse">
                 <Target className="w-12 h-12 mb-4 opacity-20" />
-                <p>Forging Mission Data...</p>
+                <p>Forging Mission Data</p>
             </div>
         );
     }
@@ -239,7 +240,7 @@ export default function MissionsWiki() {
                         <div className="bg-accent-primary/5 p-4 rounded-xl border border-accent-primary/30 flex flex-col items-center text-center group">
                             <GameIcon name="Hammer" className="w-12 h-12 mb-2 group-hover:rotate-12 transition-transform" />
                             <div className="text-[9px] font-black text-accent-primary uppercase mb-1">Shared Hammers</div>
-                            <div className="text-lg font-black text-white">{currentAllMemberReward?.Hammers || 0}</div>
+                            <div className="text-lg font-black text-white">{currentAllMemberReward?.Hammers ?? currentAllMemberReward?.Reward?.Amount ?? 0}</div>
                         </div>
                     </div>
                 </Card>
@@ -257,7 +258,7 @@ export default function MissionsWiki() {
                     <div className="relative w-full md:w-80">
                         <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
                         <input
-                            placeholder="Filter missions by name..."
+                            placeholder="Filter missions by name"
                             className="w-full bg-bg-input border border-border rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-1 focus:ring-accent-primary outline-none transition-all"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -271,13 +272,11 @@ export default function MissionsWiki() {
                         const scaledDmg = getScaledValue(battle.BaseDamage);
                         const scaledHp = getScaledValue(battle.BaseHealth);
                         
-                        // 2. Power scales EXPONENTIALLY (Confirmed by user 5.4B -> 12.5B jump)
-                        // Formula: BasePower(Level 1) * (Multiplier ^ (Level - 1))
-                        // Base Power is calculated for a team of 3 (Supports)
-                        const multiplier = baseConfig?.HealthAndDamageLevelMultiplier || 1.524;
-                        // The game uses a fixed baseline for suggested power regardless of the specific mission stats
-                        const fixedBasePower = 144000;
-                        const suggestedPower = fixedBasePower * Math.pow(multiplier, clanPoints - 1);
+                        // Suggested power is mission-SPECIFIC: 0.8 × UnitCount × (8·Damage + Health),
+                        // on the per-level-scaled enemy stats (scaling already applied by getScaledValue).
+                        // Calibrated to in-game values: Law L33 82.5B, Alien L33 49.5B, Black Sails L34 89.5B,
+                        // Star Blades L34 125B. (The old fixed 144000 was just Star Blades' 9×16000, hardcoded.)
+                        const suggestedPower = 0.8 * (battle.UnitCount || 1) * (8 * scaledDmg + scaledHp);
 
                         return (
                             <Card key={battle.MissionId} className={cn(
@@ -336,7 +335,7 @@ export default function MissionsWiki() {
                                             {formatNumber(suggestedPower)}
                                         </div>
                                         <div className="text-[8px] font-bold text-text-muted mt-0.5 opacity-0 group-hover/power:opacity-100 transition-all translate-y-2 group-hover/power:translate-y-0 relative z-10 text-center px-2">
-                                            Formula: BasePower × {multiplier.toFixed(3)} ^ (Lvl-1)
+                                            Formula: 0.8 × {battle.UnitCount} units × (8×Dmg + HP)
                                         </div>
                                     </div>
 

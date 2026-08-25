@@ -5,7 +5,8 @@ import { toast } from 'react-toastify';
 import { cn } from '../../lib/utils';
 import {
     Star, Egg, Key, Shirt, Cat, Image, ChevronDown,
-    Cpu, Swords, Shield, Lock, Coins, Palette, FileJson, HelpCircle, Github, TrendingUp, Hammer, Coffee, Zap, ShoppingCart, Target, Sliders, Pin, PinOff
+    Cpu, Swords, Shield, Lock, Coins, Palette, FileJson, HelpCircle, Github, TrendingUp, Hammer, Coffee, Zap, ShoppingCart, Target, Sliders, Pin, PinOff,
+    Trash2, Check, Copy, Trophy, Users
 } from 'lucide-react';
 import { GameIcon } from '../UI/GameIcon';
 import { useProfile } from '../../context/ProfileContext';
@@ -73,9 +74,10 @@ const CoffeeFountain = () => {
 
 export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: SidebarProps) {
     const location = useLocation();
-    const { profile } = useProfile();
+    const { profile, profiles, activeProfileId, switchProfile, createProfile, cloneProfile, deleteProfile } = useProfile();
     const { selectedVersion } = useGameDataContext();
     const [isHoveringCoffee, setIsHoveringCoffee] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({
         'Calculators': true,
         'Wiki': true
@@ -113,8 +115,9 @@ export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: Side
             title: 'Profile',
             items: [
                 { name: 'My Profile', path: '/', isProfile: true },
+                { name: 'Clan', path: '/clan', icon: Users },
                 { name: 'Progress Prediction', path: '/progress-prediction', icon: TrendingUp },
-                { name: 'Solo Mission', path: '/solo-mission', icon: Target },
+                { name: 'Mission Calculator', path: '/solo-mission', icon: Target },
                 { name: 'PVP Simulator', path: '/pvp-arena', icon: Swords },
                 { name: 'Colors', path: '/colors', icon: Palette },
                 { name: 'Emblems', path: '/emblems', icon: Shield },
@@ -131,7 +134,9 @@ export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: Side
                 { name: 'Eggs', path: '/eggs', icon: Egg },
                 { name: 'Skills', path: '/calculators/skills', icon: Star },
                 { name: 'Mounts', path: '/calculators/mounts', icon: Star },
+                { name: 'War Prizes', path: '/calculators/war-prizes', icon: Trophy },
                 { name: 'Substats', path: '/calculators/substats', icon: Sliders },
+                { name: 'Loadout Optimizer', path: '/calculators/loadout', icon: Trophy },
             ]
         },
         {
@@ -188,7 +193,7 @@ export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: Side
             {/* Mobile Backdrop */}
             <div
                 className={cn(
-                    "fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300",
+                    "fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] transition-opacity duration-300",
                     isOpen ? "opacity-100" : "opacity-0 pointer-events-none",
                     isPinned && "lg:opacity-0 lg:pointer-events-none"
                 )}
@@ -199,7 +204,7 @@ export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: Side
             <aside
                 onMouseLeave={() => { if (!isPinned) onClose(); }}
                 className={cn(
-                    "fixed top-0 left-0 bottom-0 w-64 bg-bg-secondary border-r border-border z-50 transition-transform duration-300 ease-in-out flex flex-col shadow-2xl",
+                    "fixed top-0 left-0 bottom-0 w-64 bg-bg-secondary border-r border-border z-[60] transition-transform duration-300 ease-in-out flex flex-col shadow-2xl",
                     isOpen ? "translate-x-0" : "-translate-x-full"
                 )}
             >
@@ -224,6 +229,93 @@ export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: Side
                         >
                             {isPinned ? <Pin size={18} className="fill-current" /> : <PinOff size={18} />}
                         </button>
+                    )}
+                </div>
+
+                {/* Profile Selector in Sidebar */}
+                <div className="px-4 py-3 border-b border-border bg-bg-secondary/20 relative z-30">
+                    <button
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-bg-input border border-border hover:border-accent-primary/40 transition-all select-none animate-pulse-subtle"
+                    >
+                        <div className="flex items-center gap-2 min-w-0">
+                            <ProfileIcon iconIndex={profile.iconIndex} size={28} className="border-0 shrink-0" />
+                            <span className="font-semibold text-sm text-left whitespace-nowrap overflow-hidden text-clip text-text-primary max-w-[130px]">{profile.name}</span>
+                        </div>
+                        <ChevronDown className={cn("w-4 h-4 text-text-muted transition-transform shrink-0", isDropdownOpen && "rotate-180")} />
+                    </button>
+
+                    {isDropdownOpen && (
+                        <div className="absolute top-full left-4 right-4 mt-1 bg-bg-primary border border-border rounded-xl shadow-2xl overflow-hidden z-50">
+                            <div className="p-2 border-b border-border">
+                                <p className="text-[10px] text-text-muted uppercase font-bold px-2 mb-1.5">Profiles</p>
+                                <div className="max-h-40 overflow-y-auto space-y-0.5">
+                                    {profiles.map((p) => (
+                                        <div
+                                            key={p.id}
+                                            className={cn(
+                                                "w-full flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors group relative",
+                                                p.id === activeProfileId
+                                                    ? "bg-accent-primary/20 text-accent-primary font-bold"
+                                                    : "hover:bg-bg-input text-text-primary"
+                                            )}
+                                        >
+                                            <button
+                                                onClick={() => {
+                                                    switchProfile(p.id);
+                                                    setIsDropdownOpen(false);
+                                                }}
+                                                className="flex-1 flex items-center gap-2 min-w-0 text-left text-xs font-semibold"
+                                            >
+                                                <ProfileIcon iconIndex={p.iconIndex} size={24} className="border-0 shrink-0" />
+                                                <span className="whitespace-nowrap overflow-hidden text-clip">{p.name}</span>
+                                            </button>
+
+                                            {p.id === activeProfileId && (
+                                                <Check className="w-3.5 h-3.5 text-accent-primary shrink-0" />
+                                            )}
+                                            {profiles.length > 1 && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (profiles.length <= 1) return;
+                                                        if (window.confirm(`Are you sure you want to delete profile "${p.name}"?`)) {
+                                                            deleteProfile(p.id);
+                                                        }
+                                                    }}
+                                                    className="p-1 text-text-muted hover:text-red-400 transition-colors shrink-0 opacity-0 group-hover:opacity-100"
+                                                    title="Delete profile"
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="p-1.5 space-y-0.5">
+                                <button
+                                    onClick={() => {
+                                        createProfile();
+                                        setIsDropdownOpen(false);
+                                    }}
+                                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-bg-input text-text-secondary hover:text-text-primary transition-colors text-xs font-semibold"
+                                >
+                                    <img src={`${import.meta.env.BASE_URL}Texture2D/${selectedVersion}/PlusIcon.png`} alt="New Profile" className="w-3.5 h-3.5 object-contain animate-pulse" />
+                                    <span>New Profile</span>
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        cloneProfile();
+                                        setIsDropdownOpen(false);
+                                    }}
+                                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-bg-input text-text-secondary hover:text-text-primary transition-colors text-xs font-semibold"
+                                >
+                                    <Copy className="w-3.5 h-3.5" />
+                                    <span>Clone Current</span>
+                                </button>
+                            </div>
+                        </div>
                     )}
                 </div>
 

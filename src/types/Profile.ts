@@ -1,3 +1,5 @@
+import { newProfileUuid } from '../services/profileIdMigration';
+
 export interface ItemSlot {
     age: number; // Tier/Level bracket (corresponds to "Age" in JSON)
     idx: number; // Index within the tier (corresponds to "Idx" in JSON)
@@ -57,6 +59,9 @@ export interface UserProfile {
     iconIndex: number; // Index in CardIcons.png spritesheet (8x8 = 64 icons)
     version: number;
     isShared?: boolean;
+    /** Last time any tech tree (Forge/Power/SkillsPetTech/Clan) was edited — stamped centrally in
+     *  ProfileContext so the Profile tree spoiler can flag stale (>2d) tree data. */
+    techTreeUpdatedAt?: number;
 
     items: {
         Weapon: ItemSlot | null;
@@ -123,6 +128,11 @@ export interface UserProfile {
         };
         skillCalculatorLevel?: number;
         skillCalculatorTickets?: number;
+        // Resource counts also edited from the Clan/Profile "Resources" panel. These are the
+        // SAME keys the individual calculators read, so the panel and the calculators stay in sync.
+        coins?: number;         // no calculator consumes it yet (informational)
+        guildPotions?: number;  // no calculator consumes it yet (informational)
+        ownedEggs?: { [rarity: string]: number }; // shared with the Egg hatch calculator
         mountCalculatorLevel?: number;
         mountCalculatorProgress?: number;
         mountCalculatorWinders?: number;
@@ -150,9 +160,19 @@ export interface UserProfile {
     };
 }
 
-// Generate unique ID
+/**
+ * Generate a unique profile id.
+ *
+ * This is a **UUID**, not the old `profile_<epoch>_<random>` string, because the id doubles as
+ * the primary key of `public.profiles`, whose `id` column is `uuid` — the old format made every
+ * first sync fail with `22P02 invalid input syntax for type uuid` (BACKEND_PLAN.md §7b).
+ * Existing local profiles are rewritten once by `ensureProfileIdsMigrated()`
+ * (`src/services/profileIdMigration.ts`), which also documents why renaming ids is safe.
+ *
+ * The generator lives in that module so the migration and the mint can never disagree.
+ */
 export function generateProfileId(): string {
-    return `profile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return newProfileUuid();
 }
 
 export const INITIAL_PROFILE: UserProfile = {
@@ -212,6 +232,8 @@ export const INITIAL_PROFILE: UserProfile = {
         mountCalculatorProgress: 0,
         mountCalculatorWinders: 0,
         techPotions: 0,
+        coins: 0,
+        guildPotions: 0,
         dungeonKeyCounts: {
             Hammer: 0,
             Skill: 0,

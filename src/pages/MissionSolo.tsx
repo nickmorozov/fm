@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useGameData } from '../hooks/useGameData';
+import { useTreeModifiers, useClanNodeMax } from '../hooks/useCalculatedStats';
+import { SandboxPanel } from '../components/UI/SandboxPanel';
 import { Card } from '../components/UI/Card';
 import { GameIcon } from '../components/UI/GameIcon';
 import { Target, Trophy, Sword, Swords, Settings, Clock, Users, Shield, Zap, Info, Gift, Hammer as HammerIcon, ChevronRight, Search, Activity, Heart, TrendingUp, Star, Check, Play } from 'lucide-react';
@@ -48,7 +50,8 @@ interface MissionReward {
 
 interface MissionAllMemberReward {
     Level: number;
-    Hammers: number;
+    Hammers?: number;
+    Reward?: { Amount: number; Type: string; $type: string };
 }
 
 interface MissionBaseConfig {
@@ -160,10 +163,56 @@ export default function MissionSolo() {
             .sort((a, b) => a.MinLevel - b.MinLevel);
     }, [battleLibrary, searchTerm]);
 
+    // Clan tech tree boost to mission rewards + sandbox override.
+    const treeModifiers = useTreeModifiers();
+    const clanMax = useClanNodeMax();
+    const profileMissionRewardBonus = treeModifiers['MissionRewards'] || 0;
+    const defaultAscension =
+        (profile?.misc?.mountAscensionLevel || 0) +
+        (profile?.misc?.skillAscensionLevel || 0) +
+        (profile?.misc?.forgeAscensionLevel || 0) +
+        (profile?.misc?.petAscensionLevel || 0);
+
+    const [sandbox, setSandbox] = useState<Record<string, number>>({});
+    const missionRewardBonus = sandbox.missionRewards ?? profileMissionRewardBonus;
+    const ascensionStars = sandbox.ascensionStars ?? defaultAscension;
+
+    const isSandboxModified = useMemo(() => {
+        return (
+            Math.abs(missionRewardBonus - profileMissionRewardBonus) > 1e-9 ||
+            ascensionStars !== defaultAscension
+        );
+    }, [missionRewardBonus, profileMissionRewardBonus, ascensionStars, defaultAscension]);
+
+    const missionSandbox = {
+        reset: () => setSandbox({}),
+        fields: [
+            { key: 'missionRewards', label: 'Mission rewards', value: missionRewardBonus, profileValue: profileMissionRewardBonus, min: 0, max: clanMax['MissionRewards'] || 0.1, step: 0.005, onChange: (v: number) => setSandbox(p => ({ ...p, missionRewards: v })) },
+        ],
+    };
+
     const displayRewards = useMemo(() => {
         if (!currentRewards?.Rewards) return [];
-        return currentRewards.Rewards;
-    }, [currentRewards]);
+        return currentRewards.Rewards.map((r: Reward) => {
+            let mult = 1 + missionRewardBonus;
+            if (r.Type === 'GuildPotions') {
+                mult *= (1 + ascensionStars * 0.1);
+            }
+            return { ...r, Amount: r.Amount * mult };
+        });
+    }, [currentRewards, missionRewardBonus, ascensionStars]);
+
+    const displayAllMemberReward = useMemo(() => {
+        if (!currentAllMemberReward) return null;
+        let hammers = currentAllMemberReward.Hammers;
+        let reward = currentAllMemberReward.Reward;
+        
+        if (reward && reward.Type === 'GuildPotions') {
+            reward = { ...reward, Amount: reward.Amount * (1 + ascensionStars * 0.1) };
+        }
+        
+        return { hammers, reward };
+    }, [currentAllMemberReward, ascensionStars]);
 
     const getScaledValue = (base: number) => {
         if (!baseConfig) return base;
@@ -175,7 +224,7 @@ export default function MissionSolo() {
         return (
             <div className="flex flex-col items-center justify-center py-20 text-text-muted animate-pulse">
                 <Target className="w-12 h-12 mb-4 opacity-20" />
-                <p>Forging Mission Data...</p>
+                <p>Forging Mission Data</p>
             </div>
         );
     }
@@ -187,7 +236,7 @@ export default function MissionSolo() {
                 <div className="space-y-2 text-center md:text-left">
                     <h1 className="text-4xl font-black text-text-primary flex items-center justify-center md:justify-start gap-4">
                         <Target className="w-10 h-10 text-accent-primary" />
-                        Solo Predictor
+                        Mission Calculator
                     </h1>
                     <p className="text-text-secondary text-lg font-medium">Test your strength and see if you can defeat missions alone, without your clan's help.</p>
                 </div>
@@ -202,6 +251,54 @@ export default function MissionSolo() {
                     <ConfigStat label="Owner Rewards" value={`${baseConfig.MissionOwnerRewardsCount}x`} icon={Trophy} />
                 </div>
             </div>
+
+            <SandboxPanel
+                fields={missionSandbox.fields}
+                onReset={missionSandbox.reset}
+                isModified={isSandboxModified}
+            >
+                <div className="pt-4 border-t border-purple-500/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Ascension Stars</span>
+                        <div className="relative">
+                            <select
+                                value={ascensionStars}
+                                onChange={(e) => setSandbox(p => ({ ...p, ascensionStars: parseInt(e.target.value) }))}
+                                className="bg-bg-input border border-purple-500/30 hover:border-purple-500/50 focus:border-purple-500/80 rounded-lg px-3 py-1.5 text-xs text-white outline-none transition-all font-mono cursor-pointer appearance-none pr-8"
+                            >
+                                {Array.from({ length: 13 }).map((_, idx) => (
+                                    <option key={idx} value={idx}>
+                                        {idx} {idx === 1 ? 'Star' : 'Stars'} (+{idx * 10}%)
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-purple-400">
+                                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Visual stars preview */}
+                    <div className="flex items-center gap-1 min-h-[24px] flex-wrap bg-purple-500/10 rounded-lg px-3 py-1.5 border border-purple-500/20">
+                        {ascensionStars > 0 ? (
+                            <div className="flex items-center gap-0.5">
+                                {Array.from({ length: ascensionStars }).map((_, idx) => (
+                                    <img
+                                        key={idx}
+                                        src={`${import.meta.env.BASE_URL}Texture2D/${selectedVersion}/AscensionStar.png`}
+                                        alt="Star"
+                                        className="w-4 h-4 object-contain drop-shadow-[0_0_3px_rgba(251,191,36,0.6)] animate-fade-in"
+                                        style={{ animationDelay: `${idx * 20}ms` }}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <span className="text-[10px] text-purple-300/60 italic font-medium">No ascension stars active</span>
+                        )}
+                    </div>
+                </div>
+            </SandboxPanel>
 
             {/* Level Slider Section */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -266,17 +363,46 @@ export default function MissionSolo() {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-                        {displayRewards.map((r, idx) => (
-                            <div key={idx} className="bg-bg-primary/50 p-4 rounded-xl border border-border/50 flex flex-col items-center text-center group hover:border-accent-primary/50 transition-all">
-                                <GameIcon name={getRewardIcon(r.Type)} className="w-12 h-12 mb-2 group-hover:scale-110 transition-transform" />
-                                <div className="text-[9px] font-black text-text-muted uppercase mb-1">{r.Type.replace(/([A-Z])/g, ' $1').trim()}</div>
-                                <div className="text-lg font-black text-white">{formatNumber(r.Amount)}</div>
+                        {displayRewards.map((r, idx) => {
+                            const isGuildPotions = r.Type === 'GuildPotions';
+                            return (
+                                <div key={idx} className="bg-bg-primary/50 p-4 rounded-xl border border-border/50 flex flex-col items-center text-center group hover:border-accent-primary/50 transition-all relative">
+                                    <GameIcon name={getRewardIcon(r.Type)} className="w-12 h-12 mb-2 group-hover:scale-110 transition-transform" />
+                                    <div className="text-[9px] font-black text-text-muted uppercase mb-1">{r.Type.replace(/([A-Z])/g, ' $1').trim()}</div>
+                                    <div className="text-lg font-black text-white flex items-center justify-center gap-1.5">
+                                        {formatNumber(Math.round(r.Amount))}
+                                        {isGuildPotions && ascensionStars > 0 && (
+                                            <div className="flex items-center gap-0.5 bg-amber-500/10 px-1 py-0.5 rounded border border-amber-500/20 text-[9px] text-amber-400 font-mono font-bold">
+                                                <img
+                                                    src={`${import.meta.env.BASE_URL}Texture2D/${selectedVersion}/AscensionStar.png`}
+                                                    alt="Ascension"
+                                                    className="w-2.5 h-2.5 object-contain"
+                                                />
+                                                x{ascensionStars}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        <div className="bg-accent-primary/5 p-4 rounded-xl border border-accent-primary/30 flex flex-col items-center text-center group hover:border-accent-primary/50 transition-all relative">
+                            <GameIcon name={displayAllMemberReward?.reward ? getRewardIcon(displayAllMemberReward.reward.Type) : "Hammer"} className="w-12 h-12 mb-2 group-hover:rotate-12 transition-transform" />
+                            <div className="text-[9px] font-black text-accent-primary uppercase mb-1">
+                                {displayAllMemberReward?.reward ? displayAllMemberReward.reward.Type.replace(/([A-Z])/g, ' $1').trim() : "Shared Hammers"}
                             </div>
-                        ))}
-                        <div className="bg-accent-primary/5 p-4 rounded-xl border border-accent-primary/30 flex flex-col items-center text-center group">
-                            <GameIcon name="Hammer" className="w-12 h-12 mb-2 group-hover:rotate-12 transition-transform" />
-                            <div className="text-[9px] font-black text-accent-primary uppercase mb-1">Shared Hammers</div>
-                            <div className="text-lg font-black text-white">{currentAllMemberReward?.Hammers || 0}</div>
+                            <div className="text-lg font-black text-white flex items-center justify-center gap-1.5">
+                                {formatNumber(Math.round(displayAllMemberReward?.hammers ?? displayAllMemberReward?.reward?.Amount ?? 0))}
+                                {displayAllMemberReward?.reward?.Type === 'GuildPotions' && ascensionStars > 0 && (
+                                    <div className="flex items-center gap-0.5 bg-amber-500/10 px-1 py-0.5 rounded border border-amber-500/20 text-[9px] text-amber-400 font-mono font-bold">
+                                        <img
+                                            src={`${import.meta.env.BASE_URL}Texture2D/${selectedVersion}/AscensionStar.png`}
+                                            alt="Ascension"
+                                            className="w-2.5 h-2.5 object-contain"
+                                        />
+                                        x{ascensionStars}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </Card>
@@ -318,13 +444,13 @@ export default function MissionSolo() {
                             ) : (
                                 <Zap className="w-4 h-4 fill-current" />
                             )}
-                            {isSimulatingAll ? 'Simulating...' : 'Simulate All'}
+                            {isSimulatingAll ? 'Simulating' : 'Simulate All'}
                         </button>
 
                         <div className="relative w-full md:w-64">
                             <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
                             <input
-                                placeholder="Filter missions..."
+                                placeholder="Filter missions"
                                 className="w-full bg-bg-input border border-border rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-1 focus:ring-accent-primary outline-none transition-all"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -337,10 +463,11 @@ export default function MissionSolo() {
                     {filteredMissions.map((battle) => {
                         const scaledDmg = getScaledValue(battle.BaseDamage);
                         const scaledHp = getScaledValue(battle.BaseHealth);
-                        const multiplier = baseConfig?.HealthAndDamageLevelMultiplier || 1.524;
-                        // The game uses a fixed baseline for suggested power regardless of the specific mission stats
-                        const fixedBasePower = 144000;
-                        const suggestedPower = fixedBasePower * Math.pow(multiplier, clanPoints - 1);
+                        // Suggested power is mission-SPECIFIC: 0.8 × UnitCount × (8·Damage + Health),
+                        // on the per-level-scaled enemy stats (scaling already applied by getScaledValue).
+                        // Calibrated to in-game values: Law L33 82.5B, Alien L33 49.5B, Black Sails L34 89.5B,
+                        // Star Blades L34 125B. (The old fixed 144000 was just Star Blades' 9×16000, hardcoded.)
+                        const suggestedPower = 0.8 * (battle.UnitCount || 1) * (8 * scaledDmg + scaledHp);
 
                         const result = missionResults[battle.MissionId];
                         const winRate = result?.winProbability || 0;
@@ -401,7 +528,7 @@ export default function MissionSolo() {
                                             {formatNumber(suggestedPower)}
                                         </div>
                                         <div className="text-[8px] font-bold text-text-muted mt-0.5 opacity-0 group-hover/power:opacity-100 transition-all translate-y-2 group-hover/power:translate-y-0 relative z-10 text-center px-2">
-                                            Formula: BasePower × {multiplier.toFixed(3)} ^ (Lvl-1)
+                                            Formula: 0.8 × {battle.UnitCount} units × (8×Dmg + HP)
                                         </div>
                                     </div>
 

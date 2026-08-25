@@ -24,3 +24,106 @@ export function getAnvilTexturePath(ascensionLevel: number, version?: string): s
     
     return `${textureBase}Anvil.png`;
 }
+
+interface NormalizedTarget {
+    $type?: string;
+    ItemType?: number;
+    DungeonType?: number;
+    CurrencyType?: number;
+}
+
+export function getNormalizedTarget(statNode: any): NormalizedTarget {
+    if (!statNode) return {};
+
+    if (statNode.StatTarget) {
+        return {
+            $type: statNode.StatTarget.$type,
+            ItemType: statNode.StatTarget.ItemType,
+            DungeonType: statNode.StatTarget.DungeonType,
+            CurrencyType: statNode.StatTarget.CurrencyType,
+        };
+    }
+
+    if (statNode.Target) {
+        const kind = statNode.Target.Kind;
+        const qualifiers = statNode.Target.Qualifiers || [];
+        const condition = statNode.Condition || "None";
+
+        const getQualifierValue = (typeStr: string): any => {
+            const q = qualifiers.find((x: any) => x.Type === typeStr);
+            return q ? q.Value : undefined;
+        };
+
+        const itemTypeVal = getQualifierValue("ItemType");
+        const dungeonTypeVal = getQualifierValue("DungeonType");
+        const currencyTypeVal = getQualifierValue("CurrencyType");
+
+        let type: string | undefined;
+
+        switch (kind) {
+            case "Player":
+                if (condition === "Melee") {
+                    type = "PlayerMeleeOnlyStatTarget";
+                } else if (condition === "Ranged") {
+                    type = "PlayerRangedOnlyStatTarget";
+                } else {
+                    type = "PlayerStatTarget";
+                }
+                break;
+            case "Equipment":
+                if (itemTypeVal === 5) {
+                    type = "WeaponStatTarget";
+                } else {
+                    type = "EquipmentStatTarget";
+                }
+                break;
+            case "Forge":
+                type = "ForgeStatTarget";
+                break;
+            case "ActiveSkill":
+            case "SkillActive":
+                type = "ActiveSkillStatTarget";
+                break;
+            case "PassiveSkill":
+            case "SkillPassive":
+                type = "PassiveSkillStatTarget";
+                break;
+            case "Pet":
+                type = "PetStatTarget";
+                break;
+            case "Mount":
+                type = "MountStatTarget";
+                break;
+            case "Egg":
+                type = "EggStatTarget";
+                break;
+            case "Currency":
+                type = "OfflineCurrencyStatTarget";
+                break;
+            case "Timer":
+                type = "OfflineTimerStatTarget";
+                break;
+            case "Dungeon":
+                type = "DungeonStatTarget";
+                break;
+        }
+
+        return {
+            $type: type,
+            ItemType: itemTypeVal,
+            DungeonType: dungeonTypeVal,
+            CurrencyType: currencyTypeVal,
+        };
+    }
+
+    if (statNode.LegacyTarget) {
+        return {
+            $type: statNode.LegacyTarget.$type,
+            ItemType: statNode.LegacyTarget.ItemType,
+            DungeonType: statNode.LegacyTarget.DungeonType,
+            CurrencyType: statNode.LegacyTarget.CurrencyType,
+        };
+    }
+
+    return {};
+}

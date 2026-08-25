@@ -484,7 +484,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                             <div className="relative mb-4">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
                                 <input
-                                    placeholder={activeTab === 'library' ? "Search mount library..." : "Search saved builds..."}
+                                    placeholder={activeTab === 'library' ? "Search mount library" : "Search saved builds"}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className="w-full bg-bg-input border border-border rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-accent-primary transition-all"
@@ -523,7 +523,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                     className="w-16 h-16 drop-shadow-lg"
                                                 />
                                             </div>
-                                            <span className="text-[10px] text-center text-text-primary font-bold truncate w-full leading-tight select-none">
+                                            <span className="text-[10px] text-center text-text-primary font-bold whitespace-nowrap overflow-hidden text-clip w-full leading-tight select-none">
                                                 {mount.name}
                                             </span>
                                         </button>
@@ -637,6 +637,10 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                     Object.entries(mountsConfig.mapping).find(([_, v]: [any, any]) => v.id === savedMount.id && v.rarity === savedMount.rarity)
                                                     : null;
                                                 const isSelected = selectedSavedIndex === originalIdx;
+                                                const activeMount = profile.mount.active;
+                                                const isEquipped = !!activeMount &&
+                                                    activeMount.id === savedMount.id && activeMount.rarity === savedMount.rarity &&
+                                                    JSON.stringify(activeMount.secondaryStats) === JSON.stringify(savedMount.secondaryStats);
 
                                                 return (
                                                     <ItemSelectionCard
@@ -647,6 +651,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                         itemName={savedMount.customName || (spriteInfo ? (spriteInfo[1] as any).name : `Mount #${savedMount.id}`)}
                                                         itemImage={null}
                                                         isSelected={isSelected}
+                                                        isEquipped={isEquipped}
                                                         rarity={savedMount.rarity}
                                                         hideAgeStyles={true}
                                                         perfection={getPerfection(savedMount)}
@@ -741,7 +746,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                     <label className="text-[10px] font-black text-text-muted uppercase tracking-widest px-1">Preset Name</label>
                                                     <div className="relative group">
                                                         <input
-                                                            placeholder="Enter preset name..."
+                                                            placeholder="Enter preset name"
                                                             value={profile.mount.savedBuilds[selectedSavedIndex]?.customName || ''}
                                                             onChange={(e) => {
                                                                 if (selectedSavedIndex !== null) {

@@ -1,6 +1,7 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { GameDataProvider } from './context/GameDataContext';
 import { ProfileProvider } from './context/ProfileContext';
+import { ClanProvider } from './context/ClanContext';
 import { TreeModeProvider } from './context/TreeModeContext';
 import { ComparisonProvider } from './context/ComparisonContext';
 import { ToastContainer } from 'react-toastify';
@@ -17,6 +18,7 @@ import Dungeons from './pages/Dungeons';
 import TechTree from './pages/TechTree';
 import Arena from './pages/Arena';
 import GuildWar from './pages/GuildWar';
+import Clan from './pages/Clan';
 
 import Unlocks from './pages/Unlocks';
 import Offline from './pages/Offline';
@@ -31,6 +33,8 @@ import ForgeCalculator from './pages/Calculators/ForgeCalculator';
 import MountCalculator from './pages/Calculators/MountCalculator';
 import SkillCalculator from './pages/Calculators/SkillCalculator';
 import TreeCalculator from './pages/Calculators/TreeCalculator';
+import WarPrizesCalculator from './pages/Calculators/WarPrizesCalculator';
+import LoadoutOptimizer from './pages/Calculators/LoadoutOptimizer';
 import Verify from './pages/Verify';
 import ForgeWiki from './pages/ForgeWiki';
 import SkinsPage from './pages/Skins';
@@ -48,9 +52,15 @@ function App() {
     return (
         <GameDataProvider>
             <ProfileProvider>
-                <ComparisonProvider>
-                    <TreeModeProvider>
-                        <HashRouter>
+                {/* ClanProvider is keyed on the ACTIVE PROFILE and reads the war configs, so it
+                    belongs inside ProfileProvider and GameDataProvider. And outside the router, so
+                    every clan surface (the Clan page and the header's clan chip) sits under it.
+                    Auth needs no provider: AuthContext is an external store. With no
+                    VITE_SUPABASE_* it settles on 'unconfigured' without a single fetch. */}
+                <ClanProvider>
+                    <ComparisonProvider>
+                        <TreeModeProvider>
+                            <HashRouter>
                             <Routes>
                                 <Route path="/" element={<AppShell />}>
                                     <Route index element={<Profile />} />
@@ -68,6 +78,7 @@ function App() {
                                     <Route path="tech-tree" element={<TechTree />} />
                                     <Route path="arena" element={<Arena />} />
                                     <Route path="guild-war" element={<GuildWar />} />
+                                    <Route path="clan" element={<Clan />} />
                                     <Route path="verify" element={<Verify />} />
 
                                     <Route path="unlocks" element={<Unlocks />} />
@@ -81,6 +92,8 @@ function App() {
                                     <Route path="calculators/skills" element={<SkillCalculator />} />
                                     <Route path="calculators/tree" element={<TreeCalculator />} />
                                     <Route path="calculators/substats" element={<SubstatsCalculator />} />
+                                    <Route path="calculators/war-prizes" element={<WarPrizesCalculator />} />
+                                    <Route path="calculators/loadout" element={<LoadoutOptimizer />} />
                                     <Route path="solo-mission" element={<MissionSolo />} />
                                     <Route path="wiki/forge" element={<ForgeWiki />} />
                                     <Route path="wiki/base-drops" element={<BaseDrops />} />
@@ -93,9 +106,10 @@ function App() {
                                     <Route path="*" element={<Home />} />
                                 </Route>
                             </Routes>
-                        </HashRouter>
-                    </TreeModeProvider>
-                </ComparisonProvider>
+                            </HashRouter>
+                        </TreeModeProvider>
+                    </ComparisonProvider>
+                </ClanProvider>
             </ProfileProvider>
             <ToastContainer
                 position="top-center"

@@ -40,6 +40,7 @@ const SPRITE_MAPPING: Record<string, { x: number; y: number }> = {
     'Lightning': { x: 1792, y: 768 },
     'SteppingStone': { x: 0, y: 1024 },
     'Eggshell': { x: 256, y: 1024 },
+    'GuildPotions': { x: 512, y: 1024 },
     // Fallback/Generic Icons
     'Sword': { x: 1024, y: 0 }, // Using Battle icon as placeholder
     'Bow': { x: 512, y: 0 },    // Using ArrowDown icon as placeholder

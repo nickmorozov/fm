@@ -5,6 +5,7 @@
  */
 
 import { UserProfile, PetSlot, SkillSlot, MountSlot, ItemSlot } from '../types/Profile';
+import { getNormalizedTarget } from './ascensionUtils';
 
 // Stat Natures from StatConfigLibrary.json
 export type StatNature = 'Multiplier' | 'Additive' | 'OneMinusMultiplier' | 'Divisor';
@@ -233,7 +234,7 @@ export function getItemStats(
                     statType,
                     statNature,
                     value,
-                    target: equipStat.StatNode?.StatTarget?.$type,
+                    target: getNormalizedTarget(equipStat.StatNode).$type,
                 });
             }
         }
@@ -492,12 +493,17 @@ export function getTechTreeStats(
             const nodeData = techTreeLibrary?.[node.Type];
             if (!nodeData?.Stats) continue;
 
-            for (const stat of nodeData.Stats) {
-                const baseValue = stat.Value || 0;
-                const valueIncrease = stat.ValueIncrease || 0;
+            const tier = node.Tier ?? 0;
+            const tierStatsArray = nodeData.StatsByTier?.[tier];
+
+            for (let si = 0; si < nodeData.Stats.length; si++) {
+                const stat = nodeData.Stats[si];
+                const tierStat = tierStatsArray?.[si];
+                const baseValue = tierStat?.Value ?? stat.Value ?? 0;
+                const valueIncrease = tierStat?.ValueIncrease ?? stat.ValueIncrease ?? 0;
                 const totalValue = baseValue + (level - 1) * valueIncrease;
 
-                const target = stat.StatNode?.StatTarget?.$type;
+                const target = getNormalizedTarget(stat.StatNode).$type;
                 if (target === 'ActiveSkillStatTarget') {
                     console.log(`[DEBUG TechTree] ${tree} Node ${nodeId} (${node.Type}) lv${level}: SkillDamage +${(totalValue * 100).toFixed(1)}%`);
                 }
