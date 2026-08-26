@@ -1157,28 +1157,23 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     </div>
                 </div>
 
-                {/* Stat Compactness Toggler - Floating Top Right */}
+                {/* Details toggle - Floating Top Right. One button, same pill as the per-stat
+                    DETAILS buttons: on = extended breakdowns and full numbers, off = compact. */}
                 <div className="absolute right-4 -top-3.5">
-                    <div className="flex bg-bg-secondary border border-border/50 rounded-full p-0.5 shadow-lg backdrop-blur-xl">
+                    <div className="bg-bg-secondary border border-border/50 rounded-full p-0.5 shadow-lg backdrop-blur-xl">
                         <button
-                            onClick={() => setIsCompactStats(true)}
+                            onClick={() => setIsCompactStats(!isCompactStats)}
+                            aria-pressed={!isCompactStats}
+                            title={isCompactStats ? 'Show detailed breakdowns and full numbers' : 'Hide details (compact view)'}
                             className={cn(
-                                "p-1.5 rounded-full transition-all",
-                                isCompactStats ? "bg-accent-primary text-white scale-110 shadow-md" : "text-text-muted hover:text-text-primary"
+                                "p-1 px-2 rounded-full border transition-all flex items-center gap-1 active:scale-95",
+                                !isCompactStats
+                                    ? "bg-orange-500/20 border-orange-500/50 text-orange-300"
+                                    : "bg-orange-500/10 hover:bg-orange-500/20 border-orange-500/30 text-orange-400 hover:text-orange-300"
                             )}
-                            title="Compact Numbers"
                         >
-                            <Minimize2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                            onClick={() => setIsCompactStats(false)}
-                            className={cn(
-                                "p-1.5 rounded-full transition-all",
-                                !isCompactStats ? "bg-accent-primary text-white scale-110 shadow-md" : "text-text-muted hover:text-text-primary"
-                            )}
-                            title="Full Numbers"
-                        >
-                            <Hash className="w-3.5 h-3.5" />
+                            <Sparkles className={cn("w-2.5 h-2.5", !isCompactStats && "animate-pulse")} />
+                            <span className="text-5xs font-bold uppercase tracking-wider">Details</span>
                         </button>
                     </div>
                 </div>
@@ -1540,29 +1535,24 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     </div>
                 </div>
 
-                {/* Display Format Toggler - Always Visible */}
+                {/* Details toggle - Always Visible. One button in the familiar DETAILS pill style:
+                    on = extended breakdowns and full numbers, off = compact values-only. */}
                 <div className="mt-4 flex items-center justify-between px-2 py-2 bg-bg-input/30 rounded-lg border border-border/20">
                     <div className="text-3xs text-text-muted font-bold uppercase tracking-widest opacity-60">Display Format</div>
-                    <div className="flex bg-bg-input/50 rounded-lg p-0.5 border border-border/30">
-                        <button
-                            onClick={() => setIsCompactStats(true)}
-                            className={cn(
-                                "px-3 py-1 rounded text-4xs font-bold transition-all",
-                                isCompactStats ? "bg-accent-primary text-white shadow-sm" : "text-text-muted hover:text-text-primary"
-                            )}
-                        >
-                            Compact
-                        </button>
-                        <button
-                            onClick={() => setIsCompactStats(false)}
-                            className={cn(
-                                "px-3 py-1 rounded text-4xs font-bold transition-all",
-                                !isCompactStats ? "bg-accent-primary text-white shadow-sm" : "text-text-muted hover:text-text-primary"
-                            )}
-                        >
-                            Extended
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => setIsCompactStats(!isCompactStats)}
+                        aria-pressed={!isCompactStats}
+                        title={isCompactStats ? 'Show detailed breakdowns and full numbers' : 'Hide details (compact view)'}
+                        className={cn(
+                            "p-1 px-2 rounded border transition-all flex items-center gap-1 active:scale-95",
+                            !isCompactStats
+                                ? "bg-orange-500/20 border-orange-500/50 text-orange-300"
+                                : "bg-orange-500/10 hover:bg-orange-500/20 border-orange-500/30 text-orange-400 hover:text-orange-300"
+                        )}
+                    >
+                        <Sparkles className={cn("w-2.5 h-2.5", !isCompactStats && "animate-pulse")} />
+                        <span className="text-5xs font-bold uppercase tracking-wider">Details</span>
+                    </button>
                 </div>
 
                 {/* Stat Goals: the desired end-state. Comparison rows show thumbs up/down as a
