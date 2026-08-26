@@ -105,6 +105,8 @@ export default function AppShell() {
     const { profile } = useProfile();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isSidebarPinned, setIsSidebarPinned] = usePersistentState('fm_sidebar_pinned', false);
+    // Collapsing the sidebar's Info section also hides the floating coffee pill below.
+    const [isInfoCollapsed, setIsInfoCollapsed] = usePersistentState('fm_info_collapsed', false);
     const [isStatsOpen, setIsStatsOpen] = useState(false);
     const [isHoveringCoffee, setIsHoveringCoffee] = useState(false);
     const [showVersionPopup, setShowVersionPopup] = useState(false);
@@ -327,6 +329,8 @@ export default function AppShell() {
                 onClose={() => { if (!isSidebarPinned) setIsSidebarOpen(false); }}
                 isPinned={isSidebarPinned}
                 onTogglePin={() => setIsSidebarPinned(prev => !prev)}
+                isInfoCollapsed={isInfoCollapsed}
+                onToggleInfo={() => setIsInfoCollapsed(prev => !prev)}
             />
 
             {/* Main Content Area */}
@@ -396,7 +400,9 @@ export default function AppShell() {
                     </div>
                 </div>
 
-                {/* Buy Me A Coffee - Fixed Floating Button */}
+                {/* Buy Me A Coffee - Fixed Floating Button (hidden when the sidebar's Info
+                    section is collapsed; that's the user's "leave me alone" switch) */}
+                {!isInfoCollapsed && (
                 <motion.a
                     href="https://www.buymeacoffee.com/1vcian"
                     target="_blank"
@@ -460,6 +466,7 @@ export default function AppShell() {
                         </AnimatePresence>
                     </div>
                 </motion.a>
+                )}
             </div>
 
             <AnimatePresence>
