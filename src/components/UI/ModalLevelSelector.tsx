@@ -27,9 +27,9 @@ export const ModalLevelSelector: React.FC<ModalLevelSelectorProps> = ({
     return (
         <div className={cn("space-y-1.5", className)}>
             <div className="flex items-center justify-between px-1">
-                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest leading-none">{label}</label>
+                <label className="text-3xs font-black text-text-muted uppercase tracking-widest leading-none">{label}</label>
                 <div className="flex items-center gap-1.5">
-                    <span className="text-[9px] font-black text-accent-primary bg-accent-primary/10 px-1.5 py-0.5 rounded uppercase tracking-tighter">MAX {maxLevel}</span>
+                    <span className="text-4xs font-black text-accent-primary bg-accent-primary/10 px-1.5 py-0.5 rounded uppercase tracking-tighter">MAX {maxLevel}</span>
                 </div>
             </div>
             <div className="relative flex items-center bg-bg-secondary/30 rounded-2xl border border-border p-1.5 gap-2 group transition-all hover:border-border/80 focus-within:border-accent-primary/50 shadow-inner">

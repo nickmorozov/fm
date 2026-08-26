@@ -173,7 +173,7 @@ function FeatureCard({ feature, stage }: { feature: FeatureUnlock; stage?: strin
                 <div className="text-sm text-text-muted flex items-center justify-between gap-2">
                     <span className="whitespace-nowrap overflow-hidden text-clip">{stage || (chips.length === 0 ? 'Available from the start' : 'Conditional')}</span>
                     {feature.forceLocked && (
-                        <span className="text-[10px] font-black uppercase tracking-tighter text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20 shrink-0">
+                        <span className="text-3xs font-black uppercase tracking-tighter text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20 shrink-0">
                             Locked / Off
                         </span>
                     )}
@@ -184,7 +184,7 @@ function FeatureCard({ feature, stage }: { feature: FeatureUnlock; stage?: strin
                         {chips.map(chip => (
                             <span
                                 key={chip}
-                                className="text-[10px] px-1.5 py-0.5 rounded bg-bg-tertiary border border-border text-text-secondary"
+                                className="text-3xs px-1.5 py-0.5 rounded bg-bg-tertiary border border-border text-text-secondary"
                             >
                                 {chip}
                             </span>

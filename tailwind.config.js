@@ -62,6 +62,15 @@ export default {
       fontFamily: {
         sans: ['Outfit', 'Inter', 'sans-serif'],
       },
+      // Sub-xs sizes in rem so browser zoom and OS font-size preferences scale them
+      // (the old text-[10px] arbitrary values ignored the user's font settings).
+      // Size-only, like arbitrary values: no line-height override, so layouts don't shift.
+      fontSize: {
+        '2xs': '0.6875rem', // 11px
+        '3xs': '0.625rem',  // 10px
+        '4xs': '0.5625rem', // 9px
+        '5xs': '0.5rem',    // 8px
+      },
       animation: {
         'hammer-swing': 'hammerSwing 3s ease-in-out infinite',
         'fade-in': 'fadeIn 0.3s ease-out',

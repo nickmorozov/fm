@@ -259,11 +259,11 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                 <div className="flex items-center gap-2">
                     <Timer className="w-4 h-4 text-accent-primary" />
                     <span className="text-xs font-bold text-text-primary uppercase tracking-wide">Skills Cycle</span>
-                    <span className="text-[10px] font-mono text-text-muted">CDR {pct(currentR)}</span>
+                    <span className="text-3xs font-mono text-text-muted">CDR {pct(currentR)}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     {headerStatus && (
-                        <span className={cn('text-[9px] font-bold font-mono px-1.5 py-0.5 rounded border', headerStatus.className)}>
+                        <span className={cn('text-4xs font-bold font-mono px-1.5 py-0.5 rounded border', headerStatus.className)}>
                             {headerStatus.label}
                         </span>
                     )}
@@ -276,7 +276,7 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                     {/* Battle length + current reduction */}
                     <div className="flex items-center gap-3 flex-wrap">
                         <div className="flex items-center gap-1.5 bg-bg-input/50 p-1 rounded border border-border/30">
-                            <span className="text-[10px] text-text-muted px-1 whitespace-nowrap">Battle length</span>
+                            <span className="text-3xs text-text-muted px-1 whitespace-nowrap">Battle length</span>
                             <Input
                                 type="number"
                                 step="1"
@@ -288,21 +288,21 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                                 }}
                                 className="w-14 h-7 text-center font-mono font-bold text-xs text-text-primary bg-bg-secondary/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
-                            <span className="text-[10px] text-text-muted pr-1">s</span>
+                            <span className="text-3xs text-text-muted pr-1">s</span>
                             {isGameDefault && (
-                                <span className="text-[9px] text-green-400/80 pr-1 whitespace-nowrap">(game default)</span>
+                                <span className="text-4xs text-green-400/80 pr-1 whitespace-nowrap">(game default)</span>
                             )}
                             {customLen !== null && configDuration !== null && customLen !== configDuration && (
                                 <button
                                     onClick={() => setCustomLen(null)}
-                                    className="text-[9px] text-accent-primary hover:underline pr-1"
+                                    className="text-4xs text-accent-primary hover:underline pr-1"
                                     title={`Reset to game default (${configDuration}s from PvpBaseConfig)`}
                                 >
                                     reset
                                 </button>
                             )}
                         </div>
-                        <span className="text-[10px] text-text-secondary font-mono">
+                        <span className="text-3xs text-text-secondary font-mono">
                             Your reduction: <span className="font-bold text-text-primary">{pct(currentR, 2)}</span>
                         </span>
                     </div>
@@ -310,7 +310,7 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                     {/* Combined recommendation */}
                     {combined && (
                         <div className={cn(
-                            'rounded p-2 border text-[11px] leading-snug',
+                            'rounded p-2 border text-2xs leading-snug',
                             currentOptimal
                                 ? 'bg-green-500/10 border-green-500/25 text-green-400'
                                 : 'bg-amber-500/10 border-amber-500/25 text-amber-400'
@@ -351,16 +351,16 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                             <div key={s.id} className="bg-bg-input/50 rounded p-2 border border-border/30">
                                 <div className="flex items-center justify-between gap-2 flex-wrap">
                                     <div className="flex items-center gap-1.5">
-                                        <span className={cn('text-[11px] font-bold', `text-rarity-${s.rarity.toLowerCase()}`)}>
+                                        <span className={cn('text-2xs font-bold', `text-rarity-${s.rarity.toLowerCase()}`)}>
                                             {prettyName(s.id)}
                                         </span>
-                                        <span className="text-[9px] font-mono text-text-muted">
+                                        <span className="text-4xs font-mono text-text-muted">
                                             CD {s.baseCd}s{s.duration > 0 ? ` · DUR ${s.duration}s` : ''}
                                         </span>
                                     </div>
                                     {s.isBuff ? (
                                         <span className={cn(
-                                            'text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border',
+                                            'text-4xs font-mono font-bold px-1.5 py-0.5 rounded border',
                                             s.coverage?.lastSecCovered
                                                 ? 'bg-green-500/15 text-green-400 border-green-500/30'
                                                 : 'bg-bg-secondary/50 text-text-secondary border-border/30'
@@ -368,11 +368,11 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                                             BUFF · {((s.coverage?.pct ?? 0) * 100).toFixed(0)}% uptime{s.coverage?.lastSecCovered ? ' · covers final second' : ''}
                                         </span>
                                     ) : s.current.inWindow ? (
-                                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border bg-green-500/15 text-green-400 border-green-500/30">
+                                        <span className="text-4xs font-mono font-bold px-1.5 py-0.5 rounded border bg-green-500/15 text-green-400 border-green-500/30">
                                             IN WINDOW · last {s.current.last.toFixed(1)}s · {s.current.count} casts
                                         </span>
                                     ) : (
-                                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border bg-amber-500/15 text-amber-400 border-amber-500/30">
+                                        <span className="text-4xs font-mono font-bold px-1.5 py-0.5 rounded border bg-amber-500/15 text-amber-400 border-amber-500/30">
                                             {s.nearest
                                                 ? `at ${pct(currentR)} → ${s.nearest.delta >= 0 ? '+' : '−'}${pct(Math.abs(s.nearest.delta))} to ${pct(s.nearest.window.from)}-${pct(s.nearest.window.to)}`
                                                 : `no window ≤ ${pct(SWEEP_MAX, 0)}`}
@@ -389,7 +389,7 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                                                     key={i}
                                                     title={`${w.casts} casts, final one in the last second`}
                                                     className={cn(
-                                                        'text-[9px] font-mono px-1.5 py-0.5 rounded border',
+                                                        'text-4xs font-mono px-1.5 py-0.5 rounded border',
                                                         active
                                                             ? 'bg-green-500/20 text-green-400 border-green-500/40 font-bold'
                                                             : 'bg-bg-secondary/60 text-text-secondary border-border/40'
@@ -408,12 +408,12 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                     {/* Timeline */}
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center justify-between gap-2">
-                            <span className="text-[9px] text-text-muted uppercase font-bold tracking-wide">Cast timeline</span>
+                            <span className="text-4xs text-text-muted uppercase font-bold tracking-wide">Cast timeline</span>
                             <div className="flex items-center gap-1">
                                 <button
                                     onClick={() => setTimelineMode('current')}
                                     className={cn(
-                                        'px-2 py-0.5 text-[9px] font-bold font-mono rounded border transition-colors',
+                                        'px-2 py-0.5 text-4xs font-bold font-mono rounded border transition-colors',
                                         timelineMode === 'current'
                                             ? 'bg-accent-primary text-black border-accent-primary'
                                             : 'bg-transparent text-text-muted border-border/40 hover:border-text-muted'
@@ -425,7 +425,7 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                                     <button
                                         onClick={() => setTimelineMode('target')}
                                         className={cn(
-                                            'px-2 py-0.5 text-[9px] font-bold font-mono rounded border transition-colors',
+                                            'px-2 py-0.5 text-4xs font-bold font-mono rounded border transition-colors',
                                             timelineMode === 'target'
                                                 ? 'bg-accent-primary text-black border-accent-primary'
                                                 : 'bg-transparent text-text-muted border-border/40 hover:border-text-muted'
@@ -442,7 +442,7 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                                 const lastT = times.length > 0 ? times[times.length - 1] : -1;
                                 return (
                                     <div key={s.id} className="flex items-center gap-1.5">
-                                        <span className={cn('w-20 shrink-0 whitespace-nowrap overflow-hidden text-clip text-right text-[9px] font-bold', `text-rarity-${s.rarity.toLowerCase()}`)}>
+                                        <span className={cn('w-20 shrink-0 whitespace-nowrap overflow-hidden text-clip text-right text-4xs font-bold', `text-rarity-${s.rarity.toLowerCase()}`)}>
                                             {prettyName(s.id)}
                                         </span>
                                         <div className="relative flex-1 h-5 rounded bg-bg-secondary/70 border border-border/30 overflow-hidden">
@@ -483,7 +483,7 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                             {/* axis */}
                             <div className="flex items-center gap-1.5">
                                 <span className="w-20 shrink-0" />
-                                <div className="relative flex-1 h-3 text-[8px] font-mono text-text-muted">
+                                <div className="relative flex-1 h-3 text-5xs font-mono text-text-muted">
                                     <span className="absolute left-0">0s</span>
                                     <span className="absolute" style={{ left: '50%', transform: 'translateX(-50%)' }}>{(T / 2).toFixed(0)}s</span>
                                     <span className="absolute" style={{ left: `${((T - 1) / T) * 100}%`, transform: 'translateX(-50%)' }} >{(T - 1).toFixed(0)}s</span>
@@ -494,7 +494,7 @@ export function SkillsCycle({ skills }: SkillsCycleProps) {
                     </div>
 
                     {/* Model footnote */}
-                    <p className="text-[9px] text-text-muted leading-snug">
+                    <p className="text-4xs text-text-muted leading-snug">
                         Engine model: first cast at {START_TIME}s (skill startup), then every eff. CD + active duration;
                         eff. CD = max({MIN_COOLDOWN}s, CD × (1 − reduction)). A skill is "aligned" when its final cast lands in
                         the last second [{(T - 1).toFixed(0)}-{T}s). Sweep: 0-{pct(SWEEP_MAX, 0)} in {pct(SWEEP_STEP)} steps.

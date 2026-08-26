@@ -244,13 +244,13 @@ export function SkillsPassivesPanel() {
                     <h2 className="text-lg sm:text-xl font-bold">Skill Passives</h2>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap justify-end">
-                    <span className="text-[10px] sm:text-xs font-normal text-text-muted mr-auto sm:mr-2">
+                    <span className="text-3xs sm:text-xs font-normal text-text-muted mr-auto sm:mr-2">
                         {ownedCount}/{totalSkills}
                     </span>
                     <button
                         onClick={isUndoVisible ? handleUndo : handleResetAll}
                         className={cn(
-                            "flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition-all border",
+                            "flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-3xs sm:text-xs font-semibold transition-all border",
                             isUndoVisible 
                                 ? "bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20" 
                                 : "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
@@ -343,7 +343,7 @@ export function SkillsPassivesPanel() {
                                 ) : (
                                     <Sparkles className="w-1/2 h-1/2 text-text-muted" />
                                 )}
-                                <span className="absolute inset-x-1 bottom-[8%] rounded-full bg-black/75 text-center font-black tabular-nums text-white text-[10px] leading-tight">
+                                <span className="absolute inset-x-1 bottom-[8%] rounded-full bg-black/75 text-center font-black tabular-nums text-white text-3xs leading-tight">
                                     {owned ? `Lv${level}` : '0'}
                                 </span>
                             </div>
@@ -351,7 +351,7 @@ export function SkillsPassivesPanel() {
                             <div className="flex items-center gap-0.5 min-w-0">
                                 <button
                                     onClick={() => handleLevelChange(id, level - 1)}
-                                    className="flex-1 min-w-0 rounded bg-bg-input/60 hover:bg-bg-input text-text-muted hover:text-white text-[13px] font-black leading-none py-1 pointer-coarse:py-2 shrink-0 basis-5"
+                                    className="flex-1 min-w-0 rounded bg-bg-input/60 hover:bg-bg-input text-text-muted hover:text-white text-[0.8125rem] font-black leading-none py-1 pointer-coarse:py-2 shrink-0 basis-5"
                                     title="Level down"
                                 >
                                     -
@@ -360,13 +360,13 @@ export function SkillsPassivesPanel() {
                                     type="number"
                                     value={level}
                                     onChange={(e) => handleLevelChange(id, parseInt(e.target.value) || 0)}
-                                    className="w-full min-w-0 flex-[3] bg-black/40 border-white/10 text-center font-bold tabular-nums px-0 py-1 h-auto text-[13px]"
+                                    className="w-full min-w-0 flex-[3] bg-black/40 border-white/10 text-center font-bold tabular-nums px-0 py-1 h-auto text-[0.8125rem]"
                                     max={maxLevel}
                                     min={0}
                                 />
                                 <button
                                     onClick={() => handleLevelChange(id, level + 1)}
-                                    className="flex-1 min-w-0 rounded bg-bg-input/60 hover:bg-bg-input text-text-muted hover:text-white text-[13px] font-black leading-none py-1 pointer-coarse:py-2 shrink-0 basis-5"
+                                    className="flex-1 min-w-0 rounded bg-bg-input/60 hover:bg-bg-input text-text-muted hover:text-white text-[0.8125rem] font-black leading-none py-1 pointer-coarse:py-2 shrink-0 basis-5"
                                     title="Level up"
                                 >
                                     +
@@ -379,10 +379,10 @@ export function SkillsPassivesPanel() {
                                 player asks before spending on a level. A skill at 0 shows a dash
                                 rather than a zero, because it is not contributing at all. */}
                             <div className="flex items-center justify-between gap-1 tabular-nums leading-tight">
-                                <span className="min-w-0 text-[9px] font-bold text-red-400" title={stats ? `Passive damage: ${Math.round(stats.damage).toLocaleString()}` : 'No passive damage at level 0'}>
+                                <span className="min-w-0 text-4xs font-bold text-red-400" title={stats ? `Passive damage: ${Math.round(stats.damage).toLocaleString()}` : 'No passive damage at level 0'}>
                                     {stats ? formatCompactNumber(stats.damage) : '-'}
                                 </span>
-                                <span className="min-w-0 text-[9px] font-bold text-green-400" title={stats ? `Passive health: ${Math.round(stats.health).toLocaleString()}` : 'No passive health at level 0'}>
+                                <span className="min-w-0 text-4xs font-bold text-green-400" title={stats ? `Passive health: ${Math.round(stats.health).toLocaleString()}` : 'No passive health at level 0'}>
                                     {stats ? formatCompactNumber(stats.health) : '-'}
                                 </span>
                             </div>

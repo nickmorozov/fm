@@ -202,7 +202,7 @@ export function ClanSyncPanel() {
 
                     {/* Verifiable rather than promised: the clock the publisher actually ran on. */}
                     {on && clan.status === 'ready' && (
-                        <p className="mt-1 text-[11px] text-text-secondary/80">
+                        <p className="mt-1 text-2xs text-text-secondary/80">
                             Published {relativeTime(clan.share.publishedAt)}
                             {clan.share.status === 'pending' && ' · a change is waiting to be sent'}
                             {clan.share.status === 'publishing' && ' · sending now'}
@@ -213,7 +213,7 @@ export function ClanSyncPanel() {
                     {failure && (
                         <p
                             role="status"
-                            className="mt-2 flex items-start gap-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-[11px] text-red-200"
+                            className="mt-2 flex items-start gap-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-2xs text-red-200"
                         >
                             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                             <span>
@@ -231,7 +231,7 @@ export function ClanSyncPanel() {
                         <div role="status" className="mt-3 rounded-lg border border-accent-primary/40 bg-accent-primary/5 p-2.5">
                             <div className="flex items-start gap-2">
                                 <ArrowDownToLine className="w-3.5 h-3.5 shrink-0 mt-0.5 text-accent-primary" />
-                                <p className="min-w-0 flex-1 text-[11px] text-text-secondary leading-relaxed">
+                                <p className="min-w-0 flex-1 text-2xs text-text-secondary leading-relaxed">
                                     <span className="font-bold text-text-primary">
                                         Your clan tech tree was updated from {clanName ?? 'your clan'}.
                                     </span>{' '}

@@ -128,16 +128,16 @@ function WaveBreakdownCompact({ result }: { result: BattleResult }) {
                         <div className="w-8 h-1 bg-surface-tertiary rounded-full mt-1 overflow-hidden mb-1">
                             <div className={`h-full ${bgColor}`} style={{ width: `${healthPercent}%` }} />
                         </div>
-                        <span className="text-[10px] text-text-tertiary">{enemyCount} enemies</span>
+                        <span className="text-3xs text-text-tertiary">{enemyCount} enemies</span>
 
                         {/* Damage Stats Display */}
                         <div className="flex flex-col gap-0.5 mt-1 border-t border-border pt-1 w-full text-center">
                             {wave.enemies.map((e, eIdx) => (
-                                <div key={eIdx} className="text-[9px] text-text-secondary leading-tight whitespace-nowrap">
+                                <div key={eIdx} className="text-4xs text-text-secondary leading-tight whitespace-nowrap">
                                     <span className={e.isRanged ? "text-blue-300" : "text-red-300"}>
                                         {formatNumber(e.damagePerHit)}
                                     </span>
-                                    {e.isRanged && <span className="text-[8px] ml-0.5 opacity-70">(R)</span>}
+                                    {e.isRanged && <span className="text-5xs ml-0.5 opacity-70">(R)</span>}
                                 </div>
                             ))}
                         </div>
@@ -491,7 +491,7 @@ function MainBattleView({
                     </h2>
                     <div className="flex items-center gap-4">
                         {isSimulating && (
-                            <div className="flex items-center gap-2 text-[10px] text-accent-primary animate-pulse bg-surface-secondary px-2 py-1 rounded-full border border-accent-primary/20">
+                            <div className="flex items-center gap-2 text-3xs text-accent-primary animate-pulse bg-surface-secondary px-2 py-1 rounded-full border border-accent-primary/20">
                                 <div className="w-2 h-2 rounded-full border-2 border-current border-t-transparent animate-spin" />
                                 {Math.round((simProgress.current / simProgress.total) * 100)}%
                             </div>
@@ -783,7 +783,7 @@ function DungeonView({
                     {maxLevel >= 0 && (
                         <div className="flex items-center gap-3">
                             {isSimulating && (
-                                <div className="flex items-center gap-2 text-[10px] text-accent-primary animate-pulse bg-surface-secondary px-2 py-1 rounded-full border border-accent-primary/20">
+                                <div className="flex items-center gap-2 text-3xs text-accent-primary animate-pulse bg-surface-secondary px-2 py-1 rounded-full border border-accent-primary/20">
                                     <div className="w-2 h-2 rounded-full border-2 border-current border-t-transparent animate-spin" />
                                     Simulating 1,000+ battles
                                 </div>
@@ -814,7 +814,7 @@ function DungeonView({
                                         <button
                                             key={lvl}
                                             onClick={() => setSelectedLevel(lvl)}
-                                            className={`h-8 rounded text-[10px] font-medium transition-all relative flex items-center justify-center
+                                            className={`h-8 rounded text-3xs font-medium transition-all relative flex items-center justify-center
                                                 ${style.bg} ${style.text} ${style.border}
                                                 ${isSelected ? 'shadow-md ring-2 ring-accent-primary ring-offset-2 ring-offset-surface-secondary' : 'hover:brightness-110'}
                                                 ${isMax ? 'ring-2 ring-purple-500 ring-offset-1 ring-offset-surface-secondary z-10' : ''}
@@ -917,7 +917,7 @@ function ResultPanel({ result, onRecalculate, isRecalculating, onShowBattle }: {
                                 )}
                             </button>
                         </div>
-                        <p className="text-[10px] text-text-muted mt-1 text-center">
+                        <p className="text-3xs text-text-muted mt-1 text-center">
                             More runs = more accurate (10-100000)
                         </p>
                     </div>
@@ -1155,7 +1155,7 @@ export default function ProgressPrediction() {
                             <div className="bg-accent-primary/10 border border-accent-primary/40 rounded-2xl px-6 py-3 flex items-center gap-6 shadow-[0_0_20px_rgba(var(--accent-primary-rgb),0.2)] animate-pulse">
                                 <div className="relative">
                                     <div className="w-10 h-10 rounded-full border-4 border-accent-primary/30 border-t-accent-primary animate-spin" />
-                                    <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-accent-primary">
+                                    <div className="absolute inset-0 flex items-center justify-center text-3xs font-bold text-accent-primary">
                                         {Math.round((simProgress.current / simProgress.total) * 100)}%
                                     </div>
                                 </div>
@@ -1169,7 +1169,7 @@ export default function ProgressPrediction() {
                                             style={{ width: `${(simProgress.current / simProgress.total) * 100}%` }}
                                         />
                                     </div>
-                                    <div className="text-[10px] text-text-muted mt-1.5 uppercase font-bold tracking-widest flex justify-between">
+                                    <div className="text-3xs text-text-muted mt-1.5 uppercase font-bold tracking-widest flex justify-between">
                                         <span>Analyzing strategy</span>
                                         <span>{simProgress.current} / {simProgress.total}</span>
                                     </div>

@@ -324,11 +324,11 @@ export default function Items() {
                                             return (
                                                 <div className="mt-4 pt-4 border-t border-border/30 grid grid-cols-2 gap-2">
                                                     <div className="bg-bg-input/50 p-2 rounded border border-border/30 flex flex-col">
-                                                        <span className="text-[10px] text-text-muted uppercase font-bold">Range</span>
+                                                        <span className="text-3xs text-text-muted uppercase font-bold">Range</span>
                                                         <span className="font-mono font-bold text-text-primary">{weaponData.AttackRange?.toFixed(1) || '0.0'}</span>
                                                     </div>
                                                     <div className="bg-bg-input/50 p-2 rounded border border-border/30 flex flex-col">
-                                                        <span className="text-[10px] text-text-muted uppercase font-bold">Windup</span>
+                                                        <span className="text-3xs text-text-muted uppercase font-bold">Windup</span>
                                                         <div className="flex items-center gap-1.5 text-accent-secondary font-mono font-bold">
                                                             <Activity className="w-3 h-3" />
                                                             {weaponData.WindupTime ? weaponData.WindupTime.toFixed(2) + 's' : 'N/A'}
@@ -338,23 +338,23 @@ export default function Items() {
                                                         "bg-bg-input/50 p-2 rounded border border-border/30 flex flex-col",
                                                         projectileData ? "col-span-1" : "col-span-2"
                                                     )}>
-                                                        <span className="text-[10px] text-text-muted uppercase font-bold">Is Aiming</span>
+                                                        <span className="text-3xs text-text-muted uppercase font-bold">Is Aiming</span>
                                                         <span className="font-mono font-bold text-text-primary">{weaponData.IsAiming ? 'Yes' : 'No'}</span>
                                                     </div>
                                                     {projectileData && (
                                                         <div className="bg-bg-input/50 p-2 rounded border border-border/30 flex flex-col">
-                                                            <span className="text-[10px] text-text-muted uppercase font-bold">Gravity Affected</span>
+                                                            <span className="text-3xs text-text-muted uppercase font-bold">Gravity Affected</span>
                                                             <span className="font-mono font-bold text-text-primary">{projectileData.AffectedByGravity ? 'Yes' : 'No'}</span>
                                                         </div>
                                                     )}
                                                     {projectileData && (
                                                         <>
                                                             <div className="bg-bg-input/50 p-2 rounded border border-border/30 flex flex-col">
-                                                                <span className="text-[10px] text-text-muted uppercase font-bold">Proj Speed</span>
+                                                                <span className="text-3xs text-text-muted uppercase font-bold">Proj Speed</span>
                                                                 <span className="font-mono font-bold text-text-primary">{projectileData.Speed || 'N/A'}</span>
                                                             </div>
                                                             <div className="bg-bg-input/50 p-2 rounded border border-border/30 flex flex-col">
-                                                                <span className="text-[10px] text-text-muted uppercase font-bold">Proj Radius</span>
+                                                                <span className="text-3xs text-text-muted uppercase font-bold">Proj Radius</span>
                                                                 <span className="font-mono font-bold text-text-primary">{projectileData.CollisionRadius?.toFixed(2) || 'N/A'}</span>
                                                             </div>
                                                         </>
@@ -371,7 +371,7 @@ export default function Items() {
                                                                 }
                                                             });
                                                         }}
-                                                        className="mt-2 w-full flex items-center justify-center gap-2 bg-accent-primary/10 hover:bg-accent-primary/20 text-accent-primary py-2 rounded-lg text-[9px] font-bold uppercase transition-all ring-1 ring-accent-primary/30 col-span-2"
+                                                        className="mt-2 w-full flex items-center justify-center gap-2 bg-accent-primary/10 hover:bg-accent-primary/20 text-accent-primary py-2 rounded-lg text-4xs font-bold uppercase transition-all ring-1 ring-accent-primary/30 col-span-2"
                                                     >
                                                         <Zap className="w-3 h-3" />
                                                         Show Breakpoints Table

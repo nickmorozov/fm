@@ -580,7 +580,7 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                 <div className="px-3 py-2 sm:px-4 sm:py-3 border-b border-gray-800 bg-[#12121a] flex justify-between items-center gap-2">
                     <div className="flex-1 min-w-0">
                         <h2 className="text-base sm:text-lg font-bold text-white whitespace-nowrap overflow-hidden text-clip">{getTitle()}</h2>
-                        <div className="text-[10px] sm:text-xs text-gray-400 flex gap-2 sm:gap-3 flex-wrap">
+                        <div className="text-3xs sm:text-xs text-gray-400 flex gap-2 sm:gap-3 flex-wrap">
                             <span className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 {(time || 0).toFixed(1)}s
@@ -603,7 +603,7 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                                 <button
                                     key={s}
                                     onClick={() => setSpeed(s)}
-                                    className={`px-1.5 py-1 rounded text-[10px] sm:text-xs font-bold transition-all ${speed === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                                    className={`px-1.5 py-1 rounded text-3xs sm:text-xs font-bold transition-all ${speed === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
                                 >
                                     {s}x
                                 </button>
@@ -739,7 +739,7 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                                 {combatStats.buffDamage > 0 && (
                                     <span className="text-green-400 font-bold">
                                         → {fmt(combatStats.playerDamageWithBuff)}
-                                        <span className="text-green-300 text-[10px] ml-1">(+{fmt(combatStats.buffDamage)})</span>
+                                        <span className="text-green-300 text-3xs ml-1">(+{fmt(combatStats.buffDamage)})</span>
                                     </span>
                                 )}
                             </div>
@@ -753,7 +753,7 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                                     <Zap className="w-3 h-3 text-purple-400" />
                                     <span className="text-gray-400">Skill Dmg:</span>
                                     <span className="text-purple-300 font-bold">+{combatStats.skillDmgMultiTotal.toFixed(1)}%</span>
-                                    <span className="text-gray-500 text-[10px]">
+                                    <span className="text-gray-500 text-3xs">
                                         ({combatStats.skillDmgMultiFromTree.toFixed(1)}% tree, {combatStats.skillDmgMultiFromStats.toFixed(1)}% stats)
                                     </span>
                                 </div>
@@ -848,13 +848,13 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                                                 className="w-full h-full"
                                             />
                                             {/* Buff Type Indicator */}
-                                            <div className={`absolute bottom-0 right-0 text-[6px] font-bold px-0.5 rounded-tl flex items-center justify-center ${buff.bonusMaxHealth > 0 ? 'bg-green-600' : 'bg-red-600'
+                                            <div className={`absolute bottom-0 right-0 text-[0.375rem] font-bold px-0.5 rounded-tl flex items-center justify-center ${buff.bonusMaxHealth > 0 ? 'bg-green-600' : 'bg-red-600'
                                                 } text-white`}>
                                                 {buff.bonusMaxHealth > 0 ? 'HP' : 'DMG'}
                                             </div>
                                         </div>
                                         {/* Tooltip */}
-                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 border border-gray-700 rounded text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 border border-gray-700 rounded text-3xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
                                             <div className="font-bold text-yellow-400">{buff.skillId}</div>
                                             {buff.bonusMaxHealth > 0 && <span className="block text-green-400">+{fmt(buff.bonusMaxHealth)} HP</span>}
                                             {buff.bonusDamage > 0 && <span className="block text-red-400">+{fmt(buff.bonusDamage)} DMG</span>}
@@ -865,7 +865,7 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                         </div>
 
                         {/* HP Text (Real Values) */}
-                        <span className="text-[9px] sm:text-[10px] font-mono text-gray-300 mb-1 font-bold drop-shadow-md">
+                        <span className="text-4xs sm:text-3xs font-mono text-gray-300 mb-1 font-bold drop-shadow-md">
                             {Math.round(snapshot.player?.health || 0).toLocaleString()} / {Math.round(snapshot.player?.maxHealth || 0).toLocaleString()}
                         </span>
 
@@ -966,7 +966,7 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                                         </div>
 
                                         {/* HP Text */}
-                                        <span className="text-[9px] sm:text-[10px] text-gray-200 font-bold drop-shadow-md leading-none bg-black/60 px-1 rounded-sm mt-0.5 border border-black/20">{fmt(enemy.health)}</span>
+                                        <span className="text-4xs sm:text-3xs text-gray-200 font-bold drop-shadow-md leading-none bg-black/60 px-1 rounded-sm mt-0.5 border border-black/20">{fmt(enemy.health)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -1009,41 +1009,41 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                         <div className="grid grid-cols-3 gap-2 text-center">
                             {/* Row 1: Offensive Basics */}
                             <div className="flex flex-col items-center">
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-yellow-500" /> Crit %</div>
+                                <div className="text-3xs text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-yellow-500" /> Crit %</div>
                                 <div className="text-xs font-bold text-yellow-400">{((snapshot.playerStats?.criticalChance || 0) * 100).toFixed(0)}%</div>
                             </div>
                             <div className="flex flex-col items-center">
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-red-500" /> Crit Dmg</div>
+                                <div className="text-3xs text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-red-500" /> Crit Dmg</div>
                                 <div className="text-xs font-bold text-red-400">x{(snapshot.playerStats?.criticalDamage || 1).toFixed(1)}</div>
                             </div>
                             <div className="flex flex-col items-center">
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1"><Sword className="w-3 h-3 text-orange-500" /> Double</div>
+                                <div className="text-3xs text-gray-500 flex items-center gap-1"><Sword className="w-3 h-3 text-orange-500" /> Double</div>
                                 <div className="text-xs font-bold text-orange-400">{((snapshot.playerStats?.doubleDamageChance || 0) * 100).toFixed(0)}%</div>
                             </div>
                             <div className="flex flex-col items-center">
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3 text-blue-300" /> Atk Spd</div>
+                                <div className="text-3xs text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3 text-blue-300" /> Atk Spd</div>
                                 <div className="text-xs font-bold text-blue-300">x{(snapshot.playerStats?.attackSpeedMultiplier || 1).toFixed(2)}</div>
                             </div>
 
                             {/* Row 2: Defensive & Utility */}
                             <div className="flex flex-col items-center">
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1"><Shield className="w-3 h-3 text-blue-500" /> Block</div>
+                                <div className="text-3xs text-gray-500 flex items-center gap-1"><Shield className="w-3 h-3 text-blue-500" /> Block</div>
                                 <div className="text-xs font-bold text-blue-400">{((snapshot.playerStats?.blockChance || 0) * 100).toFixed(0)}%</div>
                             </div>
                             <div className="flex flex-col items-center">
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1"><Heart className="w-3 h-3 text-pink-500" /> Steal</div>
+                                <div className="text-3xs text-gray-500 flex items-center gap-1"><Heart className="w-3 h-3 text-pink-500" /> Steal</div>
                                 <div className="text-xs font-bold text-pink-400">{((snapshot.playerStats?.lifeSteal || 0) * 100).toFixed(1)}%</div>
                             </div>
                             <div className="flex flex-col items-center">
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1"><Heart className="w-3 h-3 text-green-500" /> Regen</div>
+                                <div className="text-3xs text-gray-500 flex items-center gap-1"><Heart className="w-3 h-3 text-green-500" /> Regen</div>
                                 <div className="text-xs font-bold text-green-400">{((snapshot.playerStats?.healthRegen || 0) * 100).toFixed(1)}%</div>
                             </div>
                             <div className="flex flex-col items-center">
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-purple-400" /> Skill Dmg</div>
+                                <div className="text-3xs text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-purple-400" /> Skill Dmg</div>
                                 <div className="text-xs font-bold text-purple-400">+{((snapshot.playerStats?.skillDamageMultiplier || 0) * 100).toFixed(0)}%</div>
                             </div>
                             <div className="flex flex-col items-center">
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3 text-purple-400" /> Skill CD</div>
+                                <div className="text-3xs text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3 text-purple-400" /> Skill CD</div>
                                 <div className="text-xs font-bold text-purple-400">-{((snapshot.playerStats?.skillCooldownReduction || 0) * 100).toFixed(0)}%</div>
                             </div>
                         </div>
@@ -1090,7 +1090,7 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                                             />
                                         ) : (
                                             /* Fallback text */
-                                            <span className="text-[10px] text-gray-400 font-bold">{skill.id.substring(0, 3)}</span>
+                                            <span className="text-3xs text-gray-400 font-bold">{skill.id.substring(0, 3)}</span>
                                         )}
                                         {isCooldown && (
                                             <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-lg">
@@ -1107,11 +1107,11 @@ export const BattleVisualizerModal: React.FC<BattleVisualizerModalProps> = ({
                     {/* Compact Log */}
                     <div className="max-h-32 sm:max-h-40 overflow-y-auto px-3 py-2 border-t border-gray-800/50 flex flex-col-reverse">
                         {battleLogs.length === 0 ? (
-                            <p className="text-[10px] text-gray-600 italic text-center">Press play to start battle</p>
+                            <p className="text-3xs text-gray-600 italic text-center">Press play to start battle</p>
                         ) : (
                             <div className="space-y-0.5">
                                 {battleLogs.map((log, i) => ( // Show ALL logs
-                                    <div key={i} className="text-[10px] text-gray-400 font-mono whitespace-nowrap overflow-hidden text-clip">{log}</div>
+                                    <div key={i} className="text-3xs text-gray-400 font-mono whitespace-nowrap overflow-hidden text-clip">{log}</div>
                                 ))}
                             </div>
                         )}

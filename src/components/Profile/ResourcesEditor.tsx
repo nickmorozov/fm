@@ -18,7 +18,7 @@ function ResourceCard({ icon, label, value, onChange, ring, hint }: {
                 </div>
                 <div className="min-w-0">
                     <div className="text-xs font-bold whitespace-nowrap overflow-hidden text-clip leading-tight">{label}</div>
-                    {hint && <div className="text-[9px] text-text-muted whitespace-nowrap overflow-hidden text-clip">{hint}</div>}
+                    {hint && <div className="text-4xs text-text-muted whitespace-nowrap overflow-hidden text-clip">{hint}</div>}
                 </div>
             </div>
             <div className="flex items-center justify-between bg-bg-input rounded-lg border border-border">
@@ -51,7 +51,7 @@ function ResourceCard({ icon, label, value, onChange, ring, hint }: {
 }
 
 function SectionTitle({ children }: { children: ReactNode }) {
-    return <h3 className="text-[11px] font-black uppercase tracking-widest text-accent-primary/90 border-b border-white/5 pb-2 mb-3">{children}</h3>;
+    return <h3 className="text-2xs font-black uppercase tracking-widest text-accent-primary/90 border-b border-white/5 pb-2 mb-3">{children}</h3>;
 }
 
 const EGG_RARITIES: { key: string; ring: string }[] = [
@@ -134,7 +134,7 @@ export function ResourcesEditor() {
                 </div>
             </div>
 
-            <p className="text-[11px] text-text-muted flex items-start gap-2">
+            <p className="text-2xs text-text-muted flex items-start gap-2">
                 <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-accent-primary" />
                 These are the same values the calculators use. Edit them here or inside a calculator, they stay in sync.
                 (Coins and Guild Potions aren&apos;t consumed by any calculator yet.)

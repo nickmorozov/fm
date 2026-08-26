@@ -176,11 +176,11 @@ export default function Skins() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-tighter block mb-1">XP Required per Level</span>
+                                    <span className="text-3xs font-bold text-text-muted uppercase tracking-tighter block mb-1">XP Required per Level</span>
                                     <div className="grid grid-cols-2 gap-2">
                                         {data.GoodSkinsLevelExperience.map((exp: number, i: number) => (
                                             <div key={i} className="bg-bg-input/50 rounded p-2 border border-border/20 flex justify-between items-center">
-                                                <span className="text-[10px] text-text-muted font-bold">Lv.{i + 1} → {i + 2}</span>
+                                                <span className="text-3xs text-text-muted font-bold">Lv.{i + 1} → {i + 2}</span>
                                                 <span className="text-xs font-mono font-bold text-accent-secondary">{exp}</span>
                                             </div>
                                         ))}
@@ -313,10 +313,10 @@ function SkinCard({ skin, bgStyle, timing, onShowBreakpoints }: {
                             {skin.SkinId.Type}
                         </span>
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[10px] text-text-muted bg-bg-input px-1.5 py-0.5 rounded border border-border/30">
+                            <span className="text-3xs text-text-muted bg-bg-input px-1.5 py-0.5 rounded border border-border/30">
                                 ID: {skin.SkinId.Idx}
                             </span>
-                            <span className="text-[9px] text-text-muted uppercase border border-border/20 px-1 rounded">
+                            <span className="text-4xs text-text-muted uppercase border border-border/20 px-1 rounded">
                                 Stats: {skin.MaxStatCount}
                             </span>
                         </div>
@@ -327,14 +327,14 @@ function SkinCard({ skin, bgStyle, timing, onShowBreakpoints }: {
                                     <div className="flex items-center justify-between gap-1">
                                         <div className="flex items-center gap-1 text-orange-400">
                                             <Sword className="w-2.5 h-2.5" />
-                                            <span className="text-[9px] font-bold uppercase">Melee: {timing.melee.windup.toFixed(2)}s</span>
+                                            <span className="text-4xs font-bold uppercase">Melee: {timing.melee.windup.toFixed(2)}s</span>
                                         </div>
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onShowBreakpoints?.(timing.melee!.windup, timing.melee!.duration);
                                             }}
-                                            className="px-1.5 py-0.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 text-[8px] font-bold rounded border border-orange-500/30 transition-all"
+                                            className="px-1.5 py-0.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 text-5xs font-bold rounded border border-orange-500/30 transition-all"
                                         >
                                             Breakpoints
                                         </button>
@@ -344,14 +344,14 @@ function SkinCard({ skin, bgStyle, timing, onShowBreakpoints }: {
                                     <div className="flex items-center justify-between gap-1">
                                         <div className="flex items-center gap-1 text-cyan-400">
                                             <Zap className="w-2.5 h-2.5" />
-                                            <span className="text-[9px] font-bold uppercase">Ranged: {timing.ranged.windup.toFixed(2)}s</span>
+                                            <span className="text-4xs font-bold uppercase">Ranged: {timing.ranged.windup.toFixed(2)}s</span>
                                         </div>
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onShowBreakpoints?.(timing.ranged!.windup, timing.ranged!.duration);
                                             }}
-                                            className="px-1.5 py-0.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 text-[8px] font-bold rounded border border-cyan-500/30 transition-all"
+                                            className="px-1.5 py-0.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 text-5xs font-bold rounded border border-cyan-500/30 transition-all"
                                         >
                                             Breakpoints
                                         </button>

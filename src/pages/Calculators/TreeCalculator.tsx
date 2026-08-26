@@ -97,7 +97,7 @@ const ScheduleItem = React.memo(({
 
                 <div className="flex flex-col items-center shrink-0 w-8">
                     <div className={cn(
-                        "text-[10px] font-bold w-full text-center py-0.5 rounded border mb-2",
+                        "text-3xs font-bold w-full text-center py-0.5 rounded border mb-2",
                         entry.isInvalid ? "text-red-400 bg-red-500/10 border-red-500/20" : "text-text-muted bg-white/5 border-white/5"
                     )}>#{idx + 1}</div>
                     <div className="w-10 h-10 shrink-0 rounded-lg overflow-hidden border border-white/5 bg-black/20">
@@ -114,7 +114,7 @@ const ScheduleItem = React.memo(({
                 <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-0.5">
                         <span className={cn("text-xs font-black uppercase tracking-tight", isStartWar ? "text-accent-primary" : "text-text-muted")}>START</span>
-                        <div className="flex items-center gap-1 text-[10px] font-mono font-bold text-white bg-black/30 px-1.5 rounded">
+                        <div className="flex items-center gap-1 text-3xs font-mono font-bold text-white bg-black/30 px-1.5 rounded">
                             <Clock size={10} className="text-accent-primary" />
                             {formatScheduleTime(entry.startDate)}
                         </div>
@@ -123,7 +123,7 @@ const ScheduleItem = React.memo(({
                         {entry.step.type === 'delay' ? `Delay (+${formatTime(entry.step.delayMinutes! * 60)})` : entry.nodeName}
                     </div>
                     {entry.step.type === 'node' && (
-                        <div className="text-[9px] text-text-muted flex items-center gap-1 mt-1">
+                        <div className="text-4xs text-text-muted flex items-center gap-1 mt-1">
                             <span className="bg-white/5 px-1 rounded">Lv.{entry.fromLevel} → {entry.toLevel}</span>
                             <span>•</span>
                             <span className="whitespace-nowrap overflow-hidden text-clip">{entry.step.tree === 'SkillsPetTech' ? 'SPT' : entry.step.tree}</span>
@@ -139,8 +139,8 @@ const ScheduleItem = React.memo(({
             )}>
                 <div className="flex justify-between items-start mb-2">
                     <div className="flex flex-col">
-                        <span className={cn("text-[10px] font-black uppercase tracking-tight", isStopWar ? "text-accent-primary" : "text-text-muted")}>FINISH</span>
-                        <div className="flex items-center gap-1 text-[10px] font-mono font-bold text-white bg-black/30 px-1.5 rounded w-fit">
+                        <span className={cn("text-3xs font-black uppercase tracking-tight", isStopWar ? "text-accent-primary" : "text-text-muted")}>FINISH</span>
+                        <div className="flex items-center gap-1 text-3xs font-mono font-bold text-white bg-black/30 px-1.5 rounded w-fit">
                             <CheckCircle2 size={10} className="text-accent-secondary" />
                             {formatScheduleTime(entry.endDate)}
                             {isRunning && (
@@ -149,7 +149,7 @@ const ScheduleItem = React.memo(({
                                 </span>
                             )}
                             {entry.startDate.getDate() !== entry.endDate.getDate() && (
-                                <span className="text-[8px] text-accent-secondary ml-0.5">+{Math.ceil((entry.endDate.getTime() - entry.startDate.getTime()) / 86400000)}d</span>
+                                <span className="text-5xs text-accent-secondary ml-0.5">+{Math.ceil((entry.endDate.getTime() - entry.startDate.getTime()) / 86400000)}d</span>
                             )}
                         </div>
                     </div>
@@ -159,12 +159,12 @@ const ScheduleItem = React.memo(({
                             +{entry.points.toLocaleString()} pts
                             {isStopWar && <Trophy size={12} className="animate-bounce" />}
                         </div>
-                        {isStopWar && <span className="text-[7px] font-black bg-accent-primary text-black px-1 rounded uppercase tracking-tighter">WAR BONUS</span>}
+                        {isStopWar && <span className="text-[0.4375rem] font-black bg-accent-primary text-black px-1 rounded uppercase tracking-tighter">WAR BONUS</span>}
                     </div>
                 </div>
 
                 <div className="mt-auto flex justify-between items-center gap-4">
-                    <div className="flex items-center gap-2 text-[10px] font-mono text-text-muted">
+                    <div className="flex items-center gap-2 text-3xs font-mono text-text-muted">
                         <div className="flex items-center gap-1"><Timer size={10} />{formatTime(entry.duration || entry.delaySeconds)}</div>
                         {entry.potionCost > 0 && <div className="flex items-center gap-1"><SpriteIcon name="Potion" size={10} />{entry.potionCost}</div>}
                     </div>
@@ -198,14 +198,14 @@ const ScheduleItem = React.memo(({
             {isRunning && isEditMode && onShiftPlan && (
                 <div className="p-3 bg-accent-primary/5 border-t border-accent-primary/10 flex flex-wrap items-center gap-3">
                     <div className="flex flex-col">
-                        <span className="text-[8px] font-black text-accent-primary uppercase tracking-tighter">Sync Progress</span>
-                        <span className="text-[9px] text-text-muted">Set actual time remaining:</span>
+                        <span className="text-5xs font-black text-accent-primary uppercase tracking-tighter">Sync Progress</span>
+                        <span className="text-4xs text-text-muted">Set actual time remaining:</span>
                     </div>
 
                     <div className="flex items-center gap-1.5 ml-auto">
                         <div className="flex items-center gap-1 bg-black/40 border border-white/10 rounded px-2 py-1">
                             <div className="flex flex-col items-center">
-                                <label className="text-[7px] text-text-muted uppercase font-bold">Days</label>
+                                <label className="text-[0.4375rem] text-text-muted uppercase font-bold">Days</label>
                                 <input
                                     type="number"
                                     id={`rem-d-${idx}`}
@@ -215,7 +215,7 @@ const ScheduleItem = React.memo(({
                             </div>
                             <span className="text-text-muted opacity-30">:</span>
                             <div className="flex flex-col items-center">
-                                <label className="text-[7px] text-text-muted uppercase font-bold">Hrs</label>
+                                <label className="text-[0.4375rem] text-text-muted uppercase font-bold">Hrs</label>
                                 <input
                                     type="number"
                                     id={`rem-h-${idx}`}
@@ -225,7 +225,7 @@ const ScheduleItem = React.memo(({
                             </div>
                             <span className="text-text-muted opacity-30">:</span>
                             <div className="flex flex-col items-center">
-                                <label className="text-[7px] text-text-muted uppercase font-bold">Min</label>
+                                <label className="text-[0.4375rem] text-text-muted uppercase font-bold">Min</label>
                                 <input
                                     type="number"
                                     id={`rem-m-${idx}`}
@@ -256,7 +256,7 @@ const ScheduleItem = React.memo(({
 
             {/* Running Badge */}
             {isRunning && (
-                <div className="absolute top-0 right-0 z-10 px-2 py-0.5 bg-accent-primary text-black text-[8px] font-black uppercase rounded-bl-lg shadow-glow">
+                <div className="absolute top-0 right-0 z-10 px-2 py-0.5 bg-accent-primary text-black text-5xs font-black uppercase rounded-bl-lg shadow-glow">
                     RUNNING
                 </div>
             )}
@@ -288,13 +288,13 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-                <p className="text-[10px] text-text-muted leading-relaxed">
+                <p className="text-3xs text-text-muted leading-relaxed">
                     Select one or more priorities and generate an optimized upgrade plan automatically.
                 </p>
 
                 {/* Target Trees */}
                 <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-text-secondary uppercase">Target Trees</label>
+                    <label className="text-3xs font-bold text-text-secondary uppercase">Target Trees</label>
                     <div className="grid grid-cols-3 gap-2">
                         {[
                             { key: 'Forge', label: 'Forge', icon: <Hammer size={12} /> },
@@ -315,7 +315,7 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
                                         });
                                     }}
                                     className={cn(
-                                        "flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg border text-[10px] font-bold transition-all",
+                                        "flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg border text-3xs font-bold transition-all",
                                         isActive
                                             ? "border-accent-secondary bg-accent-secondary/10 text-accent-secondary"
                                             : "border-white/5 bg-bg-primary/30 text-text-muted hover:border-white/20"
@@ -331,7 +331,7 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
 
                 {/* Priority Toggles */}
                 <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-text-secondary uppercase">Priorities</label>
+                    <label className="text-3xs font-bold text-text-secondary uppercase">Priorities</label>
                     <div className="grid grid-cols-2 gap-2">
                         {[
                             { key: 'war_points', label: 'War Points', icon: <Trophy size={18} />, desc: 'Max points/time' },
@@ -359,8 +359,8 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
                                     )}
                                 >
                                     <span className={cn("", isActive ? "text-accent-primary" : "text-text-muted")}>{p.icon}</span>
-                                    <span className={cn("text-[10px] font-bold", isActive ? "text-accent-primary" : "text-text-secondary")}>{p.label}</span>
-                                    <span className="text-[8px] text-text-muted">{p.desc}</span>
+                                    <span className={cn("text-3xs font-bold", isActive ? "text-accent-primary" : "text-text-secondary")}>{p.label}</span>
+                                    <span className="text-5xs text-text-muted">{p.desc}</span>
                                 </button>
                             );
                         })}
@@ -370,7 +370,7 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
                 {/* Number of Steps */}
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-bold text-text-secondary uppercase">Number of Steps</label>
+                        <label className="text-3xs font-bold text-text-secondary uppercase">Number of Steps</label>
                         <span className="text-xs font-mono text-accent-primary font-bold">{autoNumSteps} / {planner.totalRemainingNodes}</span>
                     </div>
                     <input
@@ -386,7 +386,7 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
 
                 {/* Potion Budget */}
                 <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-text-secondary uppercase flex items-center gap-2">
+                    <label className="text-3xs font-bold text-text-secondary uppercase flex items-center gap-2">
                         <SpriteIcon name="Potion" size={12} />
                         Potion Budget
                     </label>
@@ -402,7 +402,7 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
                         {autoPotionBudget > 0 && (
                             <button
                                 onClick={() => setAutoPotionBudget(0)}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-text-muted hover:text-accent-primary"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-4xs text-text-muted hover:text-accent-primary"
                             >∞</button>
                         )}
                     </div>
@@ -410,14 +410,14 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
 
                 {/* Schedule Optimization */}
                 <div className="pt-2 border-t border-white/5 space-y-3">
-                    <label className="text-[10px] font-bold text-text-secondary uppercase flex items-center gap-2">
+                    <label className="text-3xs font-bold text-text-secondary uppercase flex items-center gap-2">
                         <Clock size={12} className="text-accent-secondary" />
                         Schedule Optimization
                     </label>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
-                            <label className="text-[9px] text-text-muted uppercase">Sleep Start</label>
+                            <label className="text-4xs text-text-muted uppercase">Sleep Start</label>
                             <input
                                 type="time"
                                 value={autoSleepStart}
@@ -426,7 +426,7 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
                             />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-[9px] text-text-muted uppercase">Sleep End</label>
+                            <label className="text-4xs text-text-muted uppercase">Sleep End</label>
                             <input
                                 type="time"
                                 value={autoSleepEnd}
@@ -438,8 +438,8 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
 
                     <div className="space-y-1">
                         <div className="flex justify-between items-center">
-                            <label className="text-[9px] text-text-muted uppercase">Max Wait Buffer</label>
-                            <span className="text-[10px] font-mono text-accent-secondary">{autoMaxWait}m</span>
+                            <label className="text-4xs text-text-muted uppercase">Max Wait Buffer</label>
+                            <span className="text-3xs font-mono text-accent-secondary">{autoMaxWait}m</span>
                         </div>
                         <input
                             type="range"
@@ -450,13 +450,13 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
                             onChange={(e) => setAutoMaxWait(Number(e.target.value))}
                             className="w-full h-1.5 bg-bg-input rounded-lg appearance-none cursor-pointer accent-accent-secondary"
                         />
-                        <p className="text-[8px] text-text-muted leading-tight">Wait for War or wake-up.</p>
+                        <p className="text-5xs text-text-muted leading-tight">Wait for War or wake-up.</p>
                     </div>
 
                     <div className="space-y-1">
                         <div className="flex justify-between items-center">
-                            <label className="text-[9px] text-text-muted uppercase">Min Interval</label>
-                            <span className="text-[10px] font-mono text-accent-secondary">{autoMinWait}m</span>
+                            <label className="text-4xs text-text-muted uppercase">Min Interval</label>
+                            <span className="text-3xs font-mono text-accent-secondary">{autoMinWait}m</span>
                         </div>
                         <input
                             type="range"
@@ -501,7 +501,7 @@ const AutoPlannerControls = ({ planner, profile, updateNestedProfile }: {
                 </button>
 
                 {autoPriorities.size === 0 && (
-                    <p className="text-[9px] text-red-400 text-center">Select at least one priority</p>
+                    <p className="text-4xs text-red-400 text-center">Select at least one priority</p>
                 )}
             </CardContent>
         </Card>
@@ -1026,7 +1026,7 @@ export default function TreeCalculator() {
                         <CardContent className="space-y-6">
                             {/* SCHEDULE GROUP */}
                             <div className="space-y-4 p-4 bg-bg-primary/30 rounded-xl border border-white/5">
-                                <h3 className="text-[10px] font-bold text-accent-primary uppercase tracking-widest flex items-center gap-2 mb-2">
+                                <h3 className="text-3xs font-bold text-accent-primary uppercase tracking-widest flex items-center gap-2 mb-2">
                                     <Calendar size={14} />
                                     Race Schedule
                                 </h3>
@@ -1035,7 +1035,7 @@ export default function TreeCalculator() {
                                     {/* Start Time */}
                                     <div className="space-y-2">
                                         <div className="flex items-center justify-between">
-                                            <label className="text-[10px] font-bold text-text-secondary uppercase">Start Time</label>
+                                            <label className="text-3xs font-bold text-text-secondary uppercase">Start Time</label>
                                             <div className="flex items-center gap-3">
                                                 <button
                                                     onClick={() => {
@@ -1043,7 +1043,7 @@ export default function TreeCalculator() {
                                                         now.setSeconds(0, 0);
                                                         setStartTime(toLocalDateTimeString(now));
                                                     }}
-                                                    className="text-[9px] font-bold text-accent-primary hover:underline uppercase"
+                                                    className="text-4xs font-bold text-accent-primary hover:underline uppercase"
                                                 >
                                                     Now
                                                 </button>
@@ -1056,7 +1056,7 @@ export default function TreeCalculator() {
                                                         }
                                                         setStartTime(toLocalDateTimeString(target));
                                                     }}
-                                                    className="text-[9px] font-bold text-accent-secondary hover:underline uppercase"
+                                                    className="text-4xs font-bold text-accent-secondary hover:underline uppercase"
                                                 >
                                                     0.00
                                                 </button>
@@ -1071,7 +1071,7 @@ export default function TreeCalculator() {
                                                 onFocus={(e) => (e.target as HTMLInputElement).showPicker()}
                                                 onClick={(e) => (e.target as HTMLInputElement).showPicker()}
                                                 step="60"
-                                                className="w-full bg-transparent border-none text-white text-[15px] outline-none"
+                                                className="w-full bg-transparent border-none text-white text-[0.9375rem] outline-none"
                                                 style={{ colorScheme: 'dark' }}
                                             />
                                         </div>
@@ -1080,7 +1080,7 @@ export default function TreeCalculator() {
                                     {/* End Time */}
                                     <div className="space-y-2">
                                         <div className="flex items-center justify-between">
-                                            <label className="text-[10px] font-bold text-text-secondary uppercase">End Time</label>
+                                            <label className="text-3xs font-bold text-text-secondary uppercase">End Time</label>
                                             <button
                                                 onClick={() => {
                                                     const start = new Date(startTime);
@@ -1094,7 +1094,7 @@ export default function TreeCalculator() {
 
                                                     handleEndTimeChange(toLocalDateTimeString(target));
                                                 }}
-                                                className="text-[9px] font-bold text-accent-primary hover:underline uppercase"
+                                                className="text-4xs font-bold text-accent-primary hover:underline uppercase"
                                             >
                                                 Set 23:59
                                             </button>
@@ -1108,7 +1108,7 @@ export default function TreeCalculator() {
                                                 onFocus={(e) => (e.target as HTMLInputElement).showPicker()}
                                                 onClick={(e) => (e.target as HTMLInputElement).showPicker()}
                                                 step="60"
-                                                className="w-full bg-transparent border-none text-white text-[15px] outline-none"
+                                                className="w-full bg-transparent border-none text-white text-[0.9375rem] outline-none"
                                                 style={{ colorScheme: 'dark' }}
                                             />
                                         </div>
@@ -1117,7 +1117,7 @@ export default function TreeCalculator() {
 
                                 {/* Duration Display/Input */}
                                 <div className="space-y-2 pt-2 border-t border-white/5">
-                                    <label className="text-[10px] font-bold text-text-secondary uppercase flex items-center gap-2">
+                                    <label className="text-3xs font-bold text-text-secondary uppercase flex items-center gap-2">
                                         <Timer size={12} />
                                         Duration (Time Limit)
                                     </label>
@@ -1136,7 +1136,7 @@ export default function TreeCalculator() {
                                                 }}
                                                 placeholder="0"
                                             />
-                                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-text-muted pointer-events-none">h</span>
+                                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-3xs font-bold text-text-muted pointer-events-none">h</span>
                                         </div>
 
                                         {/* Minutes */}
@@ -1154,7 +1154,7 @@ export default function TreeCalculator() {
                                                 }}
                                                 placeholder="0"
                                             />
-                                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-text-muted pointer-events-none">m</span>
+                                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-3xs font-bold text-text-muted pointer-events-none">m</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1227,7 +1227,7 @@ export default function TreeCalculator() {
 
                             <div className="p-4 bg-accent-primary/5 rounded-lg border border-accent-primary/20 flex gap-3 items-start">
                                 <Info size={16} className="text-accent-primary shrink-0 mt-0.5" />
-                                <p className="text-[11px] text-text-secondary leading-relaxed">
+                                <p className="text-2xs text-text-secondary leading-relaxed">
                                     Use the arrows on the right to reorder upgrades based on your schedule. Reordering is blocked if it violates game prerequisites.
                                 </p>
                             </div>
@@ -1254,7 +1254,7 @@ export default function TreeCalculator() {
                                     {/* Stats Summary */}
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-3 lg:gap-4">
                                         <div className="p-4 bg-bg-primary rounded-xl border border-accent-primary/20 md:col-span-2 shadow-lg shadow-accent-primary/5">
-                                            <div className="text-[10px] text-accent-primary font-black uppercase tracking-widest mb-1 flex items-center justify-between">
+                                            <div className="text-3xs text-accent-primary font-black uppercase tracking-widest mb-1 flex items-center justify-between">
                                                 <span>War Points (Completion)</span>
                                                 <Trophy size={14} />
                                             </div>
@@ -1263,12 +1263,12 @@ export default function TreeCalculator() {
                                                     {Math.floor(selectedWarPoints).toLocaleString()}
                                                 </div>
                                                 {selectedWarPoints < (optimization.totalWarPoints || 0) && (
-                                                    <div className="text-[10px] text-text-muted font-bold">
+                                                    <div className="text-3xs text-text-muted font-bold">
                                                         / {Math.floor(optimization.totalWarPoints || 0).toLocaleString()}
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="text-[9px] text-text-muted mt-1">
+                                            <div className="text-4xs text-text-muted mt-1">
                                                 Tree Points: {Math.floor(selectedPoints).toLocaleString()}
                                                 {selectedPoints < optimization.totalPoints && (
                                                     <span> / {Math.floor(optimization.totalPoints).toLocaleString()}</span>
@@ -1277,7 +1277,7 @@ export default function TreeCalculator() {
                                         </div>
 
                                         <div className="bg-bg-tertiary/50 p-4 rounded-xl border border-white/5 flex flex-col justify-center">
-                                            <div className="text-[10px] text-text-muted uppercase font-bold mb-1 flex items-center gap-1">
+                                            <div className="text-3xs text-text-muted uppercase font-bold mb-1 flex items-center gap-1">
                                                 <Timer size={10} />
                                                 Time Used
                                             </div>
@@ -1287,7 +1287,7 @@ export default function TreeCalculator() {
                                         </div>
 
                                         <div className="bg-bg-tertiary/50 p-4 rounded-xl border border-white/5 flex flex-col justify-center">
-                                            <div className="text-[10px] text-text-muted uppercase font-bold mb-1 flex items-center gap-1">
+                                            <div className="text-3xs text-text-muted uppercase font-bold mb-1 flex items-center gap-1">
                                                 <SpriteIcon name="Potion" size={12} />
                                                 Potions
                                             </div>
@@ -1386,7 +1386,7 @@ export default function TreeCalculator() {
 
                                                                             <div className="flex flex-col items-center shrink-0 w-8">
                                                                                 <div className={cn(
-                                                                                    "text-[10px] font-bold w-full text-center py-0.5 rounded border mb-2 transition-colors",
+                                                                                    "text-3xs font-bold w-full text-center py-0.5 rounded border mb-2 transition-colors",
                                                                                     selectedIds.has(id)
                                                                                         ? "text-accent-primary bg-accent-primary/10 border-accent-primary/20"
                                                                                         : "text-text-muted bg-white/5 border-white/5"
@@ -1414,12 +1414,12 @@ export default function TreeCalculator() {
                                                                                     </span>
                                                                                     <div className="flex items-center gap-2 text-right">
                                                                                         <div className="flex flex-col items-end">
-                                                                                            <div className="flex items-center gap-1 text-[9px] font-bold text-accent-primary uppercase">
+                                                                                            <div className="flex items-center gap-1 text-4xs font-bold text-accent-primary uppercase">
                                                                                                 <Clock size={8} /> {formatScheduleTime(startObj)}
                                                                                             </div>
-                                                                                            <div className="flex items-center gap-1 text-[9px] font-bold text-text-muted uppercase">
+                                                                                            <div className="flex items-center gap-1 text-4xs font-bold text-text-muted uppercase">
                                                                                                 <CheckCircle2 size={8} /> {formatScheduleTime(endObj)}
-                                                                                                {isDifferentDay && <span className="text-[8px] text-accent-secondary ml-0.5">+{endObj.getDate() - startObj.getDate()}d</span>}
+                                                                                                {isDifferentDay && <span className="text-5xs text-accent-secondary ml-0.5">+{endObj.getDate() - startObj.getDate()}d</span>}
                                                                                             </div>
                                                                                         </div>
                                                                                         <div className={cn(
@@ -1430,18 +1430,18 @@ export default function TreeCalculator() {
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div className="flex items-center gap-2 text-[10px] text-text-muted mb-2 cursor-pointer">
+                                                                                <div className="flex items-center gap-2 text-3xs text-text-muted mb-2 cursor-pointer">
                                                                                     <span className="bg-white/5 px-1.5 rounded">Lv.{action.fromLevel} → Lv.{action.toLevel}</span>
                                                                                     <span>•</span>
                                                                                     <span className="text-accent-primary/80">{action.tree}</span>
                                                                                     <span className="ml-auto font-mono text-accent-secondary">Tier {action.tier + 1}</span>
                                                                                 </div>
-                                                                                <div className="flex justify-between items-center text-[11px] font-mono border-t border-white/5 pt-2">
+                                                                                <div className="flex justify-between items-center text-2xs font-mono border-t border-white/5 pt-2">
                                                                                     <div className="flex items-center gap-3">
                                                                                         <div className={cn("flex items-center gap-1", recalculatedGemCost > 0 ? "text-accent-primary" : "")}>
                                                                                             <Timer size={10} className="opacity-50" />
                                                                                             {formatTime(effectiveDuration)}
-                                                                                            {recalculatedGemCost > 0 && <span className="text-[8px] opacity-70 underline">Gems used</span>}
+                                                                                            {recalculatedGemCost > 0 && <span className="text-5xs opacity-70 underline">Gems used</span>}
                                                                                         </div>
                                                                                         <div className="flex items-center gap-1">
                                                                                             <SpriteIcon name="Potion" size={10} />
@@ -1450,7 +1450,7 @@ export default function TreeCalculator() {
                                                                                     </div>
                                                                                     <div className={cn("font-bold flex items-center gap-1", isWarDayNow ? "text-accent-primary" : "text-text-muted")}>
                                                                                         +{action.points.toLocaleString()} pts
-                                                                                        {isWarDayNow && <span className="text-[7px] bg-accent-primary/20 text-accent-primary px-1 py-0.5 rounded font-black uppercase">WAR</span>}
+                                                                                        {isWarDayNow && <span className="text-[0.4375rem] bg-accent-primary/20 text-accent-primary px-1 py-0.5 rounded font-black uppercase">WAR</span>}
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -1526,14 +1526,14 @@ export default function TreeCalculator() {
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <label className="text-[10px] font-bold text-text-secondary uppercase">Start Date</label>
+                                        <label className="text-3xs font-bold text-text-secondary uppercase">Start Date</label>
                                         <button
                                             onClick={() => {
                                                 const now = new Date();
                                                 now.setSeconds(0, 0);
                                                 planner.setPlanStartDate(toLocalDateTimeString(now));
                                             }}
-                                            className="text-[9px] font-bold text-accent-primary hover:underline uppercase"
+                                            className="text-4xs font-bold text-accent-primary hover:underline uppercase"
                                         >Now</button>
                                     </div>
                                     <div className="flex items-center gap-3 bg-bg-input border border-border rounded-lg px-3 py-2.5 group focus-within:border-accent-primary transition-colors min-h-[48px]">
@@ -1545,7 +1545,7 @@ export default function TreeCalculator() {
                                             onFocus={(e) => (e.target as HTMLInputElement).showPicker()}
                                             onClick={(e) => (e.target as HTMLInputElement).showPicker()}
                                             step="60"
-                                            className="w-full bg-transparent border-none text-white text-[15px] outline-none"
+                                            className="w-full bg-transparent border-none text-white text-[0.9375rem] outline-none"
                                             style={{ colorScheme: 'dark' }}
                                         />
                                     </div>
@@ -1554,16 +1554,16 @@ export default function TreeCalculator() {
                                 {/* Summary */}
                                 <div className="grid grid-cols-3 gap-2 pt-2">
                                     <div className="bg-bg-primary/50 rounded-xl p-3 text-center border border-white/5 shadow-inner flex flex-col justify-center">
-                                        <div className="text-[10px] text-text-muted uppercase font-black mb-1 flex items-center justify-center gap-1 tracking-widest">Points</div>
+                                        <div className="text-3xs text-text-muted uppercase font-black mb-1 flex items-center justify-center gap-1 tracking-widest">Points</div>
                                         <div className="flex flex-col items-center">
                                             <div className="text-xl font-black text-white leading-none mb-0.5">{planner.summary.totalPoints.toLocaleString()}</div>
-                                            <div className="text-[10px] font-black text-accent-primary flex items-center gap-1 bg-accent-primary/10 px-1.5 py-0.5 rounded-full border border-accent-primary/20" title="Points earned during Guild War days">
+                                            <div className="text-3xs font-black text-accent-primary flex items-center gap-1 bg-accent-primary/10 px-1.5 py-0.5 rounded-full border border-accent-primary/20" title="Points earned during Guild War days">
                                                 <Trophy size={10} /> {planner.summary.totalWarPoints.toLocaleString()} War
                                             </div>
                                         </div>
                                     </div>
                                     <div className="bg-bg-primary/50 rounded-xl p-3 text-center border border-accent-primary/10 shadow-glow-sm shadow-accent-primary/5">
-                                        <div className="text-[10px] text-accent-primary uppercase font-black mb-1 flex items-center justify-center gap-1 tracking-widest"><Timer size={10} />Time</div>
+                                        <div className="text-3xs text-accent-primary uppercase font-black mb-1 flex items-center justify-center gap-1 tracking-widest"><Timer size={10} />Time</div>
                                         <div className="text-xl font-black text-white drop-shadow-sm leading-none">
                                             {(() => {
                                                 const totalSecs = planner.summary.totalTime;
@@ -1573,24 +1573,24 @@ export default function TreeCalculator() {
                                                 return (
                                                     <div className="flex flex-col items-center">
                                                         <span>{d > 0 ? `${d}d ${h}h` : `${h}h`}</span>
-                                                        <span className="text-[10px] opacity-60 font-bold">{m}m</span>
+                                                        <span className="text-3xs opacity-60 font-bold">{m}m</span>
                                                     </div>
                                                 );
                                             })()}
                                         </div>
                                     </div>
                                     <div className="bg-bg-primary/50 rounded-xl p-3 text-center border border-white/5 shadow-inner">
-                                        <div className="text-[10px] text-text-muted uppercase font-black mb-1 flex items-center justify-center gap-1 tracking-widest"><SpriteIcon name="Potion" size={10} className="text-accent-secondary" />Potions</div>
+                                        <div className="text-3xs text-text-muted uppercase font-black mb-1 flex items-center justify-center gap-1 tracking-widest"><SpriteIcon name="Potion" size={10} className="text-accent-secondary" />Potions</div>
                                         <div className="text-xl font-black text-accent-secondary drop-shadow-sm leading-none mb-1">{planner.summary.totalPotions.toLocaleString()}</div>
                                     </div>
                                 </div>
 
                                 <div className="bg-accent-primary/5 rounded-xl p-2 text-center border border-accent-primary/20 flex items-center justify-between px-4">
-                                    <div className="text-[10px] text-text-secondary font-black uppercase tracking-widest">Total upgrades</div>
+                                    <div className="text-3xs text-text-secondary font-black uppercase tracking-widest">Total upgrades</div>
                                     <div className="flex items-center gap-2">
                                         <div className="text-sm font-black text-white">{planner.summary.nodeCount} nodes</div>
                                         {planner.summary.delayCount > 0 && (
-                                            <div className="text-[10px] font-bold text-yellow-400 opacity-80 flex items-center gap-1 border-l border-white/10 pl-2">
+                                            <div className="text-3xs font-bold text-yellow-400 opacity-80 flex items-center gap-1 border-l border-white/10 pl-2">
                                                 <Pause size={10} /> {planner.summary.delayCount} delays
                                             </div>
                                         )}
@@ -1598,7 +1598,7 @@ export default function TreeCalculator() {
                                 </div>
 
                                 {planner.schedule.length > 0 && (
-                                    <div className="text-[10px] text-text-muted text-center pt-1 border-t border-white/5">
+                                    <div className="text-3xs text-text-muted text-center pt-1 border-t border-white/5">
                                         Completion: <span className="text-white font-bold ml-1">{planner.summary.completionDate.toLocaleDateString('en-GB', { weekday: 'short', month: 'short', day: 'numeric' })} {planner.summary.completionDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span>
                                     </div>
                                 )}
@@ -1654,7 +1654,7 @@ export default function TreeCalculator() {
                                     <div className="flex bg-bg-input rounded-lg p-1 border border-border gap-0.5 flex-1">
                                         {['all', 'Forge', 'Power', 'SkillsPetTech'].map(t => (
                                             <button key={t} onClick={() => setPlannerTreeFilter(t)}
-                                                className={cn("flex-1 py-1 text-[10px] font-bold rounded transition-all",
+                                                className={cn("flex-1 py-1 text-3xs font-bold rounded transition-all",
                                                     plannerTreeFilter === t ? "bg-accent-primary text-black" : "text-text-muted hover:text-text-primary"
                                                 )}
                                             >{t === 'all' ? 'All' : t === 'SkillsPetTech' ? 'SPT' : t}</button>
@@ -1662,7 +1662,7 @@ export default function TreeCalculator() {
                                     </div>
                                     <button
                                         onClick={() => planner.appendDelay(60)}
-                                        className="px-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 rounded-lg hover:bg-yellow-500/20 transition-all flex items-center gap-1.5 text-[10px] font-bold group"
+                                        className="px-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 rounded-lg hover:bg-yellow-500/20 transition-all flex items-center gap-1.5 text-3xs font-bold group"
                                         title="Add manual 1h delay"
                                     >
                                         <Pause size={12} className="group-hover:scale-110 transition-transform" />
@@ -1691,15 +1691,15 @@ export default function TreeCalculator() {
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="text-xs font-bold text-white whitespace-nowrap overflow-hidden text-clip">{node.nodeType}</div>
-                                                    <div className="flex items-center gap-2 text-[9px] text-text-muted">
+                                                    <div className="flex items-center gap-2 text-4xs text-text-muted">
                                                         <span className="text-accent-primary/70">{node.tree === 'SkillsPetTech' ? 'SPT' : node.tree}</span>
                                                         <span>T{node.tier + 1}</span>
                                                         <span>Lv.{node.currentLevel}→{node.nextLevel}/{node.maxLevel}</span>
                                                     </div>
                                                 </div>
                                                 <div className="shrink-0 text-right">
-                                                    <div className="text-[10px] font-mono text-accent-secondary">+{node.points.toLocaleString()}</div>
-                                                    <div className="text-[9px] text-text-muted">{formatTime(node.duration)}</div>
+                                                    <div className="text-3xs font-mono text-accent-secondary">+{node.points.toLocaleString()}</div>
+                                                    <div className="text-4xs text-text-muted">{formatTime(node.duration)}</div>
                                                 </div>
                                                 <Plus size={14} className="text-text-muted group-hover:text-accent-primary transition-colors shrink-0" />
                                             </button>
@@ -1721,13 +1721,13 @@ export default function TreeCalculator() {
                                 <div className="flex flex-col">
                                     <span>Upgrade Schedule</span>
                                     <div className="flex items-center gap-2 mt-0.5">
-                                        <span className="text-[10px] text-text-muted font-normal lowercase tracking-tight">
+                                        <span className="text-3xs text-text-muted font-normal lowercase tracking-tight">
                                             {planner.schedule.length} steps: {planner.schedule.filter(e => e.step.type === 'node').length} nodes, {planner.schedule.filter(e => e.step.type === 'delay').length} delays
                                         </span>
                                         {planner.planMetadata?.isAuto ? (
-                                            <span className="text-[8px] font-black bg-green-500/20 text-green-400 px-1 rounded uppercase tracking-tighter" title="Auto-generated using optimizer">Auto-Optimized</span>
+                                            <span className="text-5xs font-black bg-green-500/20 text-green-400 px-1 rounded uppercase tracking-tighter" title="Auto-generated using optimizer">Auto-Optimized</span>
                                         ) : (
-                                            <span className="text-[8px] font-black bg-white/10 text-text-muted px-1 rounded uppercase tracking-tighter">Manual Plan</span>
+                                            <span className="text-5xs font-black bg-white/10 text-text-muted px-1 rounded uppercase tracking-tighter">Manual Plan</span>
                                         )}
                                     </div>
                                 </div>
@@ -1783,7 +1783,7 @@ export default function TreeCalculator() {
                                                                         return (
                                                                             <div className="absolute -top-1 left-0 right-0 z-20 flex items-center gap-2 pointer-events-none">
                                                                                 <div className="h-0.5 flex-1 bg-accent-primary shadow-glow shadow-accent-primary/50" />
-                                                                                <span className="text-[9px] font-black bg-accent-primary text-black px-1.5 py-0.5 rounded shadow-glow shrink-0 animate-pulse">NOW</span>
+                                                                                <span className="text-4xs font-black bg-accent-primary text-black px-1.5 py-0.5 rounded shadow-glow shrink-0 animate-pulse">NOW</span>
                                                                                 <div className="h-0.5 w-4 bg-accent-primary shadow-glow shadow-accent-primary/50" />
                                                                             </div>
                                                                         );
@@ -1794,7 +1794,7 @@ export default function TreeCalculator() {
                                                                 {isFirstInWarBlock && (
                                                                     <div className="flex items-center gap-2 py-2 px-1 mt-2 first:mt-0">
                                                                         <Trophy size={14} className="text-accent-primary animate-pulse" />
-                                                                        <span className="text-[10px] font-black text-accent-primary uppercase tracking-widest">Guild War Event Period</span>
+                                                                        <span className="text-3xs font-black text-accent-primary uppercase tracking-widest">Guild War Event Period</span>
                                                                         <div className="h-px flex-1 bg-gradient-to-r from-accent-primary/50 to-transparent" />
                                                                     </div>
                                                                 )}
@@ -1882,7 +1882,7 @@ export default function TreeCalculator() {
                                                                 return (
                                                                     <div className="absolute -top-1 left-0 right-0 z-20 flex items-center gap-2 pointer-events-none">
                                                                         <div className="h-0.5 flex-1 bg-accent-primary shadow-glow shadow-accent-primary/50" />
-                                                                        <span className="text-[9px] font-black bg-accent-primary text-black px-1.5 py-0.5 rounded shadow-glow shrink-0 animate-pulse">NOW</span>
+                                                                        <span className="text-4xs font-black bg-accent-primary text-black px-1.5 py-0.5 rounded shadow-glow shrink-0 animate-pulse">NOW</span>
                                                                         <div className="h-0.5 w-4 bg-accent-primary shadow-glow shadow-accent-primary/50" />
                                                                     </div>
                                                                 );
@@ -1893,7 +1893,7 @@ export default function TreeCalculator() {
                                                         {isFirstInWarBlock && (
                                                             <div className="flex items-center gap-2 py-2 px-1 mt-2 first:mt-0">
                                                                 <Trophy size={14} className="text-accent-primary animate-pulse" />
-                                                                <span className="text-[10px] font-black text-accent-primary uppercase tracking-widest">Guild War Event Period</span>
+                                                                <span className="text-3xs font-black text-accent-primary uppercase tracking-widest">Guild War Event Period</span>
                                                                 <div className="h-px flex-1 bg-gradient-to-r from-accent-primary/50 to-transparent" />
                                                             </div>
                                                         )}

@@ -276,7 +276,7 @@ export default function Skills() {
                                     <div className="flex-1 min-w-0">
                                         <h3 className="font-bold text-text-primary text-lg leading-tight whitespace-nowrap overflow-hidden text-clip">{skill.type}</h3>
                                         <span className={cn(
-                                            "text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-white/5 mt-1 inline-block",
+                                            "text-3xs font-bold uppercase px-2 py-0.5 rounded-full bg-white/5 mt-1 inline-block",
                                             `text-rarity-${skill.rarity.toLowerCase()}`
                                         )}>
                                             {skill.rarity}
@@ -335,7 +335,7 @@ export default function Skills() {
                                 <div className="flex gap-2 mt-auto">
                                     {dmgAtLevel > 0 && (
                                         <div className="flex flex-col bg-bg-input/50 p-2 rounded border border-white/5 flex-1 items-center">
-                                            <div className="flex items-center gap-1 text-[10px] text-red-400 mb-1 uppercase font-bold">
+                                            <div className="flex items-center gap-1 text-3xs text-red-400 mb-1 uppercase font-bold">
                                                 <Sword className="w-3 h-3" /> Damage
                                             </div>
                                             <div className="font-mono font-bold text-red-200">
@@ -345,7 +345,7 @@ export default function Skills() {
                                     )}
                                     {hpAtLevel > 0 && (
                                         <div className="bg-bg-input/50 p-2 rounded border border-white/5 flex-1 items-center">
-                                            <div className="flex items-center gap-1 text-[10px] text-green-400 mb-1 uppercase font-bold">
+                                            <div className="flex items-center gap-1 text-3xs text-green-400 mb-1 uppercase font-bold">
                                                 <Heart className="w-3 h-3" /> Health
                                             </div>
                                             <div className="font-mono font-bold text-green-200">
@@ -358,7 +358,7 @@ export default function Skills() {
                                 {/* Progression Stats matching Pet/Mount Wiki style */}
                                 <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/5">
                                     <div className="bg-bg-primary/50 p-2 rounded border border-white/5 flex flex-col items-center">
-                                        <div className="flex items-center gap-1 text-[9px] text-text-muted mb-0.5 uppercase font-bold text-center">
+                                        <div className="flex items-center gap-1 text-4xs text-text-muted mb-0.5 uppercase font-bold text-center">
                                             <TrendingUp className="w-2.5 h-2.5 text-accent-primary" /> Next Level
                                         </div>
                                         <div className="font-mono font-bold text-accent-primary text-xs">
@@ -366,7 +366,7 @@ export default function Skills() {
                                         </div>
                                     </div>
                                     <div className="bg-bg-primary/50 p-2 rounded border border-white/5 flex flex-col items-center">
-                                        <div className="flex items-center gap-1 text-[9px] text-text-muted mb-0.5 uppercase font-bold text-center">
+                                        <div className="flex items-center gap-1 text-4xs text-text-muted mb-0.5 uppercase font-bold text-center">
                                             <Package className="w-2.5 h-2.5 text-accent-secondary" /> Total Copies
                                         </div>
                                         <div className="font-mono font-bold text-accent-secondary text-xs">

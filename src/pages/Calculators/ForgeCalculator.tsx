@@ -802,7 +802,7 @@ export default function ForgeCalculator() {
                                     <div style={getVirtualNodeIconStyle(n.key, 24)} />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <div className="text-[10px] text-text-muted uppercase leading-tight">{n.label}</div>
+                                    <div className="text-3xs text-text-muted uppercase leading-tight">{n.label}</div>
                                     <div className="text-sm font-bold text-white">{n.format(currentVal)}</div>
                                 </div>
                             </div>
@@ -818,7 +818,7 @@ export default function ForgeCalculator() {
                                 </button>
 
                                 <div className="text-xs font-mono font-bold text-text-secondary text-center">
-                                    {(n.key === 'SellPrice' || n.key === 'FreeForgeChance') ? (currentVal * 100).toFixed(0) : currentVal.toFixed(0)} <span className="opacity-50 text-[9px]">/ {(n.key === 'SellPrice' || n.key === 'FreeForgeChance') ? (maxVal * 100).toFixed(0) : maxVal.toFixed(0)}</span>
+                                    {(n.key === 'SellPrice' || n.key === 'FreeForgeChance') ? (currentVal * 100).toFixed(0) : currentVal.toFixed(0)} <span className="opacity-50 text-4xs">/ {(n.key === 'SellPrice' || n.key === 'FreeForgeChance') ? (maxVal * 100).toFixed(0) : maxVal.toFixed(0)}</span>
                                 </div>
 
                                 <button
@@ -858,7 +858,7 @@ export default function ForgeCalculator() {
                 <span className="text-white/50 text-stroke-sm">-</span>
                 <span className="text-stroke-sm">{formatNumber(max)}</span>
             </div>
-            <div className="text-[10px] text-white/50 font-mono text-stroke-sm">
+            <div className="text-3xs text-white/50 font-mono text-stroke-sm">
                 {formatNumber((min + max) / 2)} (Avg)
             </div>
         </div>
@@ -880,13 +880,13 @@ export default function ForgeCalculator() {
                     </p>
                     <div className="flex items-center gap-2 pt-3 scale-75 origin-left">
                         {isWarPointDay(new Date(), 'forge', guildWarConfig) && (
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/20 text-accent-primary border border-accent-primary/30 text-[10px] font-black uppercase tracking-wider animate-pulse">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/20 text-accent-primary border border-accent-primary/30 text-3xs font-black uppercase tracking-wider animate-pulse">
                                 <Trophy size={14} />
                                 War Points Active: High Value Day
                             </div>
                         )}
                         {forgeWarBonus > 0 && (
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-3xs font-black uppercase tracking-wider">
                                 <Trophy size={14} />
                                 Clan Boost: +{(forgeWarBonus * 100).toFixed(0)}% War Points
                             </div>
@@ -903,35 +903,35 @@ export default function ForgeCalculator() {
                 <div className="flex items-center gap-2 mb-3">
                     <Trophy size={16} className="text-accent-primary" />
                     <h3 className="text-sm font-bold text-white">Forge Upgrade War Points</h3>
-                    <span className="text-[10px] text-text-muted">(spending coins/gems on upgrades)</span>
+                    <span className="text-3xs text-text-muted">(spending coins/gems on upgrades)</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-1.5">
-                        <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Starting forge level</label>
+                        <label className="text-3xs text-text-muted uppercase font-bold ml-1">Starting forge level</label>
                         <div className="w-full bg-black/20 border border-white/5 rounded-lg px-3 py-2 text-xs font-bold text-text-secondary">
                             Lvl {simulatedForgeLevel} <span className="text-text-muted font-normal">(from slider below)</span>
                         </div>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Upgrade steps (max {maxForgeSpendSteps})</label>
+                        <label className="text-3xs text-text-muted uppercase font-bold ml-1">Upgrade steps (max {maxForgeSpendSteps})</label>
                         <input
                             type="number" min="1" max={maxForgeSpendSteps} value={effectiveForgeSteps}
                             onChange={(e) => setForgeSteps(Math.max(1, Math.min(maxForgeSpendSteps, parseInt(e.target.value) || 1)))}
                             className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-white outline-none focus:border-accent-primary"
                         />
-                        <div className="text-[10px] text-text-muted ml-1">
+                        <div className="text-3xs text-text-muted ml-1">
                             {forgeSpendWarPoints && `≈ ${Math.round(forgeSpendWarPoints?.coins ?? 0).toLocaleString()} coins → `}
                             <span className="text-emerald-300 font-bold">{forgeSpendWarPoints ? Math.round(forgeSpendWarPoints?.coinPts ?? 0).toLocaleString() : 0} pts</span>
                         </div>
                     </div>
                     <div className="space-y-1.5">
-                        <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Gems spent on forge</label>
+                        <label className="text-3xs text-text-muted uppercase font-bold ml-1">Gems spent on forge</label>
                         <input
                             type="number" min="0" value={gemsSpent}
                             onChange={(e) => setGemsSpent(Math.max(0, parseInt(e.target.value) || 0))}
                             className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-white outline-none focus:border-accent-primary"
                         />
-                        <div className="text-[10px] text-text-muted ml-1">
+                        <div className="text-3xs text-text-muted ml-1">
                             {forgeSpendWarPoints && `${forgeSpendWarPoints?.gemReward ?? 0} pts / gem → `}
                             <span className="text-emerald-300 font-bold">{forgeSpendWarPoints ? Math.round(forgeSpendWarPoints?.gemPts ?? 0).toLocaleString() : 0} pts</span>
                         </div>
@@ -981,7 +981,7 @@ export default function ForgeCalculator() {
                         onChange={(e) => setSimulatedForgeLevel(parseInt(e.target.value))}
                         className="w-full h-2 bg-bg-input rounded-lg appearance-none cursor-pointer accent-accent-primary hover:accent-accent-secondary"
                     />
-                    <div className="flex justify-between text-[10px] text-text-muted font-mono mt-1">
+                    <div className="flex justify-between text-3xs text-text-muted font-mono mt-1">
                         <span>1</span>
                         <span>{Math.floor(maxForgeLevel * 0.25)}</span>
                         <span>{Math.floor(maxForgeLevel * 0.5)}</span>
@@ -1067,20 +1067,20 @@ export default function ForgeCalculator() {
                                         <span className="text-sm text-text-muted group-hover:text-white transition-colors select-none">
                                             Use Player Items
                                         </span>
-                                        {!usePlayerItems && <span className="text-[10px] text-accent-primary">Simulating Custom Tech Tree</span>}
+                                        {!usePlayerItems && <span className="text-3xs text-accent-primary">Simulating Custom Tech Tree</span>}
                                     </div>
                                 </label>
 
                                 {/* AutoForge Settings */}
                                 <div className="bg-bg-primary/40 border border-white/5 rounded-xl p-4 space-y-4">
-                                    <div className="flex items-center justify-between text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1">
+                                    <div className="flex items-center justify-between text-3xs font-bold text-text-muted uppercase tracking-wider mb-1">
                                         <span>AutoForge Estimates</span>
                                         <HelpCircle className="w-3 h-3 opacity-50" />
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Summons / Cycle</label>
+                                            <label className="text-3xs text-text-muted uppercase font-bold ml-1">Summons / Cycle</label>
                                             <input
                                                 type="number"
                                                 min="1"
@@ -1091,7 +1091,7 @@ export default function ForgeCalculator() {
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] text-text-muted uppercase font-bold ml-1">Cycle Time (s)</label>
+                                            <label className="text-3xs text-text-muted uppercase font-bold ml-1">Cycle Time (s)</label>
                                             <input
                                                 type="number"
                                                 step="0.01"
@@ -1102,7 +1102,7 @@ export default function ForgeCalculator() {
                                             />
                                         </div>
                                     </div>
-                                    <p className="text-[9px] text-text-muted leading-tight opacity-70">
+                                    <p className="text-4xs text-text-muted leading-tight opacity-70">
                                         * Duration is empirical and may vary.
                                     </p>
                                 </div>
@@ -1301,7 +1301,7 @@ export default function ForgeCalculator() {
                                                                                         "text-white",
                                                     "text-stroke-sm"
                                                 )}>{age.name}</span>
-                                                {age.isMax && <span className="text-[10px] bg-accent-primary text-white px-1.5 py-0.5 rounded font-bold uppercase shadow-glow-sm text-stroke-sm">Max Unlocked</span>}
+                                                {age.isMax && <span className="text-3xs bg-accent-primary text-white px-1.5 py-0.5 rounded font-bold uppercase shadow-glow-sm text-stroke-sm">Max Unlocked</span>}
                                             </div>
                                             <div className={cn(
                                                 "text-xs font-bold text-stroke-sm",
@@ -1321,21 +1321,21 @@ export default function ForgeCalculator() {
                                             "p-2 rounded-lg text-center md:text-right border text-stroke-sm",
                                             age.idx === 9 ? "bg-black/40 border-white/20" : "bg-black/20 border-white/5"
                                         )}>
-                                            <div className={cn("text-[10px] uppercase font-bold mb-1 text-stroke-sm", age.idx === 9 ? "text-white/70" : "text-text-muted text-stroke-sm")}>Items</div>
+                                            <div className={cn("text-3xs uppercase font-bold mb-1 text-stroke-sm", age.idx === 9 ? "text-white/70" : "text-text-muted text-stroke-sm")}>Items</div>
                                             <div className="text-white font-mono font-bold text-stroke-sm">{formatNumber(age.items)}</div>
                                         </div>
                                         <div className={cn(
                                             "p-2 rounded-lg text-center md:text-right border text-stroke-sm",
                                             age.idx === 9 ? "bg-black/40 border-white/20" : "bg-black/20 border-white/5"
                                         )}>
-                                            <div className={cn("text-[10px] uppercase font-bold mb-1 text-stroke-sm", age.idx === 9 ? "text-white/70" : "text-text-muted text-stroke-sm")}>Gold Value</div>
+                                            <div className={cn("text-3xs uppercase font-bold mb-1 text-stroke-sm", age.idx === 9 ? "text-white/70" : "text-text-muted text-stroke-sm")}>Gold Value</div>
                                             <div className={cn("font-mono font-bold text-stroke-sm", age.idx === 9 ? "text-white" : "text-yellow-400 text-stroke-sm")}>{formatNumber(age.coins)}</div>
                                         </div>
                                         <div className={cn(
                                             "p-2 rounded-lg text-center md:text-right border text-stroke-sm",
                                             age.idx === 9 ? "bg-black/40 border-white/20" : "bg-black/20 border-white/5"
                                         )}>
-                                            <div className={cn("text-[10px] uppercase font-bold mb-1 text-stroke-sm", age.idx === 9 ? "text-white/70" : "text-text-muted text-stroke-sm")}>War Points</div>
+                                            <div className={cn("text-3xs uppercase font-bold mb-1 text-stroke-sm", age.idx === 9 ? "text-white/70" : "text-text-muted text-stroke-sm")}>War Points</div>
                                             <div className={cn("font-mono font-bold text-stroke-sm", age.idx === 9 ? "text-white" : "text-red-400 text-stroke-sm")}>{formatNumber(age.warPoints)}</div>
                                         </div>
                                     </div>

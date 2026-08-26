@@ -236,7 +236,7 @@ export default function Gallery() {
                                 size="sm"
                                 onClick={() => setShowOnlyChanges(!showOnlyChanges)}
                                 className={cn(
-                                    "h-7 px-2 text-[10px] font-black uppercase tracking-widest gap-1.5",
+                                    "h-7 px-2 text-3xs font-black uppercase tracking-widest gap-1.5",
                                     showOnlyChanges ? "text-accent-primary bg-accent-primary/10" : "text-text-muted"
                                 )}
                             >
@@ -291,7 +291,7 @@ export default function Gallery() {
                                 />
                                 {diffStatus && (
                                     <div className={cn(
-                                        "absolute top-1 right-1 text-[8px] font-black px-1 rounded shadow-lg uppercase",
+                                        "absolute top-1 right-1 text-5xs font-black px-1 rounded shadow-lg uppercase",
                                         diffStatus === 'added' ? "bg-green-500 text-black" :
                                             diffStatus === 'removed' ? "bg-red-500 text-white" :
                                                 "bg-yellow-500 text-black"
@@ -300,7 +300,7 @@ export default function Gallery() {
                                     </div>
                                 )}
                             </div>
-                            <div className={cn("mt-2 text-[10px] font-medium whitespace-nowrap overflow-hidden text-clip px-1", diffStatus === 'removed' ? "text-red-400/80 line-through" : "text-text-muted")} title={texture}>
+                            <div className={cn("mt-2 text-3xs font-medium whitespace-nowrap overflow-hidden text-clip px-1", diffStatus === 'removed' ? "text-red-400/80 line-through" : "text-text-muted")} title={texture}>
                                 {texture}
                             </div>
 
@@ -314,7 +314,7 @@ export default function Gallery() {
                                         <Download size={14} />
                                     </Button>
                                 </div>
-                                <span className="text-[10px] font-black text-white uppercase tracking-widest px-2 text-center whitespace-nowrap overflow-hidden text-clip w-full">
+                                <span className="text-3xs font-black text-white uppercase tracking-widest px-2 text-center whitespace-nowrap overflow-hidden text-clip w-full">
                                     {texture}
                                 </span>
                             </div>
@@ -340,8 +340,8 @@ export default function Gallery() {
                                     {selectedImage}
                                 </h2>
                                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mt-1">
-                                    <span className="text-[10px] font-bold text-text-muted uppercase bg-white/5 px-1.5 py-0.5 rounded">Version: {formatVersion(activeVersion)}</span>
-                                    {compareVersion && <span className="text-[10px] font-bold text-accent-primary uppercase bg-accent-primary/10 px-1.5 py-0.5 rounded">vs {formatVersion(compareVersion)}</span>}
+                                    <span className="text-3xs font-bold text-text-muted uppercase bg-white/5 px-1.5 py-0.5 rounded">Version: {formatVersion(activeVersion)}</span>
+                                    {compareVersion && <span className="text-3xs font-bold text-accent-primary uppercase bg-accent-primary/10 px-1.5 py-0.5 rounded">vs {formatVersion(compareVersion)}</span>}
                                 </div>
                             </div>
                             <div className="flex flex-col sm:flex-row items-center gap-3 px-2">
@@ -367,7 +367,7 @@ export default function Gallery() {
                                             variant="ghost"
                                             size="sm"
                                             className={cn(
-                                                "h-8 font-black uppercase tracking-widest gap-2 text-[10px] px-3",
+                                                "h-8 font-black uppercase tracking-widest gap-2 text-3xs px-3",
                                                 showDiff ? "bg-accent-primary text-black hover:bg-accent-primary/80" : "text-text-muted hover:text-white"
                                             )}
                                             onClick={() => {
@@ -435,7 +435,7 @@ export default function Gallery() {
                                 !md5Manifest[activeVersion]?.[selectedImage] && "opacity-50",
                                 compareVersion && mobileView === 'compare' && "hidden md:flex"
                             )}>
-                                <div className="text-[10px] font-black text-text-muted uppercase tracking-widest bg-bg-input px-2 py-1 rounded">
+                                <div className="text-3xs font-black text-text-muted uppercase tracking-widest bg-bg-input px-2 py-1 rounded">
                                     Version: {formatVersion(activeVersion)}
                                 </div>
                                 <div className="flex-1 w-full flex items-center justify-center bg-bg-primary/30 rounded-lg overflow-hidden p-4 border border-border/20 relative min-h-[300px] max-h-[60vh]">
@@ -459,7 +459,7 @@ export default function Gallery() {
                                     )}
                                 </div>
                                 {md5Manifest[activeVersion]?.[selectedImage] && (
-                                    <div className="font-mono text-[10px] text-text-muted bg-black/20 px-2 py-1 rounded flex items-center gap-2">
+                                    <div className="font-mono text-3xs text-text-muted bg-black/20 px-2 py-1 rounded flex items-center gap-2">
                                         <Hash size={10} /> {md5Manifest[activeVersion][selectedImage]}
                                     </div>
                                 )}
@@ -472,7 +472,7 @@ export default function Gallery() {
                                     !md5Manifest[compareVersion]?.[selectedImage] && "opacity-50",
                                     mobileView === 'active' && "hidden md:flex"
                                 )}>
-                                    <div className="text-[10px] font-black text-accent-primary uppercase tracking-widest bg-accent-primary/10 px-2 py-1 rounded">
+                                    <div className="text-3xs font-black text-accent-primary uppercase tracking-widest bg-accent-primary/10 px-2 py-1 rounded">
                                         Comparison: {formatVersion(compareVersion)}
                                     </div>
                                     <div className="flex-1 w-full flex items-center justify-center bg-bg-primary/30 rounded-lg overflow-hidden p-4 border border-border/20 relative min-h-[300px] max-h-[60vh]">
@@ -499,7 +499,7 @@ export default function Gallery() {
                                         )}
                                     </div>
                                     {md5Manifest[compareVersion]?.[selectedImage] && (
-                                        <div className="font-mono text-[10px] text-text-muted bg-black/20 px-2 py-1 rounded flex items-center gap-2">
+                                        <div className="font-mono text-3xs text-text-muted bg-black/20 px-2 py-1 rounded flex items-center gap-2">
                                             <Hash size={10} /> {md5Manifest[compareVersion][selectedImage]}
                                         </div>
                                     )}
@@ -507,7 +507,7 @@ export default function Gallery() {
                                     {/* Etichette differenze modale */}
                                     {md5Manifest[activeVersion]?.[selectedImage] !== md5Manifest[compareVersion]?.[selectedImage] && (
                                         <div className={cn(
-                                            "absolute top-4 right-4 text-[10px] font-black px-2 py-1 rounded shadow-xl uppercase",
+                                            "absolute top-4 right-4 text-3xs font-black px-2 py-1 rounded shadow-xl uppercase",
                                             md5Manifest[activeVersion]?.[selectedImage] && !md5Manifest[compareVersion]?.[selectedImage] ? "bg-green-500 text-black" :
                                                 !md5Manifest[activeVersion]?.[selectedImage] && md5Manifest[compareVersion]?.[selectedImage] ? "bg-red-500 text-white" :
                                                     "bg-yellow-500 text-black"

@@ -305,7 +305,7 @@ export function SkillPanel({ variant = 'default', title, compareSkills }: SkillP
                         <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 px-2 text-[10px] font-bold border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40 text-red-400 gap-1 active:scale-95 transition-all w-fit"
+                            className="h-7 px-2 text-3xs font-bold border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40 text-red-400 gap-1 active:scale-95 transition-all w-fit"
                             onClick={handleAutoOptimize}
                             disabled={!isReady || !skillLibrary || Object.keys(skillLibrary).length < 1}
                             title="Select best 3 active skills for Max DPS"
@@ -317,7 +317,7 @@ export function SkillPanel({ variant = 'default', title, compareSkills }: SkillP
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-7 px-2 text-[10px] font-bold text-text-muted hover:text-white gap-1 active:scale-95 transition-all w-fit"
+                                className="h-7 px-2 text-3xs font-bold text-text-muted hover:text-white gap-1 active:scale-95 transition-all w-fit"
                                 onClick={handleRevert}
                             >
                                 <RotateCcw className="w-3 h-3" />
@@ -411,26 +411,26 @@ export function SkillPanel({ variant = 'default', title, compareSkills }: SkillP
                                         multiplier all on one wrapping line instead of five stacked. */}
                                     {stats.damage > 0 && (
                                         <div className="relative group/dmg flex items-baseline flex-wrap gap-x-1.5 gap-y-0.5 rounded-md border border-red-400/25 bg-red-400/10 px-1.5 py-1">
-                                            <span className="text-[9px] font-black uppercase tracking-wide text-red-400">Damage</span>
-                                            {stats.count > 1 && <span className="text-[9px] font-bold text-red-400/80">(x{stats.count})</span>}
+                                            <span className="text-4xs font-black uppercase tracking-wide text-red-400">Damage</span>
+                                            {stats.count > 1 && <span className="text-4xs font-bold text-red-400/80">(x{stats.count})</span>}
                                             {(() => {
                                                 const mech = SKILL_MECHANICS[skill.id];
                                                 if (mech?.count === 0) {
-                                                    return <span className="text-[8px] bg-green-500/20 px-1 rounded border border-green-500/30 text-green-400">CONTINUOUS</span>;
+                                                    return <span className="text-5xs bg-green-500/20 px-1 rounded border border-green-500/30 text-green-400">CONTINUOUS</span>;
                                                 }
                                                 return mech?.isAOE ? (
-                                                    <span className="text-[8px] bg-red-500/20 px-1 rounded border border-red-500/30 text-red-400">AOE</span>
+                                                    <span className="text-5xs bg-red-500/20 px-1 rounded border border-red-500/30 text-red-400">AOE</span>
                                                 ) : (
-                                                    <span className="text-[8px] bg-blue-500/20 px-1 rounded border border-blue-500/30 text-blue-400">SINGLE</span>
+                                                    <span className="text-5xs bg-blue-500/20 px-1 rounded border border-blue-500/30 text-blue-400">SINGLE</span>
                                                 );
                                             })()}
-                                            <span className="font-mono font-bold text-[13px] text-red-400 leading-none">
+                                            <span className="font-mono font-bold text-[0.8125rem] text-red-400 leading-none">
                                                 {formatNumber(stats.totalDamage)}
                                             </span>
                                             {stats.count > 1 && (
-                                                <span className="text-[8px] font-mono italic text-red-400/70">({formatNumber(stats.damage)} / hit)</span>
+                                                <span className="text-5xs font-mono italic text-red-400/70">({formatNumber(stats.damage)} / hit)</span>
                                             )}
-                                            <span className="font-mono text-[9px] font-bold text-text-muted/90 ml-auto whitespace-nowrap">
+                                            <span className="font-mono text-4xs font-bold text-text-muted/90 ml-auto whitespace-nowrap">
                                                 x{stats.multi.toFixed(2)} <span className="text-green-400/80">({((stats.multi - 1) * 100).toFixed(1)}%)</span>
                                             </span>
                                             <div className="hidden group-hover/dmg:block">
@@ -440,11 +440,11 @@ export function SkillPanel({ variant = 'default', title, compareSkills }: SkillP
                                     )}
                                     {stats.health > 0 && (
                                         <div className="relative group/heal flex items-baseline flex-wrap gap-x-1.5 gap-y-0.5 rounded-md border border-green-400/25 bg-green-400/10 px-1.5 py-1">
-                                            <span className="text-[9px] font-black uppercase tracking-wide text-green-400">Healing</span>
-                                            <span className="font-mono font-bold text-[13px] text-green-400 leading-none">
+                                            <span className="text-4xs font-black uppercase tracking-wide text-green-400">Healing</span>
+                                            <span className="font-mono font-bold text-[0.8125rem] text-green-400 leading-none">
                                                 {formatNumber(stats.health)}
                                             </span>
-                                            <span className="font-mono text-[9px] font-bold text-text-muted/90 ml-auto whitespace-nowrap">
+                                            <span className="font-mono text-4xs font-bold text-text-muted/90 ml-auto whitespace-nowrap">
                                                 x{stats.multi.toFixed(2)} <span className="text-green-400/80">({((stats.multi - 1) * 100).toFixed(1)}%)</span>
                                             </span>
                                             <div className="hidden group-hover/heal:block">
@@ -479,13 +479,13 @@ export function SkillPanel({ variant = 'default', title, compareSkills }: SkillP
 
                                         const diff = Math.max(0.5, cdComponent) - targetCd;
                                         const cell = "rounded flex flex-col items-center justify-center py-1 bg-bg-input/40 min-w-0";
-                                        const cap = "text-[7px] text-text-muted uppercase font-bold tracking-wide";
+                                        const cap = "text-[0.4375rem] text-text-muted uppercase font-bold tracking-wide";
 
                                         // Cooldown, duration and the three Hit Frequence numbers used to be
                                         // two separate boxes and a captioned 3-up grid. Same five numbers,
                                         // one strip.
                                         return (
-                                            <div className="grid grid-cols-5 gap-1 text-[10px]">
+                                            <div className="grid grid-cols-5 gap-1 text-3xs">
                                                 <div className={cell} title="Cooldown after cooldown reduction">
                                                     <span className={cap}>CD</span>
                                                     <span className="font-mono font-bold tabular-nums">{cdComponent.toFixed(1)}s</span>
@@ -511,7 +511,7 @@ export function SkillPanel({ variant = 'default', title, compareSkills }: SkillP
                                                 >
                                                     <span className={cn(cap, "text-current opacity-90")}>To+1</span>
                                                     <span className="font-mono font-bold tabular-nums leading-none">{Math.abs(diff).toFixed(2)}s</span>
-                                                    <span className="text-[7px] opacity-80 tabular-nums">({((Math.abs(diff) / stats.cooldown) * 100).toFixed(1)}%)</span>
+                                                    <span className="text-[0.4375rem] opacity-80 tabular-nums">({((Math.abs(diff) / stats.cooldown) * 100).toFixed(1)}%)</span>
                                                 </div>
                                             </div>
                                         );

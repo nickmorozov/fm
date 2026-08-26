@@ -433,12 +433,12 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
             <div className="flex items-center gap-2 flex-wrap">
                 <Users className="w-4 h-4 text-accent-primary shrink-0" />
                 <h2 className="text-sm font-bold uppercase tracking-wider text-text-primary">Roster</h2>
-                <span className="text-[11px] text-text-muted">
+                <span className="text-2xs text-text-muted">
                     {members.length}
                     {cap ? ` / ${cap}` : ''} member{members.length === 1 ? '' : 's'}
                 </span>
                 {totals.missing > 0 && (
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border shrink-0 bg-amber-500/15 text-amber-400 border-amber-500/30">
+                    <span className="px-1.5 py-0.5 rounded text-4xs font-bold uppercase border shrink-0 bg-amber-500/15 text-amber-400 border-amber-500/30">
                         {totals.missing} not sharing
                     </span>
                 )}
@@ -466,7 +466,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                     <div className="rounded-xl border border-accent-primary/25 bg-accent-primary/5 p-3 space-y-3">
                         <div className="flex items-end gap-3 flex-wrap">
                             <div>
-                                <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-accent-primary">
+                                <div className="flex items-center gap-1.5 text-3xs font-black uppercase tracking-widest text-accent-primary">
                                     <Swords className="w-3.5 h-3.5" /> Obtainable war points
                                 </div>
                                 {/* The "≥" is not decoration: unless every member published an
@@ -512,7 +512,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                                     )}
                                 </div>
                             </div>
-                            <div className="text-[11px] text-text-muted leading-snug">
+                            <div className="text-2xs text-text-muted leading-snug">
                                 from {totals.sharing} of {members.length} member{members.length === 1 ? '' : 's'}
                                 {totals.missing > 0 && (
                                     <>
@@ -556,7 +556,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                         </div>
 
                         {/* One sentence about the SUM, before any day total is read. */}
-                        <p className="flex items-start gap-1.5 text-[11px] leading-relaxed text-text-secondary">
+                        <p className="flex items-start gap-1.5 text-2xs leading-relaxed text-text-secondary">
                             {(() => {
                                 const Icon = CONFIDENCE_META[totals.confidence].icon;
                                 return <Icon className={cn('w-3.5 h-3.5 mt-0.5 shrink-0', CONFIDENCE_META[totals.confidence].text)} aria-hidden="true" />;
@@ -639,7 +639,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                                 >
                                     <div
                                         className={cn(
-                                            'text-[9px] uppercase tracking-wide whitespace-nowrap overflow-hidden text-clip',
+                                            'text-4xs uppercase tracking-wide whitespace-nowrap overflow-hidden text-clip',
                                             day === todayIndex ? 'text-accent-primary' : 'text-text-muted',
                                         )}
                                     >
@@ -657,7 +657,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                                     {/* WHAT SCORING ON THIS DAY MEANS — the answer to "what do I do
                                         today", which a bare number never gave. Derived from the
                                         config's own day map, so it follows a reshuffle. */}
-                                    <div className="mt-0.5 text-[8px] leading-tight text-text-muted whitespace-nowrap overflow-hidden text-clip" title={dayWork[day].long}>
+                                    <div className="mt-0.5 text-5xs leading-tight text-text-muted whitespace-nowrap overflow-hidden text-clip" title={dayWork[day].long}>
                                         {dayWork[day].short}
                                     </div>
 
@@ -667,7 +667,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                                         says that; a plus sign says the opposite. */}
                                     {totals.byDayBoosted[day] > value && (
                                         <div
-                                            className="font-mono text-[9px] tabular-nums text-emerald-300"
+                                            className="font-mono text-4xs tabular-nums text-emerald-300"
                                             title={
                                                 `${value.toLocaleString('en-US')} becomes ${totals.byDayBoosted[day].toLocaleString('en-US')} once each member's own ` +
                                                 `"${getTechNodeName(`WarPointsOnDay${day + 1}`)}" clan node is applied — that node multiplies what you score on ` +
@@ -682,13 +682,13 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                                         day with no scoring tasks. Saying "0" invites the reader to
                                         wonder who let the clan down. */}
                                     {value === 0 && dayWork[day].idle && (
-                                        <div className="text-[8px] leading-tight text-text-muted">no task points</div>
+                                        <div className="text-5xs leading-tight text-text-muted">no task points</div>
                                     )}
                                 </div>
                             ))}
                         </div>
                         {totals.dayBoostWorth > 0 && (
-                            <p className="text-[10px] text-text-muted">
+                            <p className="text-3xs text-text-muted">
                                 <span className="text-emerald-300">The green number is the same day after each
                                 member&apos;s own <span className="text-text-secondary">War Points On Day</span> clan
                                 node is applied</span> — not points on top of the white one, the white one
@@ -709,7 +709,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                             Silence here meant the SUM could sit visibly below the headline with no
                             explanation anywhere — the member row was labelled and the clan was not. */}
                         {totals.daySplitMismatches > 0 && (
-                            <p className="flex items-start gap-1.5 text-[10px] text-amber-400 leading-relaxed">
+                            <p className="flex items-start gap-1.5 text-3xs text-amber-400 leading-relaxed">
                                 <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" aria-hidden="true" />
                                 <span>
                                     These day figures add up to{' '}
@@ -727,7 +727,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
 
                     {/* ---- sort ---- */}
                     <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[10px] uppercase tracking-wider text-text-muted mr-0.5">Sort</span>
+                        <span className="text-3xs uppercase tracking-wider text-text-muted mr-0.5">Sort</span>
                         {(Object.keys(SORT_LABELS) as SortKey[]).map(key => {
                             const active = key === sortKey;
                             const Arrow = desc ? ArrowDown : ArrowUp;
@@ -738,7 +738,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                                     onClick={() => toggleSort(key)}
                                     aria-pressed={active}
                                     className={cn(
-                                        'flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-bold transition-colors',
+                                        'flex items-center gap-1 rounded-lg border px-2 py-1 text-2xs font-bold transition-colors',
                                         active
                                             ? 'border-accent-primary/50 bg-accent-primary/15 text-accent-primary'
                                             : 'border-border bg-bg-input text-text-secondary hover:text-text-primary hover:border-accent-primary/30',
@@ -754,7 +754,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                             <button
                                 type="button"
                                 onClick={() => setOpenIds(new Set())}
-                                className="rounded-lg border border-border bg-bg-input px-2 py-1 text-[11px] font-bold text-text-secondary hover:text-text-primary"
+                                className="rounded-lg border border-border bg-bg-input px-2 py-1 text-2xs font-bold text-text-secondary hover:text-text-primary"
                             >
                                 Collapse all
                             </button>
@@ -786,7 +786,7 @@ export const ClanRoster: React.FC<ClanRosterProps> = ({
                         stale honesty note is its own kind of lie. So each category is listed under
                         the WORST state anybody on screen published for it, which means the sentence
                         keeps telling the truth as the engine improves and as members update. */}
-                    <div className="space-y-1.5 text-[10px] text-text-muted leading-relaxed" data-testid="clan-caveats">
+                    <div className="space-y-1.5 text-3xs text-text-muted leading-relaxed" data-testid="clan-caveats">
                         <div className="flex items-start gap-2">
                             <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-accent-primary" />
                             <span>

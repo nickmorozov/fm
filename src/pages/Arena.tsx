@@ -98,7 +98,7 @@ export default function Arena() {
                                     </div>
                                     <div>
                                         <h2 className={cn("text-2xl sm:text-3xl font-black uppercase italic tracking-tighter", colorClass.split(' ')[1])}>{name}</h2>
-                                        <div className="text-[10px] font-bold text-text-muted/60 uppercase tracking-widest">League {idx + 1}</div>
+                                        <div className="text-3xs font-bold text-text-muted/60 uppercase tracking-widest">League {idx + 1}</div>
                                     </div>
                                 </div>
 

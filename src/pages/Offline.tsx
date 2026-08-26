@@ -150,7 +150,7 @@ export default function Offline() {
                                     }}
                                     placeholder="0"
                                 />
-                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-text-muted">H</span>
+                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-3xs font-bold text-text-muted">H</span>
                             </div>
 
                             {/* Minutes */}
@@ -171,10 +171,10 @@ export default function Offline() {
                                     }}
                                     placeholder="0"
                                 />
-                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-text-muted">M</span>
+                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-3xs font-bold text-text-muted">M</span>
                             </div>
                         </div>
-                        <p className="text-[10px] text-text-muted italic mt-6 px-1">
+                        <p className="text-3xs text-text-muted italic mt-6 px-1">
                             Calculated using base game rates from IdleConfig. Rewards are constant across all stages.
                         </p>
                     </Card>
@@ -209,11 +209,11 @@ export default function Offline() {
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 text-center">
                                     <div className="p-2 bg-black/20 rounded">
-                                        <div className="text-[10px] uppercase text-text-muted">Projected</div>
+                                        <div className="text-3xs uppercase text-text-muted">Projected</div>
                                         <div className="text-white font-bold">{formatHmMessages(totalOfflineHours)}</div>
                                     </div>
                                     <div className="p-2 bg-black/20 rounded ring-1 ring-orange-500/30">
-                                        <div className="text-[10px] uppercase text-orange-400/80">Actual Cap</div>
+                                        <div className="text-3xs uppercase text-orange-400/80">Actual Cap</div>
                                         <div className="text-orange-400 font-bold">{formatHmMessages(maxOfflineHours)}</div>
                                     </div>
                                 </div>
@@ -231,7 +231,7 @@ export default function Offline() {
                                         {rates.coinsPerSec.toFixed(2)}
                                     </div>
                                 </div>
-                                <div className="flex items-center justify-between text-[10px]">
+                                <div className="flex items-center justify-between text-3xs">
                                     <span className="text-text-muted">With Tech</span>
                                     <span className="text-accent-primary">+{Math.round((bonuses.coinMultiplier - 1) * 100)}%</span>
                                 </div>
@@ -247,7 +247,7 @@ export default function Offline() {
                                         {rates.hammersPerMin.toFixed(2)}
                                     </div>
                                 </div>
-                                <div className="flex items-center justify-between text-[10px]">
+                                <div className="flex items-center justify-between text-3xs">
                                     <span className="text-text-muted">With Tech</span>
                                     <span className="text-accent-tertiary">+{Math.round((bonuses.hammerMultiplier - 1) * 100)}%</span>
                                 </div>
@@ -269,14 +269,14 @@ export default function Offline() {
                                             <div className="flex flex-col items-center">
                                                 <div className="flex items-center gap-1.5 mb-0.5">
                                                     <GameIcon name="coin" className="w-4 h-4 grayscale opacity-70" />
-                                                    <span className="text-[10px] text-text-muted uppercase">Coins</span>
+                                                    <span className="text-3xs text-text-muted uppercase">Coins</span>
                                                 </div>
                                                 <div className="font-mono font-bold text-white">{formatNumber(projectedCoins)}</div>
                                             </div>
                                             <div className="flex flex-col items-center">
                                                 <div className="flex items-center gap-1.5 mb-0.5">
                                                     <GameIcon name="hammer" className="w-4 h-4 grayscale opacity-70" />
-                                                    <span className="text-[10px] text-text-muted uppercase">Hammers</span>
+                                                    <span className="text-3xs text-text-muted uppercase">Hammers</span>
                                                 </div>
                                                 <div className="font-mono font-bold text-white">{formatNumber(projectedHammers)}</div>
                                             </div>
@@ -285,20 +285,20 @@ export default function Offline() {
 
                                     {/* Actual */}
                                     <div className="p-3 bg-accent-primary/10 rounded-xl border border-accent-primary/30 relative overflow-hidden ring-1 ring-accent-primary/50">
-                                        <div className="absolute top-0 right-0 bg-accent-primary text-black text-[9px] font-bold px-2 py-0.5 rounded-bl shadow-sm">REAL</div>
+                                        <div className="absolute top-0 right-0 bg-accent-primary text-black text-4xs font-bold px-2 py-0.5 rounded-bl shadow-sm">REAL</div>
                                         <div className="text-xs text-center mb-3 font-bold text-accent-primary uppercase tracking-wider">Actual</div>
                                         <div className="space-y-3">
                                             <div className="flex flex-col items-center">
                                                 <div className="flex items-center gap-1.5 mb-0.5">
                                                     <GameIcon name="coin" className="w-4 h-4" />
-                                                    <span className="text-[10px] text-text-muted uppercase">Coins</span>
+                                                    <span className="text-3xs text-text-muted uppercase">Coins</span>
                                                 </div>
                                                 <div className="font-mono font-black text-accent-primary text-lg">{formatNumber(totalCoins)}</div>
                                             </div>
                                             <div className="flex flex-col items-center">
                                                 <div className="flex items-center gap-1.5 mb-0.5">
                                                     <GameIcon name="hammer" className="w-4 h-4" />
-                                                    <span className="text-[10px] text-text-muted uppercase">Hammers</span>
+                                                    <span className="text-3xs text-text-muted uppercase">Hammers</span>
                                                 </div>
                                                 <div className="font-mono font-black text-white text-lg">{formatNumber(totalHammers)}</div>
                                             </div>

@@ -54,13 +54,13 @@ export default function MountCalculator() {
                 <p className="text-text-secondary">Simulate level-ups and rarity drops from your winders.</p>
                 <div className="flex justify-center items-center gap-2 pt-2">
                     {isWarPointDay(new Date(), 'mounts', warDayConfig) && (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/20 text-accent-primary border border-accent-primary/30 text-[10px] font-black uppercase tracking-wider animate-pulse">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/20 text-accent-primary border border-accent-primary/30 text-3xs font-black uppercase tracking-wider animate-pulse">
                             <Trophy size={14} />
                             War Points Active: High Value Day
                         </div>
                     )}
                     {mountWarBoost > 0 && (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-3xs font-black uppercase tracking-wider">
                             <Trophy size={14} />
                             Clan Boost: +{(mountWarBoost * 100).toFixed(0)}% War Points
                         </div>
@@ -99,7 +99,7 @@ export default function MountCalculator() {
                         {/* Level & Progress */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-3 bg-bg-primary/30 p-4 rounded-xl border border-white/5">
-                                <label className="text-[10px] font-bold text-text-secondary uppercase">Current Level</label>
+                                <label className="text-3xs font-bold text-text-secondary uppercase">Current Level</label>
                                 <div className="flex items-center justify-between gap-2">
                                     <button
                                         onClick={() => setLevel(Math.max(1, currentLevel - 1))}
@@ -124,10 +124,10 @@ export default function MountCalculator() {
                                         <Plus className="w-3 h-3 text-text-primary" />
                                     </button>
                                 </div>
-                                <div className="text-[10px] text-text-muted text-center font-mono opacity-50">Max: {maxPossibleLevel}</div>
+                                <div className="text-3xs text-text-muted text-center font-mono opacity-50">Max: {maxPossibleLevel}</div>
                             </div>
                             <div className="space-y-3 bg-bg-primary/30 p-4 rounded-xl border border-white/5">
-                                <label className="text-[10px] font-bold text-text-secondary uppercase">Current Progress</label>
+                                <label className="text-3xs font-bold text-text-secondary uppercase">Current Progress</label>
                                 <div className="flex items-center justify-between gap-2">
                                     <button
                                         onClick={() => setProgress(Math.max(0, currentProgress - 1))}
@@ -157,7 +157,7 @@ export default function MountCalculator() {
                                         <Plus className="w-3 h-3 text-text-primary" />
                                     </button>
                                 </div>
-                                <div className="text-[10px] text-text-muted text-center font-mono opacity-50">
+                                <div className="text-3xs text-text-muted text-center font-mono opacity-50">
                                     Next: {currentLevel >= maxPossibleLevel ? 'MAX' : (levels[Math.min(currentLevel - 1, levels.length - 1)]?.SummonsRequired?.toLocaleString() || '?')}
                                 </div>
                             </div>
@@ -183,7 +183,7 @@ export default function MountCalculator() {
                                         min="0"
                                     />
                                 </div>
-                                <div className="text-[10px] text-text-muted px-1">
+                                <div className="text-3xs text-text-muted px-1">
                                     Estimated cost per summon: <span className="text-accent-primary font-bold">{finalCostPerSummon}</span> ⚙️
                                 </div>
                             </div>
@@ -196,7 +196,7 @@ export default function MountCalculator() {
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] text-text-muted uppercase font-bold">Target Ascension</label>
+                                        <label className="text-3xs text-text-muted uppercase font-bold">Target Ascension</label>
                                         <select
                                             value={targetAscension}
                                             onChange={(e) => setTargetAscension(Number(e.target.value))}
@@ -208,7 +208,7 @@ export default function MountCalculator() {
                                         </select>
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] text-text-muted uppercase font-bold">Target Level</label>
+                                        <label className="text-3xs text-text-muted uppercase font-bold">Target Level</label>
                                         <select
                                             value={targetLevel}
                                             onChange={(e) => setTargetLevel(Number(e.target.value))}
@@ -230,12 +230,12 @@ export default function MountCalculator() {
                                     </div>
                                 </div>
                                 <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-                                    <div className="text-[10px] text-text-muted">
+                                    <div className="text-3xs text-text-muted">
                                         Required: <span className="text-white font-bold">{calculateNeededCurrency(targetLevel, targetAscension).toLocaleString()}</span> Winders
                                     </div>
                                     <button
                                         onClick={() => setWindersCount(calculateNeededCurrency(targetLevel, targetAscension))}
-                                        className="text-[10px] bg-accent-primary/10 hover:bg-accent-primary/20 text-accent-primary px-3 py-1 rounded border border-accent-primary/30 transition-colors font-bold uppercase active:scale-95"
+                                        className="text-3xs bg-accent-primary/10 hover:bg-accent-primary/20 text-accent-primary px-3 py-1 rounded border border-accent-primary/30 transition-colors font-bold uppercase active:scale-95"
                                     >
                                         Set as Available
                                     </button>
@@ -259,7 +259,7 @@ export default function MountCalculator() {
                                         <div className="w-11 h-6 bg-bg-input peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
                                     </label>
                                 </div>
-                                <p className="text-[10px] text-text-muted leading-relaxed">
+                                <p className="text-3xs text-text-muted leading-relaxed">
                                     When ON, reaching max level resets it to 1 of the next tier. When OFF, extra winders progress only the max level.
                                 </p>
                             </div>
@@ -292,20 +292,20 @@ export default function MountCalculator() {
                                     </div>
                                     {results.simulateAscension && results.phases && results.phases.length > 1 && (
                                         <div className="space-y-2 -mt-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                                            <div className="flex items-center gap-2 text-[9px] font-bold text-text-muted uppercase px-1">
+                                            <div className="flex items-center gap-2 text-4xs font-bold text-text-muted uppercase px-1">
                                                 <RefreshCcw size={10} className="text-accent-primary" />
                                                 Phase Progression Breakdown
                                             </div>
                                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                                                 {results.phases.map((phase, idx) => (
                                                     <div key={idx} className="bg-bg-tertiary/20 p-2 rounded-lg border border-white/5 flex flex-col justify-center">
-                                                        <div className={`text-[8px] uppercase font-black mb-0.5 ${phase.startAscension > 0 ? 'text-amber-500' : 'text-text-muted'}`}>
+                                                        <div className={`text-5xs uppercase font-black mb-0.5 ${phase.startAscension > 0 ? 'text-amber-500' : 'text-text-muted'}`}>
                                                             {phase.label}
                                                         </div>
                                                         <div className="text-sm font-mono font-bold text-white leading-none mb-1">
-                                                            {phase.totalPoints.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} <span className="text-[8px] opacity-50">pts</span>
+                                                            {phase.totalPoints.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} <span className="text-5xs opacity-50">pts</span>
                                                         </div>
-                                                        <div className="text-[8px] text-text-muted font-mono leading-none">
+                                                        <div className="text-5xs text-text-muted font-mono leading-none">
                                                             Lv.{phase.startLevel} ➔ {phase.endLevel === 100 ? 'MAX' : `Lv.${phase.endLevel}`}
                                                         </div>
                                                     </div>
@@ -316,16 +316,16 @@ export default function MountCalculator() {
 
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="bg-bg-tertiary/30 p-2 rounded-lg border border-white/5 text-center">
-                                            <div className="text-[9px] text-text-muted uppercase font-bold">Summon Points</div>
+                                            <div className="text-4xs text-text-muted uppercase font-bold">Summon Points</div>
                                             <div className="text-sm font-mono font-bold text-white">+{Math.floor(results.totalSummonPoints).toLocaleString()}</div>
                                         </div>
                                         <div className="bg-bg-tertiary/30 p-2 rounded-lg border border-white/5 text-center">
-                                            <div className="text-[9px] text-text-muted uppercase font-bold">Merge Points</div>
+                                            <div className="text-4xs text-text-muted uppercase font-bold">Merge Points</div>
                                             <div className="text-sm font-mono font-bold text-accent-secondary">+{Math.floor(results.totalMergePoints).toLocaleString()}</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-[10px] text-text-muted/60 px-2 -mt-2 mb-4 text-right italic">
+                                <div className="text-3xs text-text-muted/60 px-2 -mt-2 mb-4 text-right italic">
                                     * Simulation assumes all obtained mounts are merged
                                 </div>
 
@@ -336,7 +336,7 @@ export default function MountCalculator() {
                                         </div>
                                         <div className="flex-1">
                                             <div className="text-xs font-bold text-amber-400 uppercase">Max Level Milestone</div>
-                                            <div className="text-[11px] text-text-secondary leading-relaxed">
+                                            <div className="text-2xs text-text-secondary leading-relaxed">
                                                 You reach <span className="text-white font-bold">Max Level</span> in <span className="text-amber-400 font-bold">{results.summonsToMax.toLocaleString()} summons</span> ({(results.summonsToMax * results.finalCost).toLocaleString()} winders).
                                                 The remaining <span className="text-white font-bold">{((results.totalSummons - results.summonsToMax) * results.finalCost).toLocaleString()}</span> winders progress 
                                                 into <span className="text-amber-400 font-bold">{results.simulateAscension ? `Ascension ${results.endAscensionLevel}` : 'Max Level'}</span>.
@@ -348,31 +348,31 @@ export default function MountCalculator() {
                                 {/* Summons Info Grid */}
                                 <div className="grid grid-cols-3 gap-3 pb-2 border-b border-white/5">
                                     <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">Summons</div>
+                                        <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">Summons</div>
                                         <div className="text-lg font-mono font-bold text-white">
                                             {results.totalSummons.toLocaleString()}
                                         </div>
                                     </div>
                                     <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">End Level</div>
+                                        <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">End Level</div>
                                         <div className="text-lg font-mono font-bold text-accent-primary flex flex-col justify-center">
                                             <div className="flex items-center gap-1">
                                                 <span className="text-xs opacity-50 font-normal">Lv.{currentLevel} ➔</span>
                                                 Lv.{results.endLevel}
                                             </div>
                                             {results.endAscensionLevel > (profile.misc.mountAscensionLevel || 0) && (
-                                                <div className="text-[10px] text-amber-500 font-bold">
+                                                <div className="text-3xs text-amber-500 font-bold">
                                                     (Ascension {results.endAscensionLevel})
                                                 </div>
                                             )}
                                         </div>
                                     </div>
                                     <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">Price</div>
+                                        <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">Price</div>
                                         <div className="text-lg font-mono font-bold text-green-400 flex items-baseline gap-1">
                                             {results.finalCost}
                                             {results.costReduction > 0 && (
-                                                <span className="text-[10px] text-text-muted line-through font-normal decoration-white/30">
+                                                <span className="text-3xs text-text-muted line-through font-normal decoration-white/30">
                                                     {results.baseCost}
                                                 </span>
                                             )}
@@ -409,7 +409,7 @@ export default function MountCalculator() {
                                                         <div className="flex flex-wrap gap-1 justify-end max-w-[150px] mt-1">
                                                             {(item.phaseCounts || []).map((phase, pIdx) => (
                                                                 <div key={pIdx} className={`px-1 rounded border ${phase.ascension > 0 ? 'bg-amber-500/5 border-amber-500/10' : 'bg-white/5 border-white/5'}`}>
-                                                                    <div className="flex items-center gap-0.5 text-[8px] font-mono leading-tight">
+                                                                    <div className="flex items-center gap-0.5 text-5xs font-mono leading-tight">
                                                                         <span className={phase.ascension > 0 ? 'text-amber-500/80 font-bold' : 'text-text-muted'}>
                                                                             {phase.ascension === 0 ? 'N' : `A${phase.ascension}`}:
                                                                         </span>
@@ -422,13 +422,13 @@ export default function MountCalculator() {
 
                                                     <div className="flex gap-2">
                                                         {item.summonPoints > 0 && (
-                                                            <div className="flex flex-col items-end text-[9px] text-text-muted font-mono leading-tight bg-white/5 px-1.5 py-0.5 rounded">
+                                                            <div className="flex flex-col items-end text-4xs text-text-muted font-mono leading-tight bg-white/5 px-1.5 py-0.5 rounded">
                                                                 <span className="opacity-50">Summon</span>
                                                                 <span className="text-white font-bold">{item.summonPoints.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
                                                             </div>
                                                         )}
                                                         {item.mergePoints > 0 && (
-                                                            <div className="flex flex-col items-end text-[9px] text-accent-secondary/70 font-mono leading-tight bg-accent-secondary/5 px-1.5 py-0.5 rounded">
+                                                            <div className="flex flex-col items-end text-4xs text-accent-secondary/70 font-mono leading-tight bg-accent-secondary/5 px-1.5 py-0.5 rounded">
                                                                 <span className="opacity-50">Merge</span>
                                                                 <span className="text-accent-secondary font-bold">{item.mergePoints.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
                                                             </div>

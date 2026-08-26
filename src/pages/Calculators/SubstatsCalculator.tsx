@@ -513,7 +513,7 @@ export default function SubstatsCalculator() {
                         <div className="flex items-center justify-between bg-bg-input/30 p-2 rounded-lg border border-border/30 mb-4 cursor-pointer" onClick={() => setIncludeSkills(!includeSkills)}>
                             <div className="flex flex-col">
                                 <span className="text-sm font-medium">Include Skills</span>
-                                <span className="text-[9px] text-orange-400 font-bold uppercase tracking-wider">Experimental. Recommend disabled.</span>
+                                <span className="text-4xs text-orange-400 font-bold uppercase tracking-wider">Experimental. Recommend disabled.</span>
                             </div>
                             <div className={cn("w-10 h-5 rounded-full relative transition-colors", includeSkills ? "bg-emerald-500" : "bg-bg-card")}>
                                 <div className={cn("w-4 h-4 rounded-full bg-white absolute top-0.5 transition-all", includeSkills ? "left-5" : "left-1")}></div>
@@ -544,9 +544,9 @@ export default function SubstatsCalculator() {
                             </Button>
                         </div>
                         <div className="flex items-center justify-center gap-2 mt-4 text-text-muted">
-                            <span className="text-[10px] font-bold uppercase tracking-widest border-t border-border/50 flex-1 ml-2"></span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Base Stats</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest border-t border-border/50 flex-1 mr-2"></span>
+                            <span className="text-3xs font-bold uppercase tracking-widest border-t border-border/50 flex-1 ml-2"></span>
+                            <span className="text-3xs font-bold uppercase tracking-widest">Base Stats</span>
+                            <span className="text-3xs font-bold uppercase tracking-widest border-t border-border/50 flex-1 mr-2"></span>
                         </div>
                         <div className="space-y-2 mt-2">
                             <Button 
@@ -571,7 +571,7 @@ export default function SubstatsCalculator() {
                                 <span className="flex items-center gap-2"><TrendingUp className="w-4 h-4" /> Maximize Health</span>
                             </Button>
                         </div>
-                        <p className="text-[10px] text-text-muted mt-3 text-center uppercase tracking-wide">Calculates using {optimizeType === 'real' ? 'Real-Time' : 'Theoretical'} Metrics {includeSkills ? '(With Skills)' : '(Weapon Attacks Only)'}</p>
+                        <p className="text-3xs text-text-muted mt-3 text-center uppercase tracking-wide">Calculates using {optimizeType === 'real' ? 'Real-Time' : 'Theoretical'} Metrics {includeSkills ? '(With Skills)' : '(Weapon Attacks Only)'}</p>
                     </Card>
 
                     <Card className="p-4 border-accent-primary/20 bg-accent-primary/5">
@@ -658,7 +658,7 @@ export default function SubstatsCalculator() {
                                                 <span className="text-xs font-mono font-bold text-accent-primary">
                                                     {(resultingValue * 100).toFixed(1)}%
                                                 </span>
-                                                <span className="text-[10px] text-text-muted">
+                                                <span className="text-3xs text-text-muted">
                                                     {alloc} / {maxPossible} rolls
                                                 </span>
                                             </div>

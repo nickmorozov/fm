@@ -191,7 +191,7 @@ export function PushPanel() {
                                 <li>Choose &ldquo;Add to Home Screen&rdquo;.</li>
                                 <li>Open ForgeMaster from the new icon and come back to this panel.</li>
                             </ol>
-                            <p className="mt-2 text-[11px] text-amber-400 leading-relaxed">
+                            <p className="mt-2 text-2xs text-amber-400 leading-relaxed">
                                 Keep the icon once you have it. Deleting it removes the notification permission and
                                 everything this site has stored on your phone, saved profiles included.
                             </p>
@@ -276,14 +276,14 @@ export function PushPanel() {
                                 )}
                             </p>
                             {subscription?.registered === false && (
-                                <p className="mt-1.5 flex items-start gap-2 text-[11px] text-amber-400 leading-relaxed">
+                                <p className="mt-1.5 flex items-start gap-2 text-2xs text-amber-400 leading-relaxed">
                                     <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                                     This browser is subscribed but the server has not confirmed it. Nothing will arrive
                                     until it does; it is retried every time you open the app.
                                 </p>
                             )}
                             {subscription?.keyMismatch && (
-                                <p className="mt-1.5 flex items-start gap-2 text-[11px] text-amber-400 leading-relaxed">
+                                <p className="mt-1.5 flex items-start gap-2 text-2xs text-amber-400 leading-relaxed">
                                     <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                                     This device was registered against an older signing key and can no longer receive
                                     anything. Turn notifications off and on again to fix it.
@@ -306,7 +306,7 @@ export function PushPanel() {
                         <p
                             role="status"
                             className={cn(
-                                'mt-2 flex items-start gap-2 rounded-lg border p-2 text-[11px] leading-relaxed',
+                                'mt-2 flex items-start gap-2 rounded-lg border p-2 text-2xs leading-relaxed',
                                 testResult.ok
                                     ? 'border-accent-primary/40 bg-accent-primary/5 text-text-secondary'
                                     : 'border-amber-500/40 bg-amber-500/10 text-amber-200',
@@ -322,7 +322,7 @@ export function PushPanel() {
                     {failure && (
                         <p
                             role="status"
-                            className="mt-2 flex items-start gap-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-[11px] text-red-200 leading-relaxed"
+                            className="mt-2 flex items-start gap-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-2xs text-red-200 leading-relaxed"
                         >
                             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                             <span>{failure}</span>

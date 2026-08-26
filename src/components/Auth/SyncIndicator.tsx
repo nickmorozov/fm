@@ -96,7 +96,7 @@ export function SyncIndicator({
         <span
             title={title}
             className={cn(
-                'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap',
+                'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-2xs font-semibold whitespace-nowrap',
                 tone,
                 className,
             )}
@@ -104,7 +104,7 @@ export function SyncIndicator({
             {icon}
             {label}
             {pendingCount > 0 && status !== 'saving' && (
-                <span className="ml-0.5 rounded-full bg-black/30 px-1.5 py-px text-[10px] font-bold">
+                <span className="ml-0.5 rounded-full bg-black/30 px-1.5 py-px text-3xs font-bold">
                     {pendingCount}
                 </span>
             )}

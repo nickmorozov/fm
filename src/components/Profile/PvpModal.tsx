@@ -36,7 +36,7 @@ function oppToDuel(o: OppForm): DuelStats {
 
 function NumField({ label, value, onChange, suffix }: { label: string; value: number; onChange: (v: number) => void; suffix?: string }) {
     return (
-        <label className="flex items-center justify-between gap-2 text-[11px]">
+        <label className="flex items-center justify-between gap-2 text-2xs">
             <span className="text-text-muted">{label}</span>
             <span className="flex items-center gap-1">
                 <input type="number" value={value}
@@ -51,7 +51,7 @@ function NumField({ label, value, onChange, suffix }: { label: string; value: nu
 
 function StatList({ d }: { d: DuelStats }) {
     return (
-        <div className="text-[10px] font-mono text-text-secondary grid grid-cols-2 gap-x-3 gap-y-0.5">
+        <div className="text-3xs font-mono text-text-secondary grid grid-cols-2 gap-x-3 gap-y-0.5">
             <span>DMG {fmt(d.damage)}</span><span>HP {fmt(d.health)}</span>
             <span>Crit {(d.critChance * 100).toFixed(0)}%</span><span>CritDmg {((d.critMultiplier - 1) * 100).toFixed(0)}%</span>
             <span>Double {(d.doubleChance * 100).toFixed(0)}%</span><span>APS {d.aps.toFixed(2)}</span>
@@ -120,7 +120,7 @@ export function PvpModal({ onClose }: { onClose: () => void }) {
                 <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-red-500/15 to-accent-primary/10">
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-red-500/20 flex items-center justify-center"><Swords className="w-5 h-5 text-red-400" /></div>
-                        <div><h3 className="font-black text-white">Simplified PvP</h3><p className="text-[11px] text-text-muted">Duel your build against an opponent screenshot</p></div>
+                        <div><h3 className="font-black text-white">Simplified PvP</h3><p className="text-2xs text-text-muted">Duel your build against an opponent screenshot</p></div>
                     </div>
                     <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-text-muted hover:text-white"><X className="w-5 h-5" /></button>
                 </div>
@@ -133,10 +133,10 @@ export function PvpModal({ onClose }: { onClose: () => void }) {
                                 className="border-2 border-dashed border-red-400/40 rounded-2xl p-8 text-center cursor-pointer hover:bg-red-400/5 transition">
                                 <UploadCloud className="w-10 h-10 mx-auto text-red-400 mb-3" />
                                 <p className="font-bold text-white">Drop the opponent's profile overview</p>
-                                <p className="text-[11px] text-text-muted mt-1">The screen showing their Total Damage / Total Health & % stats.</p>
+                                <p className="text-2xs text-text-muted mt-1">The screen showing their Total Damage / Total Health & % stats.</p>
                                 <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) scan(f); }} />
                             </div>
-                            <button onClick={() => setStage('ready')} className="w-full py-2 rounded-lg text-[12px] text-text-muted hover:text-white border border-border">or enter opponent stats manually →</button>
+                            <button onClick={() => setStage('ready')} className="w-full py-2 rounded-lg text-xs text-text-muted hover:text-white border border-border">or enter opponent stats manually →</button>
                             {error && <p className="text-red-400 text-sm">{error}</p>}
                         </div>
                     )}
@@ -151,11 +151,11 @@ export function PvpModal({ onClose }: { onClose: () => void }) {
                                 <div className={cn('rounded-xl p-4 text-center border-2', draw ? 'border-white/30 bg-white/5' : youWin ? 'border-green-500/50 bg-green-500/10' : 'border-red-500/50 bg-red-500/10')}>
                                     <Trophy className={cn('w-8 h-8 mx-auto mb-1', draw ? 'text-white/60' : youWin ? 'text-green-400' : 'text-red-400')} />
                                     <div className="text-xl font-black text-white">{draw ? 'Draw' : youWin ? 'You win!' : 'You lose'}</div>
-                                    <div className="text-[11px] text-text-muted">
+                                    <div className="text-2xs text-text-muted">
                                         {result.aTTK != null && `You kill in ${result.aTTK.toFixed(1)}s`}{result.aTTK != null && result.bTTK != null ? ' · ' : ''}
                                         {result.bTTK != null && `Opponent kills in ${result.bTTK.toFixed(1)}s`}
                                     </div>
-                                    {result.note && <p className="text-[10px] text-text-muted mt-1">{result.note}</p>}
+                                    {result.note && <p className="text-3xs text-text-muted mt-1">{result.note}</p>}
                                 </div>
                             )}
 
@@ -164,7 +164,7 @@ export function PvpModal({ onClose }: { onClose: () => void }) {
                                 <div className="space-y-2">
                                     {([['You', player, result.aRemainingPct, 'bg-green-500'], ['Opponent', oppD, result.bRemainingPct, 'bg-red-500']] as const).map(([lbl, d, pct, col], i) => (
                                         <div key={i}>
-                                            <div className="flex justify-between text-[10px] text-text-muted"><span>{lbl}</span><span>{pct.toFixed(0)}% HP · {fmt(effectiveDps(d))} DPS</span></div>
+                                            <div className="flex justify-between text-3xs text-text-muted"><span>{lbl}</span><span>{pct.toFixed(0)}% HP · {fmt(effectiveDps(d))} DPS</span></div>
                                             <div className="h-3 rounded-full bg-bg-input overflow-hidden"><div className={cn('h-full rounded-full transition-all duration-[1500ms] ease-out', col)} style={{ width: `${anim ? pct : 100}%` }} /></div>
                                         </div>
                                     ))}
@@ -179,7 +179,7 @@ export function PvpModal({ onClose }: { onClose: () => void }) {
                                 </div>
                                 {/* Opponent (editable) */}
                                 <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-3 space-y-1">
-                                    <div className="font-bold text-red-400 text-sm mb-1">Opponent {stage === 'ready' && <span className="text-[9px] text-text-muted">(edit if OCR missed something)</span>}</div>
+                                    <div className="font-bold text-red-400 text-sm mb-1">Opponent {stage === 'ready' && <span className="text-4xs text-text-muted">(edit if OCR missed something)</span>}</div>
                                     <NumField label="Total Damage" value={opp.damage} onChange={v => setOpp({ ...opp, damage: v })} />
                                     <NumField label="Total Health" value={opp.health} onChange={v => setOpp({ ...opp, health: v })} />
                                     <NumField label="Crit Chance" value={opp.crit} onChange={v => setOpp({ ...opp, crit: v })} suffix="%" />
@@ -191,7 +191,7 @@ export function PvpModal({ onClose }: { onClose: () => void }) {
                                 </div>
                             </div>
 
-                            <p className="text-[10px] text-text-muted flex items-start gap-1.5"><Info className="w-3 h-3 mt-0.5 shrink-0" /> Both fighters use their full totals. Which already include tree &amp; passives. So this is the real matchup. The opponent's tree is baked into their Total Damage/Health, so nothing needs to be stripped.</p>
+                            <p className="text-3xs text-text-muted flex items-start gap-1.5"><Info className="w-3 h-3 mt-0.5 shrink-0" /> Both fighters use their full totals. Which already include tree &amp; passives. So this is the real matchup. The opponent's tree is baked into their Total Damage/Health, so nothing needs to be stripped.</p>
                         </div>
                     )}
                 </div>

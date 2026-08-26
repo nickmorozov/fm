@@ -130,7 +130,7 @@ export default function Inventory() {
                     {(item.secondaryStats?.length || 0) > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1.5">
                             {item.secondaryStats!.map((s, i) => (
-                                <span key={i} className="text-[0.625rem] font-bold px-1.5 py-0.5 rounded bg-accent-primary/10 text-accent-primary border border-accent-primary/20">
+                                <span key={i} className="text-3xs font-bold px-1.5 py-0.5 rounded bg-accent-primary/10 text-accent-primary border border-accent-primary/20">
                                     {getStatName(s.statId)} {s.value}%
                                 </span>
                             ))}
@@ -159,7 +159,7 @@ export default function Inventory() {
                 {(build.secondaryStats?.length || 0) > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1.5">
                         {build.secondaryStats!.map((s, i) => (
-                            <span key={i} className="text-[0.625rem] font-bold px-1.5 py-0.5 rounded bg-accent-primary/10 text-accent-primary border border-accent-primary/20">
+                            <span key={i} className="text-3xs font-bold px-1.5 py-0.5 rounded bg-accent-primary/10 text-accent-primary border border-accent-primary/20">
                                 {getStatName(s.statId)} {s.value}%
                             </span>
                         ))}

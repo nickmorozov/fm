@@ -214,7 +214,7 @@ export default function Configs() {
                 "fixed bottom-28 left-1/2 -translate-x-1/2 z-[100] md:relative md:bottom-0 md:left-0 md:translate-x-0 md:z-auto md:px-3 md:py-1.5 md:shadow-lg md:animate-in md:fade-in md:slide-in-from-top-2"
             )}>
                 <div className="flex items-center gap-2 pr-2 border-r border-border/30 md:pr-1 md:border-r-0">
-                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-tighter hidden sm:inline">
+                    <span className="text-3xs font-bold text-text-muted uppercase tracking-tighter hidden sm:inline">
                         Matches
                     </span>
                     <span className="text-xs font-mono font-bold text-accent-primary bg-bg-input px-2.5 py-1 rounded-lg min-w-[3.5rem] text-center border border-white/5">
@@ -297,7 +297,7 @@ export default function Configs() {
 
     // Detailed Diff Legend
     const DiffLegend = () => (
-        <div className="flex flex-wrap items-center gap-4 px-4 py-2 bg-bg-secondary/30 border-b border-border text-[10px] font-bold uppercase tracking-wider text-text-muted">
+        <div className="flex flex-wrap items-center gap-4 px-4 py-2 bg-bg-secondary/30 border-b border-border text-3xs font-bold uppercase tracking-wider text-text-muted">
             <div className="flex items-center gap-1.5">
                 <div className="w-3 h-3 bg-green-500/20 border border-green-500/50 rounded-sm" />
                 <span>Added / New</span>
@@ -468,9 +468,9 @@ export default function Configs() {
 
     const getFileStatus = (file: string) => {
         if (!isCompareMode || !comparison) return null;
-        if (comparison.added.includes(file)) return <span className="text-[10px] bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded font-bold">NEW</span>;
-        if (comparison.removed.includes(file)) return <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded font-bold">DEL</span>;
-        if (comparison.modified.includes(file)) return <span className="text-[10px] bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded font-bold">MOD</span>;
+        if (comparison.added.includes(file)) return <span className="text-3xs bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded font-bold">NEW</span>;
+        if (comparison.removed.includes(file)) return <span className="text-3xs bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded font-bold">DEL</span>;
+        if (comparison.modified.includes(file)) return <span className="text-3xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded font-bold">MOD</span>;
         return null;
     };
 
@@ -490,7 +490,7 @@ export default function Configs() {
                         <Button 
                             variant="outline" 
                             size="sm" 
-                            className={cn("h-7 px-2 text-[10px] font-black uppercase tracking-widest", isCompareMode && "bg-accent-primary/20 border-accent-primary")}
+                            className={cn("h-7 px-2 text-3xs font-black uppercase tracking-widest", isCompareMode && "bg-accent-primary/20 border-accent-primary")}
                             onClick={() => setIsCompareMode(!isCompareMode)}
                         >
                             {isCompareMode ? "Exit Compare" : "Compare"}
@@ -500,7 +500,7 @@ export default function Configs() {
                     {/* Comparison Summary */}
                     {isCompareMode && comparison && (
                         <div className="flex flex-col gap-2">
-                            <div className="flex gap-2 text-[10px] font-bold">
+                            <div className="flex gap-2 text-3xs font-bold">
                                 <span className="bg-green-500/10 text-green-400 px-2 py-0.5 rounded border border-green-500/20">
                                     {comparison.added.length} NEW
                                 </span>
@@ -514,7 +514,7 @@ export default function Configs() {
                             <button 
                                 onClick={() => setShowOnlyChanges(!showOnlyChanges)}
                                 className={cn(
-                                    "flex items-center gap-2 text-[10px] font-bold uppercase tracking-tighter w-fit px-2 py-1 rounded border transition-all",
+                                    "flex items-center gap-2 text-3xs font-bold uppercase tracking-tighter w-fit px-2 py-1 rounded border transition-all",
                                     showOnlyChanges 
                                         ? "bg-accent-primary/20 border-accent-primary text-accent-primary" 
                                         : "bg-bg-input/50 border-border text-text-muted hover:text-text-primary hover:border-text-muted"
@@ -532,11 +532,11 @@ export default function Configs() {
                             {isCompareMode ? (
                                 <div className="grid grid-cols-2 gap-2">
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-1">Base (Old)</label>
+                                        <label className="text-3xs font-bold text-text-muted uppercase tracking-widest ml-1">Base (Old)</label>
                                         <select
                                             value={baseVersion}
                                             onChange={(e) => setBaseVersion(e.target.value)}
-                                            className="w-full bg-bg-input border border-border rounded-md px-2 py-1 text-[11px] text-text-primary focus:border-accent-primary outline-none appearance-none cursor-pointer"
+                                            className="w-full bg-bg-input border border-border rounded-md px-2 py-1 text-2xs text-text-primary focus:border-accent-primary outline-none appearance-none cursor-pointer"
                                         >
                                             {versions.map(v => (
                                                 <option key={v} value={v} disabled={v === targetVersion}>
@@ -546,11 +546,11 @@ export default function Configs() {
                                         </select>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1">Target (New)</label>
+                                        <label className="text-3xs font-bold text-blue-400 uppercase tracking-widest ml-1">Target (New)</label>
                                         <select
                                             value={targetVersion}
                                             onChange={(e) => setTargetVersion(e.target.value)}
-                                            className="w-full bg-bg-input border border-blue-500/30 rounded-md px-2 py-1 text-[11px] text-text-primary focus:border-accent-primary outline-none appearance-none cursor-pointer"
+                                            className="w-full bg-bg-input border border-blue-500/30 rounded-md px-2 py-1 text-2xs text-text-primary focus:border-accent-primary outline-none appearance-none cursor-pointer"
                                         >
                                             {versions.map(v => (
                                                 <option key={v} value={v} disabled={v === baseVersion}>
@@ -620,7 +620,7 @@ export default function Configs() {
                                         )}>
                                             {file.replace('.json', '')}
                                         </span>
-                                        {!hasContent && <span className="text-[10px] text-text-muted italic">Loading</span>}
+                                        {!hasContent && <span className="text-3xs text-text-muted italic">Loading</span>}
                                     </div>
                                 </div>
                                 {getFileStatus(file)}
@@ -646,7 +646,7 @@ export default function Configs() {
                                     <span className="whitespace-nowrap overflow-hidden text-clip">{selectedFile}</span>
                                 </h3>
                                 {isCompareMode && (
-                                    <div className="text-[10px] flex gap-2 mt-0.5">
+                                    <div className="text-3xs flex gap-2 mt-0.5">
                                         <span className="text-text-muted">Comparing: <span className="text-text-primary font-mono">{formatVersion(baseVersion)}</span></span>
                                         <span className="text-text-muted">→ <span className="text-blue-400 font-mono">{formatVersion(targetVersion)}</span></span>
                                     </div>

@@ -230,7 +230,7 @@ export function DurationSelect({ valueMs, onChange, legend, disabled, className 
 
     return (
         <fieldset className={cn('min-w-0 border-0 p-0 m-0', className)} data-duration-select>
-            <legend className="text-[10px] font-bold text-text-secondary uppercase p-0">{legend}</legend>
+            <legend className="text-3xs font-bold text-text-secondary uppercase p-0">{legend}</legend>
 
             <div className="mt-1 grid grid-cols-2 gap-2">
                 <Field id={hoursId} label="Hours">
@@ -284,7 +284,7 @@ export function DurationSelect({ valueMs, onChange, legend, disabled, className 
 
 const SELECT_CLASS = cn(
     'w-full appearance-none rounded-lg border border-border bg-bg-input px-3 py-2 pr-8',
-    'text-[15px] font-bold text-text-primary tabular-nums',
+    'text-[0.9375rem] font-bold text-text-primary tabular-nums',
     'focus:outline-none focus:border-accent-primary focus:ring-2 focus:ring-accent-primary/40',
     'disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
 );
@@ -299,7 +299,7 @@ function Field({ id, label, children }: { id: string; label: string; children: R
             {/* `htmlFor`, not a wrapping label with no association: the pair is read by a screen
                 reader as legend + label, and `UI/Select.tsx`'s own label has no `htmlFor` at all,
                 which is why this control does not use it. */}
-            <label htmlFor={id} className="block text-[10px] font-bold uppercase text-text-secondary">
+            <label htmlFor={id} className="block text-3xs font-bold uppercase text-text-secondary">
                 {label}
             </label>
             <div className="relative mt-0.5">

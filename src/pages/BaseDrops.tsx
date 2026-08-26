@@ -99,14 +99,14 @@ export default function BaseDrops() {
                 hasDiff && (isBetter ? "bg-green-500/10" : "bg-red-500/10")
             )}>
                 <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-text-muted opacity-50">{formatPercent(baseVal)}</span>
+                    <span className="text-3xs text-text-muted opacity-50">{formatPercent(baseVal)}</span>
                     <ArrowRight className="w-2.5 h-2.5 text-text-muted opacity-30" />
                     <span className={cn("font-bold", hasDiff ? (isBetter ? "text-green-400" : "text-red-400") : "text-text-primary")}>
                         {formatPercent(targetVal)}
                     </span>
                 </div>
                 {hasDiff && (
-                    <div className={cn("flex items-center gap-0.5 text-[9px] font-bold uppercase tracking-tighter", isBetter ? "text-green-500" : "text-red-500")}>
+                    <div className={cn("flex items-center gap-0.5 text-4xs font-bold uppercase tracking-tighter", isBetter ? "text-green-500" : "text-red-500")}>
                         {isBetter ? <TrendingUp className="w-2 h-2" /> : <TrendingDown className="w-2 h-2" />}
                         {isBetter ? "+" : ""}{formatPercent(diff)}
                     </div>
@@ -136,15 +136,15 @@ export default function BaseDrops() {
                             <tr className="border-b border-border bg-bg-secondary/80">
                                 <th className="p-2 sm:p-4 sticky left-0 top-0 bg-bg-secondary z-30 w-[60px] sm:w-[80px] border-r border-b border-border/50">
                                     <div className="flex flex-col items-center">
-                                        <span className="text-[8px] sm:text-[10px] uppercase text-text-muted">Forge</span>
-                                        <span className="text-[10px] sm:text-xs font-bold font-mono">Level</span>
+                                        <span className="text-5xs sm:text-3xs uppercase text-text-muted">Forge</span>
+                                        <span className="text-3xs sm:text-xs font-bold font-mono">Level</span>
                                     </div>
                                 </th>
                                 {AGES.map((age, idx) => (
                                     <th key={age} className="p-4 font-bold text-center group w-[120px] sticky top-0 bg-bg-secondary z-20 border-b border-border/50">
                                         <div className="flex flex-col items-center gap-1">
                                             <div style={getAgeIconStyle(idx, 24, targetVersion)} className="group-hover:scale-110 transition-transform" />
-                                            <span className="text-[10px] uppercase tracking-wider text-text-muted group-hover:text-text-primary transition-colors">{age}</span>
+                                            <span className="text-3xs uppercase tracking-wider text-text-muted group-hover:text-text-primary transition-colors">{age}</span>
                                         </div>
                                     </th>
                                 ))}
@@ -216,27 +216,27 @@ export default function BaseDrops() {
                             <tr className="border-b border-border bg-bg-secondary/80">
                                 <th className="p-2 sm:p-4 sticky left-0 top-0 bg-bg-secondary z-30 w-[80px] sm:w-[100px] border-r border-b border-border/50">
                                     <div className="flex flex-col">
-                                        <span className="text-[8px] sm:text-[10px] uppercase text-text-muted">Summon</span>
-                                        <span className="text-[10px] sm:text-xs font-bold font-mono">Level</span>
+                                        <span className="text-5xs sm:text-3xs uppercase text-text-muted">Summon</span>
+                                        <span className="text-3xs sm:text-xs font-bold font-mono">Level</span>
                                     </div>
                                 </th>
                                 <th className="p-4 bg-bg-secondary/95 w-[140px] text-center border-r border-b border-border/50 sticky top-0 z-20">
                                     <div className="flex flex-col items-center">
                                         <RefreshCw className="w-4 h-4 text-text-muted mb-1" />
-                                        <span className="text-[10px] uppercase text-text-muted">Required Summons to be unlocked</span>
+                                        <span className="text-3xs uppercase text-text-muted">Required Summons to be unlocked</span>
                                     </div>
                                 </th>
                                 <th className="p-4 bg-bg-secondary/95 w-[140px] text-center border-r border-b border-border/50 sticky top-0 z-20">
                                     <div className="flex flex-col items-center">
                                         <Sigma className="w-4 h-4 text-text-muted mb-1" />
-                                        <span className="text-[10px] uppercase text-text-muted">Total Summons</span>
+                                        <span className="text-3xs uppercase text-text-muted">Total Summons</span>
                                     </div>
                                 </th>
                                 {RARITIES.map(rarity => (
                                     <th key={rarity} className="p-4 font-bold text-center w-[120px] sticky top-0 bg-bg-secondary z-20 border-b border-border/50">
                                         <div className="flex flex-col items-center gap-1">
                                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getRarityBorderStyle(rarity).borderColor as string }} />
-                                            <span className="text-[10px] uppercase tracking-widest" style={{ color: getRarityBorderStyle(rarity).borderColor as string }}>
+                                            <span className="text-3xs uppercase tracking-widest" style={{ color: getRarityBorderStyle(rarity).borderColor as string }}>
                                                 {rarity}
                                             </span>
                                         </div>
@@ -270,12 +270,12 @@ export default function BaseDrops() {
                                         <td className="p-4 text-center border-r border-border/30 font-mono font-bold bg-bg-secondary/5">
                                             {isCompareMode && tSummons !== bSummons ? (
                                                 <div className="flex flex-col items-center">
-                                                    <div className="flex items-center gap-1.5 text-[10px] opacity-40">
+                                                    <div className="flex items-center gap-1.5 text-3xs opacity-40">
                                                         <span>{bSummons}</span>
                                                         <ArrowRight className="w-2.5 h-2.5" />
                                                         <span className="font-bold">{tSummons}</span>
                                                     </div>
-                                                    <div className={cn("text-[9px]", tSummons < bSummons ? "text-green-400" : "text-red-400")}>
+                                                    <div className={cn("text-4xs", tSummons < bSummons ? "text-green-400" : "text-red-400")}>
                                                         {tSummons < bSummons ? '↓ Faster' : '↑ Slower'} ({(tSummons - bSummons)})
                                                     </div>
                                                 </div>
@@ -286,12 +286,12 @@ export default function BaseDrops() {
                                         <td className="p-4 text-center border-r border-border/30 font-mono font-bold bg-bg-secondary/5">
                                             {isCompareMode && tCumSum !== bCumSum ? (
                                                 <div className="flex flex-col items-center">
-                                                    <div className="flex items-center gap-1.5 text-[10px] opacity-40">
+                                                    <div className="flex items-center gap-1.5 text-3xs opacity-40">
                                                         <span>{bCumSum}</span>
                                                         <ArrowRight className="w-2.5 h-2.5" />
                                                         <span className="font-bold">{tCumSum}</span>
                                                     </div>
-                                                    <div className={cn("text-[9px]", tCumSum < bCumSum ? "text-green-400" : "text-red-400")}>
+                                                    <div className={cn("text-4xs", tCumSum < bCumSum ? "text-green-400" : "text-red-400")}>
                                                         {tCumSum < bCumSum ? '↓ Faster' : '↑ Slower'} ({(tCumSum - bCumSum)})
                                                     </div>
                                                 </div>
@@ -344,7 +344,7 @@ export default function BaseDrops() {
                 <Card className="p-4 flex flex-wrap gap-4 items-center bg-bg-secondary/40 backdrop-blur-xl border-accent-primary/20 shadow-xl">
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="flex flex-col">
-                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1 ml-1">Current Version</label>
+                            <label className="text-3xs font-bold text-text-muted uppercase tracking-widest mb-1 ml-1">Current Version</label>
                             <select
                                 value={targetVersion}
                                 onChange={(e) => setTargetVersion(e.target.value)}
@@ -360,7 +360,7 @@ export default function BaseDrops() {
                                     <ArrowRight className="w-4 h-4 text-accent-primary" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <label className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1 ml-1 text-right">Comparing Against</label>
+                                    <label className="text-3xs font-bold text-text-muted uppercase tracking-widest mb-1 ml-1 text-right">Comparing Against</label>
                                     <select
                                         value={baseVersion}
                                         onChange={(e) => setBaseVersion(e.target.value)}
@@ -378,7 +378,7 @@ export default function BaseDrops() {
                         size="sm"
                         onClick={() => setIsCompareMode(!isCompareMode)}
                         className={cn(
-                            "h-10 px-6 uppercase tracking-widest text-[10px] font-black mt-4 border-2 shadow-lg transition-all",
+                            "h-10 px-6 uppercase tracking-widest text-3xs font-black mt-4 border-2 shadow-lg transition-all",
                             isCompareMode
                                 ? "bg-accent-secondary border-accent-secondary text-black"
                                 : "bg-accent-primary/20 border-accent-primary/50 text-white hover:bg-accent-primary hover:text-black shadow-lg shadow-accent-primary/10"
@@ -400,7 +400,7 @@ export default function BaseDrops() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as TabType)}
                         className={cn(
-                            "px-4 sm:px-8 py-2 sm:py-3 flex items-center gap-2 sm:gap-3 rounded-xl font-black uppercase tracking-widest text-[10px] sm:text-xs transition-all whitespace-nowrap",
+                            "px-4 sm:px-8 py-2 sm:py-3 flex items-center gap-2 sm:gap-3 rounded-xl font-black uppercase tracking-widest text-3xs sm:text-xs transition-all whitespace-nowrap",
                             activeTab === tab.id
                                 ? "bg-accent-primary text-black shadow-lg shadow-accent-primary/20 scale-105 z-10"
                                 : "text-text-muted hover:text-text-primary hover:bg-white/5"
@@ -425,7 +425,7 @@ export default function BaseDrops() {
             </Card>
 
             {isCompareMode && (
-                <div className="flex items-center justify-center gap-8 py-4 bg-bg-secondary/20 rounded-2xl border border-white/5 font-mono text-[10px] font-bold tracking-tighter uppercase opacity-60">
+                <div className="flex items-center justify-center gap-8 py-4 bg-bg-secondary/20 rounded-2xl border border-white/5 font-mono text-3xs font-bold tracking-tighter uppercase opacity-60">
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded bg-green-500/20 border border-green-500/50" />
                         <span>Increased Chance</span>

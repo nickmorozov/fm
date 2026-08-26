@@ -417,7 +417,7 @@ export function CreateClanForm({ onCreated, className }: CreateClanFormProps) {
                 {/* THE PASSWORD. The only place it is rendered, and it is rendered on purpose:
                     create_clan()'s response is the only response in the schema that carries it. */}
                 <div className="rounded-xl border border-accent-primary/40 bg-accent-primary/5 p-4">
-                    <div className="mb-2 flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-accent-primary">
+                    <div className="mb-2 flex items-center gap-2 text-2xs font-black uppercase tracking-widest text-accent-primary">
                         <KeyRound className="h-3.5 w-3.5" /> Join password
                     </div>
                     <p className="mb-3 text-sm text-text-secondary">
@@ -481,7 +481,7 @@ export function CreateClanForm({ onCreated, className }: CreateClanFormProps) {
                 <label className="block">
                     <span className="mb-1 flex items-baseline justify-between text-xs font-bold uppercase tracking-wider text-text-secondary">
                         Clan name
-                        <span className={cn('font-mono text-[10px]', storedName.length > maxName ? 'text-red-400' : 'text-text-muted')}>
+                        <span className={cn('font-mono text-3xs', storedName.length > maxName ? 'text-red-400' : 'text-text-muted')}>
                             {storedName.length}/{maxName}
                         </span>
                     </span>
@@ -501,7 +501,7 @@ export function CreateClanForm({ onCreated, className }: CreateClanFormProps) {
                 <label className="block">
                     <span className="mb-1 flex items-baseline justify-between text-xs font-bold uppercase tracking-wider text-text-secondary">
                         Tag
-                        <span className={cn('font-mono text-[10px]', storedTag.length > maxTag ? 'text-red-400' : 'text-text-muted')}>
+                        <span className={cn('font-mono text-3xs', storedTag.length > maxTag ? 'text-red-400' : 'text-text-muted')}>
                             {storedTag.length}/{maxTag}
                         </span>
                     </span>

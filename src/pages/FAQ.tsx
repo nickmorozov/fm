@@ -139,7 +139,7 @@ export default function FAQ() {
                                 <Users className="w-6 h-6 text-accent-primary" />
                                 GitHub Contributors
                             </h2>
-                            <span className="text-[10px] font-bold bg-accent-primary/10 text-accent-primary px-3 py-1 rounded-full border border-accent-primary/20 uppercase tracking-widest">
+                            <span className="text-3xs font-bold bg-accent-primary/10 text-accent-primary px-3 py-1 rounded-full border border-accent-primary/20 uppercase tracking-widest">
                                 {contributors.length} Developers
                             </span>
                         </div>
@@ -161,15 +161,15 @@ export default function FAQ() {
                                             {c.login}
                                         </div>
                                         <div className="flex flex-col gap-0.5 mt-1">
-                                            <div className="flex items-center gap-1.5 text-[9px] font-bold">
+                                            <div className="flex items-center gap-1.5 text-4xs font-bold">
                                                 <span className="text-text-muted">{c.commits} patches</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <div className="flex items-center gap-0.5 text-green-400 text-[9px] font-mono">
+                                                <div className="flex items-center gap-0.5 text-green-400 text-4xs font-mono">
                                                     <PlusCircle size={8} />
                                                     {c.additions.toLocaleString()}
                                                 </div>
-                                                <div className="flex items-center gap-0.5 text-red-400 text-[9px] font-mono">
+                                                <div className="flex items-center gap-0.5 text-red-400 text-4xs font-mono">
                                                     <MinusCircle size={8} />
                                                     {c.deletions.toLocaleString()}
                                                 </div>
@@ -190,7 +190,7 @@ export default function FAQ() {
                             Supporters Hall of Fame
                         </h2>
                         {!loading && supporters.length > 0 && (
-                            <span className="text-[10px] font-bold bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-full border border-yellow-500/20 uppercase tracking-widest">
+                            <span className="text-3xs font-bold bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-full border border-yellow-500/20 uppercase tracking-widest">
                                 {supporters.length} Heroes
                             </span>
                         )}

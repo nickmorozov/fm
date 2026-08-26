@@ -197,7 +197,7 @@ export default function ForgeWiki() {
                                             row.ascensionCost > 0 ? (
                                                 <div className="flex flex-col items-end">
                                                     <span className="text-amber-400 font-black">ASCEND</span>
-                                                    <span className="text-[10px] text-yellow-500/80">
+                                                    <span className="text-3xs text-yellow-500/80">
                                                         {new Intl.NumberFormat('en-US').format(row.ascensionCost)} Coins
                                                     </span>
                                                 </div>
@@ -208,7 +208,7 @@ export default function ForgeWiki() {
                                                     maximumFractionDigits: 0
                                                 }).format(row.cost)}
                                                 {row.baseCost !== row.cost && (
-                                                    <span className="block text-[10px] text-text-muted line-through">
+                                                    <span className="block text-3xs text-text-muted line-through">
                                                         {new Intl.NumberFormat('en-US', {
                                                             maximumFractionDigits: 0
                                                         }).format(row.baseCost)}
@@ -239,7 +239,7 @@ export default function ForgeWiki() {
                                                 .sort((a, b) => b[1] - a[1])
                                                 .map(([tier, prob]) => (
                                                     <span key={tier} className={cn(
-                                                        "text-[10px] px-1.5 py-0.5 rounded bg-bg-secondary border border-border",
+                                                        "text-3xs px-1.5 py-0.5 rounded bg-bg-secondary border border-border",
                                                         `text-age-${tier.toLowerCase()}`
                                                     )}>
                                                         {tierNames[tier]}: {prob.toFixed(2)}%
@@ -271,25 +271,25 @@ export default function ForgeWiki() {
                             {!row.isMax && (
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-bg-input/50 p-2 rounded border border-border/50">
-                                        <div className="text-[10px] uppercase font-bold text-text-muted mb-1">Total Cost</div>
+                                        <div className="text-3xs uppercase font-bold text-text-muted mb-1">Total Cost</div>
                                         <div className="text-yellow-500 font-mono font-bold">
                                             {new Intl.NumberFormat('en-US').format(row.cost)}
                                         </div>
                                     </div>
                                     <div className="bg-bg-input/50 p-2 rounded border border-border/50">
-                                        <div className="text-[10px] uppercase font-bold text-text-muted mb-1">Total Hammers</div>
+                                        <div className="text-3xs uppercase font-bold text-text-muted mb-1">Total Hammers</div>
                                         <div className="text-text-primary font-mono font-bold">
                                             {new Intl.NumberFormat('en-US').format(row.hammersToUpgrade)}
                                         </div>
                                     </div>
                                     <div className="bg-bg-input/50 p-2 rounded border border-border/50">
-                                        <div className="text-[10px] uppercase font-bold text-text-muted mb-1">Cost Per Step</div>
+                                        <div className="text-3xs uppercase font-bold text-text-muted mb-1">Cost Per Step</div>
                                         <div className="text-yellow-500/80 font-mono text-sm capitalize">
                                             {new Intl.NumberFormat('en-US').format(row.costPerTier)} × {row.tiers}
                                         </div>
                                     </div>
                                     <div className="bg-bg-input/50 p-2 rounded border border-border/50">
-                                        <div className="text-[10px] uppercase font-bold text-text-muted mb-1">Hammers/Step</div>
+                                        <div className="text-3xs uppercase font-bold text-text-muted mb-1">Hammers/Step</div>
                                         <div className="text-text-muted font-mono text-sm">
                                             {new Intl.NumberFormat('en-US').format(row.hammersPerTier)}
                                         </div>
@@ -307,13 +307,13 @@ export default function ForgeWiki() {
                             )}
 
                             <div className="pt-2">
-                                <div className="text-[10px] uppercase font-bold text-text-muted mb-2">Drop Probabilities</div>
+                                <div className="text-3xs uppercase font-bold text-text-muted mb-2">Drop Probabilities</div>
                                 <div className="flex flex-wrap gap-1.5">
                                     {row.probs && Object.entries(row.probs)
                                         .sort((a, b) => b[1] - a[1])
                                         .map(([tier, prob]) => (
                                             <div key={tier} className={cn(
-                                                "text-[9px] px-2 py-1 rounded bg-bg-secondary border border-border flex flex-col items-center min-w-[60px]",
+                                                "text-4xs px-2 py-1 rounded bg-bg-secondary border border-border flex flex-col items-center min-w-[60px]",
                                                 `text-age-${tier.toLowerCase()}`
                                             )}>
                                                 <span className="font-black">{prob.toFixed(1)}%</span>

@@ -123,7 +123,7 @@ export default function ProgressPassWiki() {
 
             {/* List */}
             <div className="space-y-4">
-                <div className="hidden sm:grid grid-cols-12 gap-4 px-6 text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">
+                <div className="hidden sm:grid grid-cols-12 gap-4 px-6 text-3xs font-black uppercase tracking-widest text-text-muted mb-2">
                     <div className="col-span-4">Milestone</div>
                     <div className="col-span-4 text-center text-white">Free Pass</div>
                     <div className="col-span-4 text-center text-accent-secondary">Premium Pass</div>
@@ -143,7 +143,7 @@ export default function ProgressPassWiki() {
                                 {/* Milestone Descriptor */}
                                 <div className="col-span-4 bg-bg-secondary/40 p-4 sm:p-6 flex items-center sm:border-r border-border/50">
                                     <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-accent-primary">
+                                        <span className="text-3xs font-black uppercase tracking-widest text-accent-primary">
                                             {ageName}
                                         </span>
                                         <span className="text-xl font-bold text-white uppercase tracking-tight">
@@ -154,7 +154,7 @@ export default function ProgressPassWiki() {
                                 
                                 {/* Free Track */}
                                 <div className="col-span-4 p-4 sm:p-6 sm:border-r border-border/50 bg-bg-primary">
-                                    <div className="sm:hidden text-[10px] font-black uppercase tracking-widest text-text-muted mb-3 flex items-center gap-2">
+                                    <div className="sm:hidden text-3xs font-black uppercase tracking-widest text-text-muted mb-3 flex items-center gap-2">
                                         Free Pass
                                     </div>
                                     <div className="flex flex-wrap gap-2 sm:justify-center">
@@ -169,7 +169,7 @@ export default function ProgressPassWiki() {
                                 
                                 {/* Premium Track */}
                                 <div className="col-span-4 p-4 sm:p-6 bg-gradient-to-br from-accent-secondary/5 to-transparent">
-                                    <div className="sm:hidden text-[10px] font-black uppercase tracking-widest text-accent-secondary mb-3 flex items-center gap-2">
+                                    <div className="sm:hidden text-3xs font-black uppercase tracking-widest text-accent-secondary mb-3 flex items-center gap-2">
                                         <Star fill="currentColor" className="w-3 h-3 text-accent-secondary" />
                                         Premium Pass
                                     </div>

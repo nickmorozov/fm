@@ -79,7 +79,7 @@ export default function GuildWar() {
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center gap-2 text-[10px] font-black text-text-muted uppercase tracking-[0.2em] bg-bg-secondary/50 px-3 py-1 rounded-full border border-white/5">
+                    <div className="flex items-center gap-2 text-3xs font-black text-text-muted uppercase tracking-[0.2em] bg-bg-secondary/50 px-3 py-1 rounded-full border border-white/5">
                         <Calendar className="w-3 h-3 text-accent-primary" />
                         Today: {getWarDayName(getWarDayIndex())} (UTC Reset)
                     </div>
@@ -132,8 +132,8 @@ export default function GuildWar() {
                                             <Shield className="w-5 h-5 text-accent-primary" />
                                         </div>
                                         <div className="min-w-0">
-                                            <div className="text-[11px] font-bold text-white whitespace-nowrap overflow-hidden text-clip">Forge Master</div>
-                                            <div className="text-[10px] text-text-muted">Daily Points</div>
+                                            <div className="text-2xs font-bold text-white whitespace-nowrap overflow-hidden text-clip">Forge Master</div>
+                                            <div className="text-3xs text-text-muted">Daily Points</div>
                                         </div>
                                     </Link>
 
@@ -143,8 +143,8 @@ export default function GuildWar() {
                                                 <Zap className="w-5 h-5 text-accent-secondary" />
                                             </div>
                                             <div className="min-w-0">
-                                                <div className="text-[11px] font-bold text-white whitespace-nowrap overflow-hidden text-clip">Skill Summons</div>
-                                                <div className="text-[10px] text-text-muted">Tue, Thu, Sat</div>
+                                                <div className="text-2xs font-bold text-white whitespace-nowrap overflow-hidden text-clip">Skill Summons</div>
+                                                <div className="text-3xs text-text-muted">Tue, Thu, Sat</div>
                                             </div>
                                         </Link>
                                     )}
@@ -155,8 +155,8 @@ export default function GuildWar() {
                                                 <Shield className="w-5 h-5 text-accent-primary" />
                                             </div>
                                             <div className="min-w-0">
-                                                <div className="text-[11px] font-bold text-white whitespace-nowrap overflow-hidden text-clip">Mount Trainer</div>
-                                                <div className="text-[10px] text-text-muted">Thu, Sat</div>
+                                                <div className="text-2xs font-bold text-white whitespace-nowrap overflow-hidden text-clip">Mount Trainer</div>
+                                                <div className="text-3xs text-text-muted">Thu, Sat</div>
                                             </div>
                                         </Link>
                                     )}
@@ -167,8 +167,8 @@ export default function GuildWar() {
                                                 <Zap className="w-5 h-5 text-accent-secondary" />
                                             </div>
                                             <div className="min-w-0">
-                                                <div className="text-[11px] font-bold text-white whitespace-nowrap overflow-hidden text-clip">Tree Optimizer</div>
-                                                <div className="text-[10px] text-text-muted">Tue, Fri</div>
+                                                <div className="text-2xs font-bold text-white whitespace-nowrap overflow-hidden text-clip">Tree Optimizer</div>
+                                                <div className="text-3xs text-text-muted">Tue, Fri</div>
                                             </div>
                                         </Link>
                                     )}
@@ -179,8 +179,8 @@ export default function GuildWar() {
                                                 <Shield className="w-5 h-5 text-accent-primary" />
                                             </div>
                                             <div className="min-w-0">
-                                                <div className="text-[11px] font-bold text-white whitespace-nowrap overflow-hidden text-clip">Dungeon Analyzer</div>
-                                                <div className="text-[10px] text-text-muted">Wed, Fri, Sat</div>
+                                                <div className="text-2xs font-bold text-white whitespace-nowrap overflow-hidden text-clip">Dungeon Analyzer</div>
+                                                <div className="text-3xs text-text-muted">Wed, Fri, Sat</div>
                                             </div>
                                         </Link>
                                     )}
@@ -198,7 +198,7 @@ export default function GuildWar() {
                                             <Trophy className="w-4 h-4" />
                                             Guild Win: <span className="text-blue-200">{dayVictoryPoints} Victory Points</span>
                                         </div>
-                                        <div className="text-[10px] bg-accent-primary/10 text-accent-primary px-3 py-1 rounded-full font-bold uppercase tracking-widest border border-accent-primary/20">
+                                        <div className="text-3xs bg-accent-primary/10 text-accent-primary px-3 py-1 rounded-full font-bold uppercase tracking-widest border border-accent-primary/20">
                                             Day {activeDay + 1}
                                         </div>
                                     </div>
@@ -220,7 +220,7 @@ export default function GuildWar() {
                                                         {formatTaskName(task.Task)}
                                                     </h3>
                                                     <div className="flex items-center gap-1.5 mt-2">
-                                                        <div className="flex items-center gap-1 bg-accent-primary/20 px-2 py-0.5 rounded text-[10px] font-bold text-accent-primary border border-accent-primary/30 uppercase tracking-tighter">
+                                                        <div className="flex items-center gap-1 bg-accent-primary/20 px-2 py-0.5 rounded text-3xs font-bold text-accent-primary border border-accent-primary/30 uppercase tracking-tighter">
                                                             <Zap className="w-3 h-3" />
                                                             +{task.Rewards?.[0]?.Amount} Points
                                                         </div>
@@ -315,7 +315,7 @@ export default function GuildWar() {
                                                                 name={mapRewardType(rew.Type)}
                                                                 size={16}
                                                             />
-                                                            <span className="text-[11px] font-mono font-black">
+                                                            <span className="text-2xs font-mono font-black">
                                                                 {rew.Amount.toLocaleString()}
                                                             </span>
                                                         </div>
@@ -350,7 +350,7 @@ export default function GuildWar() {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-[10px] font-bold text-text-muted uppercase mb-1">War Points Gained</div>
+                                            <div className="text-3xs font-bold text-text-muted uppercase mb-1">War Points Gained</div>
                                             <div className="flex gap-2 justify-end">
                                                 <span className="text-green-400 font-bold text-xs">{tier.TierPointsOnWin} Win</span>
                                                 <span className={cn(
@@ -366,12 +366,12 @@ export default function GuildWar() {
                                     <div className="p-4 grid grid-cols-2 gap-4 flex-1">
                                         {/* Win Rewards */}
                                         <div className="space-y-2">
-                                            <div className="text-[10px] font-black uppercase text-green-500 flex items-center gap-1">
+                                            <div className="text-3xs font-black uppercase text-green-500 flex items-center gap-1">
                                                 <Shield className="w-3 h-3" /> Victory Rewards
                                             </div>
                                             <div className="space-y-1">
                                                 {tier.WarWonRewards.map((rew: any, rIdx: number) => (
-                                                    <div key={rIdx} className="flex items-center justify-between bg-black/20 px-2 py-1 rounded border border-white/5 text-[10px]">
+                                                    <div key={rIdx} className="flex items-center justify-between bg-black/20 px-2 py-1 rounded border border-white/5 text-3xs">
                                                         <div className="flex items-center gap-1.5 min-w-0">
                                                             <GameIcon name={mapRewardType(rew.Type)} size={14} className="shrink-0" />
                                                             <span className="whitespace-nowrap overflow-hidden text-clip opacity-70">{rew.Type}</span>
@@ -384,12 +384,12 @@ export default function GuildWar() {
 
                                         {/* Lose Rewards */}
                                         <div className="space-y-2 border-l border-border/50 pl-4">
-                                            <div className="text-[10px] font-black uppercase text-red-500 flex items-center gap-1">
+                                            <div className="text-3xs font-black uppercase text-red-500 flex items-center gap-1">
                                                 <X className="w-3 h-3" /> Defeat Rewards
                                             </div>
                                             <div className="space-y-1">
                                                 {tier.WarLostRewards.map((rew: any, rIdx: number) => (
-                                                    <div key={rIdx} className="flex items-center justify-between bg-black/10 px-2 py-1 rounded border border-white/5 text-[10px] opacity-60">
+                                                    <div key={rIdx} className="flex items-center justify-between bg-black/10 px-2 py-1 rounded border border-white/5 text-3xs opacity-60">
                                                         <div className="flex items-center gap-1.5 min-w-0">
                                                             <GameIcon name={mapRewardType(rew.Type)} size={14} className="shrink-0" />
                                                             <span className="whitespace-nowrap overflow-hidden text-clip opacity-70">{rew.Type}</span>
@@ -421,27 +421,27 @@ export default function GuildWar() {
 
                                         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-6">
                                             <div className="space-y-1">
-                                                <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Member Limit</div>
+                                                <div className="text-3xs font-bold text-text-muted uppercase tracking-widest">Member Limit</div>
                                                 <div className="text-xl font-black">{baseConfig.MaxGuildMemberCount} / Clan</div>
                                             </div>
                                             <div className="space-y-1">
-                                                <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Creation Cost</div>
+                                                <div className="text-3xs font-bold text-text-muted uppercase tracking-widest">Creation Cost</div>
                                                 <div className="text-xl font-black text-yellow-500 flex items-center justify-center md:justify-start gap-1">
                                                     <GameIcon name="Gem" size={24} />
                                                     {baseConfig.GuildCreateCost}
                                                 </div>
                                             </div>
                                             <div className="space-y-1">
-                                                <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Name Length</div>
+                                                <div className="text-3xs font-bold text-text-muted uppercase tracking-widest">Name Length</div>
                                                 <div className="text-xl font-black">{baseConfig.MaxGuildNameLength} Chars</div>
                                             </div>
                                             <div className="space-y-1">
-                                                <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Leave Cooldown</div>
+                                                <div className="text-3xs font-bold text-text-muted uppercase tracking-widest">Leave Cooldown</div>
                                                 <div className="text-xl font-black text-red-400">{baseConfig.GuildLeaveCooldownDurationMinutes / 60} Hours</div>
                                             </div>
                                             <div className="space-y-1">
-                                                <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Role Limits</div>
-                                                <div className="text-[11px] font-bold text-text-secondary leading-tight mt-1">
+                                                <div className="text-3xs font-bold text-text-muted uppercase tracking-widest">Role Limits</div>
+                                                <div className="text-2xs font-bold text-text-secondary leading-tight mt-1">
                                                     Captain: {baseConfig.MaxCaptainRoleMemberCount} • R1: {baseConfig.MaxR1RoleMemberCount} • R2: {baseConfig.MaxR2RoleMemberCount}
                                                 </div>
                                             </div>

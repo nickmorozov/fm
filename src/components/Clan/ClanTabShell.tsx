@@ -178,7 +178,7 @@ export const ClanTabShell: React.FC<ClanTabShellProps> = ({ className }) => {
                     Create or join a clan with a shared password, then see every member&apos;s resources and builds in one place.
                     Profiles will sync to the cloud so your clan can plan Guild War together.
                 </p>
-                <div className="flex items-center justify-center gap-2 mt-5 text-[11px] uppercase tracking-widest text-text-muted">
+                <div className="flex items-center justify-center gap-2 mt-5 text-2xs uppercase tracking-widest text-text-muted">
                     <Lock className="w-3.5 h-3.5" /> Password-protected clan spaces
                 </div>
             </Card>
@@ -259,7 +259,7 @@ export const ClanTabShell: React.FC<ClanTabShellProps> = ({ className }) => {
                 <CreateClanForm />
                 <div className="flex items-center gap-3">
                     <div className="h-px flex-1 bg-border" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">or join one</span>
+                    <span className="text-3xs font-black uppercase tracking-widest text-text-muted">or join one</span>
                     <div className="h-px flex-1 bg-border" />
                 </div>
                 <ClanBrowser />
@@ -283,7 +283,7 @@ export const ClanTabShell: React.FC<ClanTabShellProps> = ({ className }) => {
                                 <span className="whitespace-nowrap overflow-hidden text-clip text-lg font-black text-white">{clan.clan.name}</span>
                                 <span className="font-mono text-xs text-accent-primary shrink-0">[{clan.clan.tag}]</span>
                             </div>
-                            <div className="flex items-center gap-1.5 text-[11px] text-text-muted">
+                            <div className="flex items-center gap-1.5 text-2xs text-text-muted">
                                 {ROLE_ICON[clan.role]}
                                 {/* Role and liveness only: the member count is stated by whichever
                                     view is below, and saying it twice invites the reader to check
@@ -408,7 +408,7 @@ export const ClanHeaderChip: React.FC<{ className?: string }> = ({ className }) 
             <ClanBadge badge={clan.badge} size={26} className="shrink-0" />
             <span className="hidden sm:flex items-baseline gap-1 min-w-0">
                 <span className="whitespace-nowrap overflow-hidden text-clip max-w-[80px] text-xs font-bold text-text-secondary">{clan.clan.name}</span>
-                <span className="font-mono text-[10px] text-accent-primary shrink-0">[{clan.clan.tag}]</span>
+                <span className="font-mono text-3xs text-accent-primary shrink-0">[{clan.clan.tag}]</span>
             </span>
         </span>
     );

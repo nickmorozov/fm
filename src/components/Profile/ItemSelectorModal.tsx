@@ -117,7 +117,7 @@ function RunewordStatPicker({ value, availableTypes, onChange }: {
                             disabled={!hasAvailable}
                             onClick={() => setSubject(group.subject)}
                             className={cn(
-                                "px-2 py-0.5 rounded-md text-[10px] font-bold border transition-all",
+                                "px-2 py-0.5 rounded-md text-3xs font-bold border transition-all",
                                 subject === group.subject
                                     ? holdsValue
                                         ? "bg-accent-primary text-white border-accent-primary"
@@ -143,7 +143,7 @@ function RunewordStatPicker({ value, availableTypes, onChange }: {
                             onClick={() => onChange(opt.id)}
                             title={getStatName(opt.id)}
                             className={cn(
-                                "px-2 py-0.5 rounded-md text-[10px] font-bold border transition-all",
+                                "px-2 py-0.5 rounded-md text-3xs font-bold border transition-all",
                                 value === opt.id
                                     ? "bg-accent-primary text-white border-accent-primary"
                                     : "bg-bg-input border-border text-text-secondary hover:border-accent-primary/50",
@@ -988,7 +988,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                 {weaponInfo.isRanged ? '🏹 RANGED' : '⚔️ MELEE'}
                             </span>
                             {skinIdx !== null && (
-                                <span className="text-[10px] text-text-muted flex items-center">
+                                <span className="text-3xs text-text-muted flex items-center">
                                     (Skin Graphics)
                                 </span>
                             )}
@@ -1129,7 +1129,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                         </button>
                                     </div>
                                     {range && (
-                                        <div className="text-[10px] text-text-muted px-1">
+                                        <div className="text-3xs text-text-muted px-1">
                                             Range: {(range.min * 100).toFixed(1)}% - {(range.max * 100).toFixed(1)}%
                                         </div>
                                     )}
@@ -1188,7 +1188,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                 </div>
                 <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium block">Saved Presets</span>
-                    <span className="text-[10px] text-text-muted">{savedPresets.length} items</span>
+                    <span className="text-3xs text-text-muted">{savedPresets.length} items</span>
                 </div>
             </button>
 
@@ -1227,7 +1227,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                         <div className="flex-1 min-w-0">
                             <span className="text-sm font-medium block">{ageName}</span>
                             {isUnlocked && (
-                                <span className="text-[10px] text-text-muted">
+                                <span className="text-3xs text-text-muted">
                                     {(dropChance * 100).toFixed(3)}% drop
                                 </span>
                             )}
@@ -1275,7 +1275,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                 <select
                                     value={savedSortField}
                                     onChange={(e) => setSavedSortField(e.target.value as SortField)}
-                                    className="bg-transparent text-[10px] font-black uppercase tracking-wider px-2 py-1 outline-none cursor-pointer text-text-primary"
+                                    className="bg-transparent text-3xs font-black uppercase tracking-wider px-2 py-1 outline-none cursor-pointer text-text-primary"
                                 >
                                     {(['level', 'name', 'age', 'perfection', 'idx'] as SortField[]).map(field => (
                                         <option key={field} value={field} className="bg-bg-secondary text-text-primary">
@@ -1288,7 +1288,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setShowFilters(!showFilters)}
-                                className={cn("h-9 gap-2 text-[10px] font-black uppercase tracking-wider", showFilters && "text-accent-primary bg-accent-primary/10")}
+                                className={cn("h-9 gap-2 text-3xs font-black uppercase tracking-wider", showFilters && "text-accent-primary bg-accent-primary/10")}
                             >
                                 <Settings className="w-3.5 h-3.5" />
                                 Filters {(filterAges.length > 0 || minPerfection > 0 || filterStats.length > 0) && `(${(filterAges.length > 0 ? 1 : 0) + (minPerfection > 0 ? 1 : 0) + (filterStats.length > 0 ? 1 : 0)})`}
@@ -1299,14 +1299,14 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                     {showFilters && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-border/30 animate-in fade-in slide-in-from-top-1">
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black text-text-muted uppercase tracking-widest">Ages</label>
+                                <label className="text-4xs font-black text-text-muted uppercase tracking-widest">Ages</label>
                                 <div className="flex flex-wrap gap-1">
                                     {AGES.map((name, i) => (
                                         <button
                                             key={i}
                                             onClick={() => setFilterAges(prev => prev.includes(i) ? prev.filter(a => a !== i) : [...prev, i])}
                                             className={cn(
-                                                "px-2 py-0.5 rounded text-[9px] font-bold border transition-all",
+                                                "px-2 py-0.5 rounded text-4xs font-bold border transition-all",
                                                 filterAges.includes(i)
                                                     ? "bg-accent-primary/20 border-accent-primary text-accent-primary"
                                                     : "bg-bg-input border-border text-text-muted hover:border-border/80"
@@ -1318,7 +1318,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black text-text-muted uppercase tracking-widest">Min Perfection: {minPerfection}%</label>
+                                <label className="text-4xs font-black text-text-muted uppercase tracking-widest">Min Perfection: {minPerfection}%</label>
                                 <input
                                     type="range"
                                     min="0"
@@ -1329,14 +1329,14 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                 />
                             </div>
                             <div className="space-y-2 md:col-span-2">
-                                <label className="text-[9px] font-black text-text-muted uppercase tracking-widest">Required Stats (Multiselect)</label>
+                                <label className="text-4xs font-black text-text-muted uppercase tracking-widest">Required Stats (Multiselect)</label>
                                 <div className="flex flex-wrap gap-1.5">
                                     {STAT_TYPES.map(statId => (
                                         <button
                                             key={statId}
                                             onClick={() => setFilterStats(prev => prev.includes(statId) ? prev.filter(s => s !== statId) : [...prev, statId])}
                                             className={cn(
-                                                "px-2 py-1 rounded-md text-[9px] font-bold border transition-all",
+                                                "px-2 py-1 rounded-md text-4xs font-bold border transition-all",
                                                 filterStats.includes(statId)
                                                     ? "bg-accent-primary/20 border-accent-primary text-accent-primary"
                                                     : "bg-bg-input border-border text-text-muted hover:border-border/80"
@@ -1350,7 +1350,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                             {(filterAges.length > 0 || minPerfection > 0 || filterStats.length > 0) && (
                                 <button
                                     onClick={() => { setFilterAges([]); setMinPerfection(0); setFilterStats([]); }}
-                                    className="md:col-span-2 text-[9px] font-black text-red-400 hover:text-red-300 uppercase tracking-widest text-center py-1"
+                                    className="md:col-span-2 text-4xs font-black text-red-400 hover:text-red-300 uppercase tracking-widest text-center py-1"
                                 >
                                     Clear All Filters
                                 </button>
@@ -1454,7 +1454,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                         <Shield className="w-6 h-6 text-text-muted" />
                                     )}
                                 </div>
-                                <span className="text-[9px] text-center text-text-secondary whitespace-nowrap overflow-hidden text-clip w-full leading-tight select-none">
+                                <span className="text-4xs text-center text-text-secondary whitespace-nowrap overflow-hidden text-clip w-full leading-tight select-none">
                                     {itemName}
                                 </span>
                             </div>
@@ -1587,7 +1587,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <span className="text-sm font-medium whitespace-nowrap overflow-hidden text-clip block">Saved Presets</span>
-                                        <span className="text-[10px] text-text-muted">{savedPresets.length} items</span>
+                                        <span className="text-3xs text-text-muted">{savedPresets.length} items</span>
                                     </div>
                                 </button>
                                 {AGES.map((ageName, idx) => {
@@ -1624,7 +1624,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                             <div className="flex-1 min-w-0">
                                                 <span className="text-sm font-medium whitespace-nowrap overflow-hidden text-clip block">{ageName}</span>
                                                 {isUnlocked && (
-                                                    <span className="text-[10px] text-text-muted">
+                                                    <span className="text-3xs text-text-muted">
                                                         {(dropChance * 100).toFixed(3)}% drop
                                                     </span>
                                                 )}
@@ -1734,7 +1734,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                                     <Shield className="w-6 h-6 text-text-muted" />
                                                 )}
                                             </div>
-                                            <span className="text-[9px] sm:text-[10px] text-center text-text-primary whitespace-nowrap overflow-hidden text-clip w-full leading-tight select-none">
+                                            <span className="text-4xs sm:text-3xs text-center text-text-primary whitespace-nowrap overflow-hidden text-clip w-full leading-tight select-none">
                                                 {itemName}
                                             </span>
                                         </div>
@@ -1783,7 +1783,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                     return getItemName(AGES[ageToUse], fileSlot, idxToUse, autoMapping) || `Item #${idxToUse}`;
                                 })()}
                             </h2>
-                            <div className="text-[10px] font-bold uppercase tracking-widest mt-1 text-text-muted">
+                            <div className="text-3xs font-bold uppercase tracking-widest mt-1 text-text-muted">
                                 {ageIdx === -1 ? ((selectedItemData as any)?.rarity || AGES[(selectedItemData as any)?.age || 0]) : AGES[ageIdx]} {slot}
                             </div>
                         </div>
@@ -1816,7 +1816,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                             {weaponInfo.isRanged ? '🏹 RANGED' : '⚔️ MELEE'}
                                         </span>
                                         {skinIdx !== null && (
-                                            <span className="text-[10px] text-text-muted flex items-center">
+                                            <span className="text-3xs text-text-muted flex items-center">
                                                 (Skin Graphics)
                                             </span>
                                         )}
@@ -1963,7 +1963,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                                         className="w-full text-sm py-1.5"
                                                     />
                                                     {range && (
-                                                        <div className="flex justify-between text-[8px] text-text-muted uppercase font-bold tracking-tighter">
+                                                        <div className="flex justify-between text-5xs text-text-muted uppercase font-bold tracking-tighter">
                                                             <span>Range</span>
                                                             <span>{(range.min * 100).toFixed(1)}% - {(range.max * 100).toFixed(1)}%</span>
                                                         </div>

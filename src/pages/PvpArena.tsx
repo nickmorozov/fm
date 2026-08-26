@@ -39,7 +39,7 @@ export default function PvpArena() {
                         </p>
 
                         <div className="pt-4 flex flex-col items-center gap-3">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10 text-[10px] text-gray-500 uppercase tracking-widest">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10 text-3xs text-gray-500 uppercase tracking-widest">
                                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full" />
                                 Work in Progress
                             </div>

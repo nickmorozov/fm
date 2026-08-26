@@ -201,7 +201,7 @@ export function PvpBattleVisualizer({
                 <div className="px-3 py-2 sm:px-4 sm:py-3 border-b border-gray-800 bg-[#12121a] flex justify-between items-center gap-2">
                     <div className="flex-1 min-w-0">
                         <h2 className="text-base sm:text-lg font-bold text-white whitespace-nowrap overflow-hidden text-clip">PvP Battle</h2>
-                        <div className="text-[10px] sm:text-xs text-gray-400 flex gap-2 sm:gap-3 flex-wrap">
+                        <div className="text-3xs sm:text-xs text-gray-400 flex gap-2 sm:gap-3 flex-wrap">
                             <span className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 {(time || 0).toFixed(1)}s / 60.0s
@@ -220,7 +220,7 @@ export function PvpBattleVisualizer({
                                 <button
                                     key={s}
                                     onClick={() => setSpeed(s)}
-                                    className={`px-1.5 py-1 rounded text-[10px] sm:text-xs font-bold transition-all ${speed === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                                    className={`px-1.5 py-1 rounded text-3xs sm:text-xs font-bold transition-all ${speed === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
                                 >
                                     {s}x
                                 </button>
@@ -315,12 +315,12 @@ export function PvpBattleVisualizer({
                                                 iconIndex={mapping.index}
                                                 className="w-full h-full"
                                             />
-                                            <div className={`absolute bottom-0 right-0 text-[6px] font-bold px-0.5 rounded-tl flex items-center justify-center ${buff.bonusMaxHealth > 0 ? 'bg-green-600' : 'bg-red-600'
+                                            <div className={`absolute bottom-0 right-0 text-[0.375rem] font-bold px-0.5 rounded-tl flex items-center justify-center ${buff.bonusMaxHealth > 0 ? 'bg-green-600' : 'bg-red-600'
                                                 } text-white`}>
                                                 {buff.bonusMaxHealth > 0 ? 'HP' : 'DMG'}
                                             </div>
                                         </div>
-                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 border border-gray-700 rounded text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 border border-gray-700 rounded text-3xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
                                             <div className="font-bold text-yellow-400">{buff.skillId}</div>
                                             {buff.bonusMaxHealth > 0 && <span className="block text-green-400">+{fmt(buff.bonusMaxHealth)} HP</span>}
                                             {buff.bonusDamage > 0 && <span className="block text-red-400">+{fmt(buff.bonusDamage)} DMG</span>}
@@ -331,7 +331,7 @@ export function PvpBattleVisualizer({
                         </div>
 
                         {/* HP Text */}
-                        <span className="text-[9px] sm:text-[10px] font-mono text-gray-300 mb-1 font-bold drop-shadow-md">
+                        <span className="text-4xs sm:text-3xs font-mono text-gray-300 mb-1 font-bold drop-shadow-md">
                             {Math.round(player1.health || 0).toLocaleString()} / {Math.round(player1.maxHealth || 0).toLocaleString()}
                         </span>
 
@@ -351,7 +351,7 @@ export function PvpBattleVisualizer({
                                 className="border-2 border-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.4)] transform scale-x-[-1] rounded-full bg-gray-900"
                             />
                         </div>
-                        <div className="mt-1 text-[10px] font-bold text-blue-400 bg-black/60 px-2 rounded">{player1Name}</div>
+                        <div className="mt-1 text-3xs font-bold text-blue-400 bg-black/60 px-2 rounded">{player1Name}</div>
                     </div>
 
                     {/* Player 2 */}
@@ -377,12 +377,12 @@ export function PvpBattleVisualizer({
                                                 iconIndex={mapping.index}
                                                 className="w-full h-full"
                                             />
-                                            <div className={`absolute bottom-0 right-0 text-[6px] font-bold px-0.5 rounded-tl flex items-center justify-center ${buff.bonusMaxHealth > 0 ? 'bg-green-600' : 'bg-red-600'
+                                            <div className={`absolute bottom-0 right-0 text-[0.375rem] font-bold px-0.5 rounded-tl flex items-center justify-center ${buff.bonusMaxHealth > 0 ? 'bg-green-600' : 'bg-red-600'
                                                 } text-white`}>
                                                 {buff.bonusMaxHealth > 0 ? 'HP' : 'DMG'}
                                             </div>
                                         </div>
-                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 border border-gray-700 rounded text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black/90 border border-gray-700 rounded text-3xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
                                             <div className="font-bold text-yellow-400">{buff.skillId}</div>
                                             {buff.bonusMaxHealth > 0 && <span className="block text-green-400">+{fmt(buff.bonusMaxHealth)} HP</span>}
                                             {buff.bonusDamage > 0 && <span className="block text-red-400">+{fmt(buff.bonusDamage)} DMG</span>}
@@ -393,7 +393,7 @@ export function PvpBattleVisualizer({
                         </div>
 
                         {/* HP Text */}
-                        <span className="text-[9px] sm:text-[10px] font-mono text-gray-300 mb-1 font-bold drop-shadow-md">
+                        <span className="text-4xs sm:text-3xs font-mono text-gray-300 mb-1 font-bold drop-shadow-md">
                             {Math.round(player2.health || 0).toLocaleString()} / {Math.round(player2.maxHealth || 0).toLocaleString()}
                         </span>
 
@@ -413,7 +413,7 @@ export function PvpBattleVisualizer({
                                 className="border-2 border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.4)] rounded-full bg-gray-900"
                             />
                         </div>
-                        <div className="mt-1 text-[10px] font-bold text-red-400 bg-black/60 px-2 rounded">{player2Name}</div>
+                        <div className="mt-1 text-3xs font-bold text-red-400 bg-black/60 px-2 rounded">{player2Name}</div>
                     </div>
 
                     {/* Projectiles */}
@@ -448,30 +448,30 @@ export function PvpBattleVisualizer({
                         <div className="grid grid-cols-2 gap-4">
                             {/* Player 1 Stats */}
                             <div>
-                                <div className="text-[10px] text-blue-400 font-bold mb-2">{player1Name}</div>
+                                <div className="text-3xs text-blue-400 font-bold mb-2">{player1Name}</div>
                                 <div className="grid grid-cols-3 gap-2 text-center">
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-yellow-500" /> Crit %</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-yellow-500" /> Crit %</div>
                                         <div className="text-xs font-bold text-yellow-400">{(player1.critChance * 100).toFixed(0)}%</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-red-500" /> Crit Dmg</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-red-500" /> Crit Dmg</div>
                                         <div className="text-xs font-bold text-red-400">x{player1.critMulti.toFixed(1)}</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Sword className="w-3 h-3 text-orange-500" /> Double</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Sword className="w-3 h-3 text-orange-500" /> Double</div>
                                         <div className="text-xs font-bold text-orange-400">{(player1.doubleDamage * 100).toFixed(0)}%</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3 text-blue-300" /> Atk Spd</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3 text-blue-300" /> Atk Spd</div>
                                         <div className="text-xs font-bold text-blue-300">x{player1.attackSpeed.toFixed(2)}</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Shield className="w-3 h-3 text-blue-500" /> Block</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Shield className="w-3 h-3 text-blue-500" /> Block</div>
                                         <div className="text-xs font-bold text-blue-400">{(player1.blockChance * 100).toFixed(0)}%</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Heart className="w-3 h-3 text-pink-500" /> Steal</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Heart className="w-3 h-3 text-pink-500" /> Steal</div>
                                         <div className="text-xs font-bold text-pink-400">{(player1.lifesteal * 100).toFixed(1)}%</div>
                                     </div>
                                 </div>
@@ -479,30 +479,30 @@ export function PvpBattleVisualizer({
 
                             {/* Player 2 Stats */}
                             <div>
-                                <div className="text-[10px] text-red-400 font-bold mb-2">{player2Name}</div>
+                                <div className="text-3xs text-red-400 font-bold mb-2">{player2Name}</div>
                                 <div className="grid grid-cols-3 gap-2 text-center">
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-yellow-500" /> Crit %</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-yellow-500" /> Crit %</div>
                                         <div className="text-xs font-bold text-yellow-400">{(player2.critChance * 100).toFixed(0)}%</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-red-500" /> Crit Dmg</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Zap className="w-3 h-3 text-red-500" /> Crit Dmg</div>
                                         <div className="text-xs font-bold text-red-400">x{player2.critMulti.toFixed(1)}</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Sword className="w-3 h-3 text-orange-500" /> Double</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Sword className="w-3 h-3 text-orange-500" /> Double</div>
                                         <div className="text-xs font-bold text-orange-400">{(player2.doubleDamage * 100).toFixed(0)}%</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3 text-blue-300" /> Atk Spd</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3 text-blue-300" /> Atk Spd</div>
                                         <div className="text-xs font-bold text-blue-300">x{player2.attackSpeed.toFixed(2)}</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Shield className="w-3 h-3 text-blue-500" /> Block</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Shield className="w-3 h-3 text-blue-500" /> Block</div>
                                         <div className="text-xs font-bold text-blue-400">{(player2.blockChance * 100).toFixed(0)}%</div>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <div className="text-[10px] text-gray-500 flex items-center gap-1"><Heart className="w-3 h-3 text-pink-500" /> Steal</div>
+                                        <div className="text-3xs text-gray-500 flex items-center gap-1"><Heart className="w-3 h-3 text-pink-500" /> Steal</div>
                                         <div className="text-xs font-bold text-pink-400">{(player2.lifesteal * 100).toFixed(1)}%</div>
                                     </div>
                                 </div>
@@ -515,7 +515,7 @@ export function PvpBattleVisualizer({
                         {/* Player 1 Skills */}
                         {player1Skills.length > 0 && (
                             <div className="mb-3">
-                                <div className="text-[10px] text-blue-400 font-bold mb-2">{player1Name} Skills</div>
+                                <div className="text-3xs text-blue-400 font-bold mb-2">{player1Name} Skills</div>
                                 <div className="flex gap-2 justify-center flex-wrap">
                                     {player1Skills.map((skill: any, idx: number) => {
                                         const isActive = skill.state === 'Active';
@@ -551,7 +551,7 @@ export function PvpBattleVisualizer({
                                                         className="w-full h-full"
                                                     />
                                                 ) : (
-                                                    <span className="text-[10px] text-gray-400 font-bold">{skill.id.substring(0, 3)}</span>
+                                                    <span className="text-3xs text-gray-400 font-bold">{skill.id.substring(0, 3)}</span>
                                                 )}
                                                 {isCooldown && (
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-lg">
@@ -568,7 +568,7 @@ export function PvpBattleVisualizer({
                         {/* Player 2 Skills */}
                         {player2Skills.length > 0 && (
                             <div>
-                                <div className="text-[10px] text-red-400 font-bold mb-2">{player2Name} Skills</div>
+                                <div className="text-3xs text-red-400 font-bold mb-2">{player2Name} Skills</div>
                                 <div className="flex gap-2 justify-center flex-wrap">
                                     {player2Skills.map((skill: any, idx: number) => {
                                         const isActive = skill.state === 'Active';
@@ -604,7 +604,7 @@ export function PvpBattleVisualizer({
                                                         className="w-full h-full"
                                                     />
                                                 ) : (
-                                                    <span className="text-[10px] text-gray-400 font-bold">{skill.id.substring(0, 3)}</span>
+                                                    <span className="text-3xs text-gray-400 font-bold">{skill.id.substring(0, 3)}</span>
                                                 )}
                                                 {isCooldown && (
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-lg">
@@ -622,11 +622,11 @@ export function PvpBattleVisualizer({
                     {/* Compact Log */}
                     <div className="max-h-32 sm:max-h-40 overflow-y-auto px-3 py-2 border-t border-gray-800/50 flex flex-col-reverse">
                         {battleLogs.length === 0 ? (
-                            <p className="text-[10px] text-gray-600 italic text-center">Press play to start battle</p>
+                            <p className="text-3xs text-gray-600 italic text-center">Press play to start battle</p>
                         ) : (
                             <div className="space-y-0.5">
                                 {battleLogs.map((log, i) => (
-                                    <div key={i} className="text-[10px] text-gray-400 font-mono whitespace-nowrap overflow-hidden text-clip">{log}</div>
+                                    <div key={i} className="text-3xs text-gray-400 font-mono whitespace-nowrap overflow-hidden text-clip">{log}</div>
                                 ))}
                             </div>
                         )}

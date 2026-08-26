@@ -35,7 +35,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     <span className="text-xs text-accent-secondary">{error}</span>
                 )}
                 {helperText && !error && (
-                    <span className="text-[10px] text-text-muted px-1">{helperText}</span>
+                    <span className="text-3xs text-text-muted px-1">{helperText}</span>
                 )}
             </div>
         );

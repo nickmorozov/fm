@@ -58,7 +58,7 @@ export const SecondaryStatCard: React.FC<SecondaryStatCardProps> = ({
                     className="w-full text-sm py-1.5"
                 />
                 {range && (
-                    <div className="flex justify-between text-[8px] text-text-muted uppercase font-bold tracking-tighter">
+                    <div className="flex justify-between text-5xs text-text-muted uppercase font-bold tracking-tighter">
                         <span>Range</span>
                         <span>{(range.min * 100).toFixed(1)}%. {(range.max * 100).toFixed(1)}%</span>
                     </div>
