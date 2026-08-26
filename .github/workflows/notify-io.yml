@@ -1,0 +1,24 @@
+name: Notify nickmorozov.io
+
+# Pokes the flatten workflow in nickmorozov.io whenever dev changes, so the
+# deployed site rebuilds automatically. Requires secret IO_SYNC_TOKEN (PAT
+# that can send repository_dispatch to nickmorozov/nickmorozov.io).
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fire repository_dispatch
+        env:
+          TOKEN: ${{ secrets.IO_SYNC_TOKEN }}
+        run: |
+          curl -sS --fail-with-body -X POST \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/nickmorozov/nickmorozov.io/dispatches \
+            -d '{"event_type":"source-updated","client_payload":{"repo":"${{ github.repository }}"}}'
