@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Card } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
 import { useProfile } from '../../context/ProfileContext';
@@ -107,9 +107,13 @@ export default function SubstatsCalculator() {
         setStatAllocations(clampedAllocations);
     }, [profile]);
 
-    // Pre-fill initial configuration based on current profile
+    // Pre-fill initial configuration based on current profile — ONCE, when the library arrives.
+    // The effect's old [profile] dependency made every profile write re-run it, so anything that
+    // touched the profile mid-session (saving a stat goal included) silently reset the sliders.
+    const prefilledRef = useRef(false);
     useEffect(() => {
-        if (!secondaryStatLibrary) return;
+        if (!secondaryStatLibrary || prefilledRef.current) return;
+        prefilledRef.current = true;
 
         let maxItemSubstats = 1;
         let maxPetSubstats = 1;
@@ -148,7 +152,7 @@ export default function SubstatsCalculator() {
         
         // Ensure initial allocations don't exceed max possible per stat (12)
         handleResetToProfile();
-    }, [secondaryStatLibrary, profile, handleResetToProfile]); // Run once when library and profile are loaded
+    }, [secondaryStatLibrary, profile, handleResetToProfile]); // guarded by prefilledRef: runs once
 
     const totalAvailablePool = (itemSubstatsConfig * 8) + (petSubstatsConfig * 3) + (mountSubstatsConfig * 1);
     const currentAllocated = Object.values(statAllocations).reduce((sum, val) => sum + val, 0);
@@ -404,8 +408,9 @@ export default function SubstatsCalculator() {
 
     }, [statAllocations, isComparing, secondaryStatLibrary, profile]);
 
-    // Save the simulated build's aggregate stats as the profile's stat goal, so the comparison
-    // rows show thumbs up/down against this target everywhere (same shape the stats drawer saves).
+    // Save the simulated build's PASSIVE stats as the profile's substat goals (crit chance,
+    // ranged damage %, ...). Aggregate stat goals (power/damage/health) come from the stats
+    // drawer or the Loadout Optimizer instead; the two layers coexist.
     const handleSaveAsGoal = () => {
         if (!secondaryStatLibrary || !itemBalancingConfig || !itemBalancingLibrary) return;
         const sim = JSON.parse(JSON.stringify(profile)) as UserProfile;
@@ -427,15 +432,22 @@ export default function SubstatsCalculator() {
 
         const stats = calculateStats(sim, libs);
         updateNestedProfile('misc', {
-            statGoals: {
-                power: stats.power,
-                totalDamage: stats.totalDamage,
-                meleeDamage: stats.meleeDamage,
-                rangedDamage: stats.rangedDamage,
-                totalHealth: stats.totalHealth,
+            substatGoals: {
+                criticalChance: stats.criticalChance,
+                criticalDamage: stats.criticalDamage,
+                blockChance: stats.blockChance,
+                doubleDamageChance: stats.doubleDamageChance,
+                lifeSteal: stats.lifeSteal,
+                healthRegen: stats.healthRegen,
+                attackSpeedMultiplier: stats.attackSpeedMultiplier,
+                skillCooldownReduction: stats.skillCooldownReduction,
+                secondaryDamageMulti: stats.secondaryDamageMulti,
+                secondaryHealthMulti: stats.secondaryHealthMulti,
+                meleeDamageMultiplier: stats.meleeDamageMultiplier,
+                rangedDamageMultiplier: stats.rangedDamageMultiplier,
             },
         });
-        toast.success('Saved this build as your stat goal');
+        toast.success('Saved this allocation as your substat goals');
     };
 
     const handleSliderChange = (statId: string, newValue: number) => {
