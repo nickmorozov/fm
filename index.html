@@ -41,8 +41,16 @@
          Inline and synchronous on purpose: doing this from React flashes the default theme. -->
     <script>
         try {
-            var t = JSON.parse(localStorage.getItem('fm_theme') || 'null');
-            if (t === 'graphite' || t === 'solarized') document.documentElement.dataset.theme = t;
+            var KNOWN = { forge: 1, graphite: 1, solarized: 1, 'solarized-light': 1, paper: 1, mist: 1 };
+            var cfg = JSON.parse(localStorage.getItem('fm_theme') || 'null');
+            /* Pre-mode schema stored just the dark palette name as a string. */
+            if (typeof cfg === 'string') cfg = { mode: 'dark', dark: cfg };
+            cfg = cfg || {};
+            var mode = (cfg.mode === 'light' || cfg.mode === 'system') ? cfg.mode : 'dark';
+            var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            var t = isDark ? (cfg.dark || 'forge') : (cfg.light || 'solarized-light');
+            if (!KNOWN[t]) t = isDark ? 'forge' : 'solarized-light';
+            if (t !== 'forge') document.documentElement.dataset.theme = t;
         } catch (e) { /* default theme */ }
     </script>
 </head>

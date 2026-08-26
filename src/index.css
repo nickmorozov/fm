@@ -92,6 +92,73 @@
     --th-accent-glow: rgba(245, 158, 11, 0.25);
 }
 
+/* `color-scheme` flips native scrollbars/inputs to match the palette family. */
+:root,
+[data-theme="forge"],
+[data-theme="graphite"],
+[data-theme="solarized"] {
+    color-scheme: dark;
+}
+
+/* ---- Light palettes (mode: light, or system when the OS prefers light) -------------------- */
+
+/* Solarized Light: base3/base2 backgrounds, base01/base02 text, darkened yellow accent. */
+[data-theme="solarized-light"] {
+    --th-bg-primary: 253 246 227;
+    --th-bg-secondary: 238 232 213;
+    --th-bg-card: 245 239 220;
+    --th-bg-card-hover: 232 225 203;
+    --th-bg-input: 240 233 212;
+    --th-text-primary: 7 54 66;
+    --th-text-secondary: 88 110 117;
+    --th-text-muted: 131 148 150;
+    --th-border: 214 207 185;
+    --th-border-hover: 181 137 0;
+    --th-accent-primary: 181 137 0;
+    --th-accent-secondary: 220 50 47;
+    --th-accent-tertiary: 108 113 196;
+    --th-accent-glow: rgba(181, 137, 0, 0.22);
+    color-scheme: light;
+}
+
+/* Paper: neutral near-white with zinc text, amber-600 accent for contrast on light. */
+[data-theme="paper"] {
+    --th-bg-primary: 250 250 250;
+    --th-bg-secondary: 255 255 255;
+    --th-bg-card: 255 255 255;
+    --th-bg-card-hover: 244 244 245;
+    --th-bg-input: 241 241 243;
+    --th-text-primary: 24 24 27;
+    --th-text-secondary: 82 82 91;
+    --th-text-muted: 113 113 122;
+    --th-border: 228 228 231;
+    --th-border-hover: 202 138 4;
+    --th-accent-primary: 217 119 6;
+    --th-accent-secondary: 220 38 38;
+    --th-accent-tertiary: 124 58 237;
+    --th-accent-glow: rgba(217, 119, 6, 0.2);
+    color-scheme: light;
+}
+
+/* Mist: cool slate-tinted light gray, same darkened amber accent. */
+[data-theme="mist"] {
+    --th-bg-primary: 241 245 249;
+    --th-bg-secondary: 248 250 252;
+    --th-bg-card: 255 255 255;
+    --th-bg-card-hover: 236 242 248;
+    --th-bg-input: 226 232 240;
+    --th-text-primary: 15 23 42;
+    --th-text-secondary: 51 65 85;
+    --th-text-muted: 100 116 139;
+    --th-border: 203 213 225;
+    --th-border-hover: 202 138 4;
+    --th-accent-primary: 217 119 6;
+    --th-accent-secondary: 220 38 38;
+    --th-accent-tertiary: 124 58 237;
+    --th-accent-glow: rgba(217, 119, 6, 0.2);
+    color-scheme: light;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
