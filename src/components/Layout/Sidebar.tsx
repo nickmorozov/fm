@@ -18,6 +18,10 @@ interface SidebarProps {
     onClose: () => void;
     isPinned?: boolean;
     onTogglePin?: () => void;
+    /* Info lives at the bottom of the sidebar; collapsing it also hides the donation
+       button here and the floating coffee pill in AppShell, so the state is lifted there. */
+    isInfoCollapsed?: boolean;
+    onToggleInfo?: () => void;
 }
 
 const getTodayIdx = () => {
@@ -72,7 +76,7 @@ const CoffeeFountain = () => {
     );
 };
 
-export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin, isInfoCollapsed = false, onToggleInfo }: SidebarProps) {
     const location = useLocation();
     const { profile, profiles, activeProfileId, switchProfile, createProfile, cloneProfile, deleteProfile } = useProfile();
     const { selectedVersion } = useGameDataContext();
@@ -160,16 +164,15 @@ export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: Side
                 { name: 'Progress Pass', path: '/wiki/progress-pass', icon: Zap },
                 { name: 'Secondary Stats', path: '/wiki/secondary-stats', icon: TrendingUp },
             ]
-        },
-        {
-            title: 'Info',
-            items: [
-                { name: 'Gallery', path: '/gallery', icon: Image, theme: 'interstellar' },
-                { name: 'Configs', path: '/configs', icon: FileJson, theme: 'multiverse' },
-                { name: 'FAQ', path: '/faq', icon: HelpCircle, theme: 'quantum' },
-                { name: 'GitHub', path: 'https://github.com/1vcian/fm', icon: Github, external: true, theme: 'underworld' },
-            ]
         }
+    ];
+
+    // Rendered at the bottom of the sidebar, collapsible together with the donation button.
+    const INFO_ITEMS = [
+        { name: 'Gallery', path: '/gallery', icon: Image, theme: 'interstellar' },
+        { name: 'Configs', path: '/configs', icon: FileJson, theme: 'multiverse' },
+        { name: 'FAQ', path: '/faq', icon: HelpCircle, theme: 'quantum' },
+        { name: 'GitHub', path: 'https://github.com/1vcian/fm', icon: Github, external: true, theme: 'underworld' },
     ];
 
     const getThemeInfo = (themeName?: string) => {
@@ -486,32 +489,130 @@ export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin }: Side
                     })}
                 </div>
 
-                {/* Footer */}
-                <div className="p-4 border-t border-border space-y-4">
-                    <a
-                        href="https://www.buymeacoffee.com/1vcian"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onMouseEnter={() => setIsHoveringCoffee(true)}
-                        onMouseLeave={() => setIsHoveringCoffee(false)}
-                        onClick={() => {
-                            if ((window as any).__triggerTestToast) {
-                                (window as any).__triggerTestToast();
-                            }
-                            onClose();
-                        }}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 relative group/coffee overflow-visible coffee-btn-animated shadow-lg hover:shadow-accent-primary/20 hover:-translate-y-0.5"
+                {/* Info + support, anchored at the bottom. Collapsing tucks the links and the
+                    donation button away (AppShell hides the floating coffee pill in sync). */}
+                <div className="p-4 border-t border-border space-y-3">
+                    <button
+                        onClick={() => onToggleInfo && onToggleInfo()}
+                        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/[0.08] border border-white/5 hover:border-accent-primary/20 shadow-sm transition-all duration-200"
                     >
-                        <div
-                            className="divine-animation rounded-xl"
-                            style={{ '--theme-url': `url(${import.meta.env.BASE_URL}Texture2D/${selectedVersion ? `${selectedVersion}/` : ''}DivineBackground.png)` } as React.CSSProperties}
-                        />
-                        {isHoveringCoffee && <CoffeeFountain />}
-                        <Coffee size={18} className="transition-transform relative z-10 text-white icon-stroke-sm group-hover/coffee:rotate-12" />
-                        <span className="relative z-10 text-stroke-sm text-white">
-                            {donationLabel}
-                        </span>
-                    </a>
+                        <h3 className={cn(
+                            "text-xs font-bold uppercase tracking-widest transition-colors",
+                            isInfoCollapsed ? "text-text-secondary" : "text-accent-primary"
+                        )}>
+                            Info
+                        </h3>
+                        <div className={cn(
+                            "p-1 rounded-md transition-all duration-200",
+                            isInfoCollapsed ? "bg-white/5 text-text-muted" : "bg-accent-primary/10 text-accent-primary"
+                        )}>
+                            <ChevronDown
+                                size={12}
+                                className={cn(
+                                    "transition-transform duration-300",
+                                    isInfoCollapsed ? "rotate-0" : "rotate-180"
+                                )}
+                            />
+                        </div>
+                    </button>
+
+                    <AnimatePresence initial={false}>
+                        {!isInfoCollapsed && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="space-y-1 overflow-hidden"
+                            >
+                                {INFO_ITEMS.map((item) => {
+                                    const isActive = location.pathname === item.path;
+                                    const Icon = item.icon;
+                                    const themeInfo = getThemeInfo(item.theme);
+
+                                    if ('external' in item && item.external) {
+                                        return (
+                                            <a
+                                                key={item.path}
+                                                href={item.path}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={() => onClose()}
+                                                className={cn(
+                                                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative overflow-visible",
+                                                    themeInfo ? "text-white" : "text-text-secondary hover:text-text-primary hover:bg-white/5"
+                                                )}
+                                            >
+                                                {themeInfo && (
+                                                    <div
+                                                        className={cn(themeInfo.className, "rounded-lg")}
+                                                        style={themeInfo.style as React.CSSProperties}
+                                                    />
+                                                )}
+                                                {Icon && <Icon size={18} className={cn("relative z-10 text-white", themeInfo && "icon-stroke-sm")} />}
+                                                <span className={cn("relative z-10 font-bold", themeInfo ? "text-stroke-sm" : "")}>{item.name}</span>
+                                            </a>
+                                        );
+                                    }
+
+                                    return (
+                                        <Link
+                                            key={item.path}
+                                            to={item.path}
+                                            onClick={() => onClose()}
+                                            className={cn(
+                                                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative",
+                                                isActive
+                                                    ? "bg-gradient-to-r from-accent-primary/20 to-transparent text-accent-primary border border-accent-primary/20"
+                                                    : themeInfo ? "text-white" : "text-text-secondary hover:text-text-primary hover:bg-white/5"
+                                            )}
+                                        >
+                                            {themeInfo && (
+                                                <div
+                                                    className={cn(themeInfo.className, "rounded-lg")}
+                                                    style={themeInfo.style as React.CSSProperties}
+                                                >
+                                                    {themeInfo.className === 'quantum-animation' && (
+                                                        <>
+                                                            <span></span><span></span><span></span><span></span>
+                                                            <span></span><span></span><span></span><span></span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {Icon && <Icon size={18} className={cn("relative z-10", themeInfo && "text-white icon-stroke-sm")} />}
+                                            <span className={cn("flex-1 relative z-10", themeInfo ? "text-stroke-sm" : "")}>{item.name}</span>
+                                        </Link>
+                                    );
+                                })}
+
+                                <a
+                                    href="https://www.buymeacoffee.com/1vcian"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onMouseEnter={() => setIsHoveringCoffee(true)}
+                                    onMouseLeave={() => setIsHoveringCoffee(false)}
+                                    onClick={() => {
+                                        if ((window as any).__triggerTestToast) {
+                                            (window as any).__triggerTestToast();
+                                        }
+                                        onClose();
+                                    }}
+                                    className="mt-2 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 relative group/coffee overflow-visible coffee-btn-animated shadow-lg hover:shadow-accent-primary/20 hover:-translate-y-0.5"
+                                >
+                                    <div
+                                        className="divine-animation rounded-xl"
+                                        style={{ '--theme-url': `url(${import.meta.env.BASE_URL}Texture2D/${selectedVersion ? `${selectedVersion}/` : ''}DivineBackground.png)` } as React.CSSProperties}
+                                    />
+                                    {isHoveringCoffee && <CoffeeFountain />}
+                                    <Coffee size={18} className="transition-transform relative z-10 text-white icon-stroke-sm group-hover/coffee:rotate-12" />
+                                    <span className="relative z-10 text-stroke-sm text-white">
+                                        {donationLabel}
+                                    </span>
+                                </a>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     <div className="text-[10px] text-text-muted text-center uppercase tracking-widest font-medium opacity-60">
                         v2.2.0 • by <a href="https://1vcian.me" target="_blank" rel="noopener noreferrer" className="hover:text-accent-primary transition-colors font-bold">1vcian</a>
