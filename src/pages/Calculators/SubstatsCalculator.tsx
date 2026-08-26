@@ -5,14 +5,15 @@ import { useProfile } from '../../context/ProfileContext';
 import { useComparison } from '../../context/ComparisonContext';
 import { useGameData } from '../../hooks/useGameData';
 import { StatsSummaryPanel } from '../../components/Profile/StatsSummaryPanel';
-import { RefreshCw, Sliders, Hash, Zap, TrendingUp, Sparkles, Wand2 } from 'lucide-react';
+import { RefreshCw, Sliders, Hash, Zap, TrendingUp, Sparkles, Wand2, Target } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { getStatName } from '../../utils/statNames';
 import { cn } from '../../lib/utils';
 import { UserProfile } from '../../types/Profile';
 import { calculateStats, LibraryData } from '../../utils/statEngine';
 
 export default function SubstatsCalculator() {
-    const { profile } = useProfile();
+    const { profile, updateNestedProfile } = useProfile();
     const { 
         isComparing, 
         enterCompareMode, 
@@ -403,6 +404,40 @@ export default function SubstatsCalculator() {
 
     }, [statAllocations, isComparing, secondaryStatLibrary, profile]);
 
+    // Save the simulated build's aggregate stats as the profile's stat goal, so the comparison
+    // rows show thumbs up/down against this target everywhere (same shape the stats drawer saves).
+    const handleSaveAsGoal = () => {
+        if (!secondaryStatLibrary || !itemBalancingConfig || !itemBalancingLibrary) return;
+        const sim = JSON.parse(JSON.stringify(profile)) as UserProfile;
+        const simulatedStats = Object.entries(statAllocations)
+            .filter(([_, count]) => count > 0)
+            .map(([statId, count]) => ({
+                statId,
+                value: count * (secondaryStatLibrary[statId]?.UpperRange || 0) * perfectionPercentage,
+            }));
+        if (!sim.items.Weapon) {
+            sim.items.Weapon = { age: 1, idx: 0, level: 1, rarity: 'Legendary', secondaryStats: [] };
+        }
+        sim.items.Weapon.secondaryStats = simulatedStats;
+        (['Helmet', 'Body', 'Gloves', 'Belt', 'Necklace', 'Ring', 'Shoe'] as (keyof UserProfile['items'])[]).forEach(slot => {
+            if (sim.items[slot]) sim.items[slot]!.secondaryStats = [];
+        });
+        sim.pets.active.forEach(pet => { if (pet) pet.secondaryStats = []; });
+        if (sim.mount.active) sim.mount.active.secondaryStats = [];
+
+        const stats = calculateStats(sim, libs);
+        updateNestedProfile('misc', {
+            statGoals: {
+                power: stats.power,
+                totalDamage: stats.totalDamage,
+                meleeDamage: stats.meleeDamage,
+                rangedDamage: stats.rangedDamage,
+                totalHealth: stats.totalHealth,
+            },
+        });
+        toast.success('Saved this build as your stat goal');
+    };
+
     const handleSliderChange = (statId: string, newValue: number) => {
         setStatAllocations(prev => {
             const currentValue = prev[statId] || 0;
@@ -450,6 +485,15 @@ export default function SubstatsCalculator() {
                     </Button>
                     <Button variant="primary" size="sm" onClick={handleResetToProfile}>
                         Reset to Profile
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSaveAsGoal}
+                        className="gap-1.5 border-purple-500/40 text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/60"
+                        title="Save this simulated build's stats as your goal — comparison rows then show thumbs up/down against it"
+                    >
+                        <Target className="w-4 h-4" /> Save as Goal
                     </Button>
                 </div>
             </div>

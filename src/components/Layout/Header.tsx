@@ -17,9 +17,12 @@ import { useComparison } from '../../context/ComparisonContext';
 interface HeaderProps {
     onMenuToggle: () => void;
     onStatsToggle: () => void;
+    /** Right-clicking the profile button toggles the sidebar pin (replaces the old pin button). */
+    isSidebarPinned?: boolean;
+    onToggleSidebarPin?: () => void;
 }
 
-export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
+export function Header({ onMenuToggle, onStatsToggle, isSidebarPinned = false, onToggleSidebarPin }: HeaderProps) {
     const { treeMode } = useTreeMode();
     const { profile, saveSharedProfile } = useProfile();
     // Whether the ACTIVE PROFILE is in a clan. `silent` covers every state with nothing to say (no
@@ -108,8 +111,18 @@ export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
                 {/* Combined Menu / Profile Button */}
                 <button
                     onClick={onMenuToggle}
-                    className="flex items-center gap-2 p-1.5 pr-2.5 sm:pr-3 rounded-xl hover:bg-bg-input border border-border hover:border-accent-primary/30 transition-all active:scale-95 group shadow-sm shrink-0"
-                    title="Open Navigation Menu & Profiles"
+                    onContextMenu={(e) => {
+                        if (!onToggleSidebarPin) return;
+                        e.preventDefault();
+                        onToggleSidebarPin();
+                    }}
+                    className={cn(
+                        "flex items-center gap-2 p-1.5 pr-2.5 sm:pr-3 rounded-xl hover:bg-bg-input border transition-all active:scale-95 group shadow-sm shrink-0",
+                        isSidebarPinned
+                            ? "border-accent-primary/40 bg-accent-primary/5"
+                            : "border-border hover:border-accent-primary/30"
+                    )}
+                    title={`Open Navigation Menu & Profiles • Right-click to ${isSidebarPinned ? 'unpin' : 'pin'} the sidebar`}
                 >
                     <div className="relative shrink-0">
                         <ProfileIcon iconIndex={profile.iconIndex} size={28} className="border-0 group-hover:scale-105 transition-transform" />

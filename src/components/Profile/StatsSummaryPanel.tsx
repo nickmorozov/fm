@@ -60,6 +60,10 @@ function InfoDot({ onClick, className }: { onClick: () => void; className?: stri
 }
 
 function StatRow({ icon, label, value, subValue, count, perf, color = 'text-accent-primary', onInfoPointsClick, onInfoClick }: StatRowProps) {
+    // Compact display format hides the breakdown small text; the Details buttons and
+    // info dots still carry the full story.
+    const { isCompactStats } = useComparison();
+    if (isCompactStats) subValue = undefined;
     return (
         <div className="flex flex-col justify-between p-2.5 bg-bg-input/30 rounded-lg border border-border/30 hover:bg-bg-input/50 transition-colors min-h-[5rem]">
             <div className="flex items-center gap-2 w-full">
@@ -104,6 +108,8 @@ function StatRow({ icon, label, value, subValue, count, perf, color = 'text-acce
 
 // Compact stat for grid layouts
 function CompactStat({ icon, label, value, subValue, count, perf, color = 'text-accent-primary', onInfoClick }: StatRowProps) {
+    const { isCompactStats } = useComparison();
+    if (isCompactStats) subValue = undefined;
     return (
         <div className="relative flex flex-col justify-between p-2.5 bg-bg-input/30 rounded-lg border border-border/30 hover:bg-bg-input/50 transition-colors min-h-[4.5rem]">
             {onInfoClick && <InfoDot onClick={onInfoClick} className="absolute top-1 right-1" />}
@@ -332,7 +338,7 @@ export function ComparisonStatRow({
                     <div className={cn("font-mono font-bold text-base", !isExactlySame && !testIsHigher && color)}>
                         {finalFormat(originalValue)}
                     </div>
-                    {originalDetails && originalDetails.length > 0 && (
+                    {!isCompact && originalDetails && originalDetails.length > 0 && (
                         <div className="mt-2 text-3xs text-text-muted space-y-0.5">
                             {originalDetails.map((d, i) => (
                                 <div key={i}>{d.label}: {finalFormat(d.value)}</div>
@@ -367,11 +373,13 @@ export function ComparisonStatRow({
                             {deltaStyle.icon}
                             <span>{delta.percent}</span>
                         </div>
-                        <div className="text-2xs opacity-70 font-mono">
-                            {delta.text}
-                        </div>
+                        {!isCompact && (
+                            <div className="text-2xs opacity-70 font-mono">
+                                {delta.text}
+                            </div>
+                        )}
                     </div>
-                    {testDetails && testDetails.length > 0 && (
+                    {!isCompact && testDetails && testDetails.length > 0 && (
                         <div className="mt-2 text-3xs text-text-muted space-y-0.5">
                             {testDetails.map((d, i) => {
                                 const detailDelta = detailDeltas?.[i];
