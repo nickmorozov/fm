@@ -157,14 +157,31 @@ export interface UserProfile {
         plannerMinWaitBetweenNodes?: number;
         techPlanMetadata?: { isAuto: boolean; config?: any };
         useSkinWindup?: boolean;
-        /** Desired end-state stats, saved from the stats panel. Comparison rows show
-            thumbs up/down as a change moves the build closer to or farther from these. */
+        /** Desired end-state stats, saved from the stats panel or Loadout Optimizer. Comparison
+            rows show thumbs up/down as a change moves the build closer to or farther from these. */
         statGoals?: {
             power?: number;
             totalDamage?: number;
             meleeDamage?: number;
             rangedDamage?: number;
             totalHealth?: number;
+        };
+        /** Desired passive/secondary stats, saved from the Substats Calculator. Same thumbs
+            mechanism on the comparison strip's Stats tab. Values are the aggregated readings
+            (fractions/multipliers), keyed like AggregatedStats. */
+        substatGoals?: {
+            criticalChance?: number;
+            criticalDamage?: number;
+            blockChance?: number;
+            doubleDamageChance?: number;
+            lifeSteal?: number;
+            healthRegen?: number;
+            attackSpeedMultiplier?: number;
+            skillCooldownReduction?: number;
+            secondaryDamageMulti?: number;
+            secondaryHealthMulti?: number;
+            meleeDamageMultiplier?: number;
+            rangedDamageMultiplier?: number;
         };
     };
 }

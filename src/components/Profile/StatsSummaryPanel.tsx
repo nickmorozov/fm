@@ -60,10 +60,10 @@ function InfoDot({ onClick, className }: { onClick: () => void; className?: stri
 }
 
 function StatRow({ icon, label, value, subValue, count, perf, color = 'text-accent-primary', onInfoPointsClick, onInfoClick }: StatRowProps) {
-    // Compact display format hides the breakdown small text; the Details buttons and
-    // info dots still carry the full story.
+    // Compact display format hides the breakdown small text and the substat slot/perfection
+    // lines; the Details buttons and info dots still carry the full story.
     const { isCompactStats } = useComparison();
-    if (isCompactStats) subValue = undefined;
+    if (isCompactStats) { subValue = undefined; count = undefined; perf = undefined; }
     return (
         <div className="flex flex-col justify-between p-2.5 bg-bg-input/30 rounded-lg border border-border/30 hover:bg-bg-input/50 transition-colors min-h-[5rem]">
             <div className="flex items-center gap-2 w-full">
@@ -109,7 +109,7 @@ function StatRow({ icon, label, value, subValue, count, perf, color = 'text-acce
 // Compact stat for grid layouts
 function CompactStat({ icon, label, value, subValue, count, perf, color = 'text-accent-primary', onInfoClick }: StatRowProps) {
     const { isCompactStats } = useComparison();
-    if (isCompactStats) subValue = undefined;
+    if (isCompactStats) { subValue = undefined; count = undefined; perf = undefined; }
     return (
         <div className="relative flex flex-col justify-between p-2.5 bg-bg-input/30 rounded-lg border border-border/30 hover:bg-bg-input/50 transition-colors min-h-[4.5rem]">
             {onInfoClick && <InfoDot onClick={onInfoClick} className="absolute top-1 right-1" />}
@@ -491,6 +491,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
     // Desired end-state stats. Saved per profile; the comparison rows above show thumbs
     // up/down as a change moves the build closer to or farther from these numbers.
     const statGoals = profile.misc.statGoals;
+    const substatGoals = profile.misc.substatGoals;
     const saveStatGoals = () => {
         if (!fullStats) return;
         updateNestedProfile('misc', {
@@ -503,7 +504,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
             },
         });
     };
-    const clearStatGoals = () => updateNestedProfile('misc', { statGoals: undefined });
+    const clearStatGoals = () => updateNestedProfile('misc', { statGoals: undefined, substatGoals: undefined });
 
     // --- Auto-optimize the Test build (drives the strip's AUTO buttons) --------
     const { optimizeLoadout, isReady: optimizerReady } = useProfileOptimizer();
@@ -1225,40 +1226,40 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     ) : viewTab === 'passives' ? (
                         <>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Star className="w-4 h-4 text-yellow-400" />} label="Crit %" originalValue={originalStats?.criticalChance ?? 0} testValue={testStats?.criticalChance ?? 0} formatFn={formatPercent} color="text-yellow-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Star className="w-4 h-4 text-yellow-400" />} label="Crit %" originalValue={originalStats?.criticalChance ?? 0} testValue={testStats?.criticalChance ?? 0} formatFn={formatPercent} color="text-yellow-400" goalValue={substatGoals?.criticalChance} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-yellow-500" />} label="Crit DMG" originalValue={originalStats?.criticalDamage ?? 0} testValue={testStats?.criticalDamage ?? 0} formatFn={formatMultiplier} color="text-yellow-500" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-yellow-500" />} label="Crit DMG" originalValue={originalStats?.criticalDamage ?? 0} testValue={testStats?.criticalDamage ?? 0} formatFn={formatMultiplier} color="text-yellow-500" goalValue={substatGoals?.criticalDamage} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Shield className="w-4 h-4 text-blue-400" />} label="Block %" originalValue={originalStats?.blockChance ?? 0} testValue={testStats?.blockChance ?? 0} formatFn={formatPercent} color="text-blue-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Shield className="w-4 h-4 text-blue-400" />} label="Block %" originalValue={originalStats?.blockChance ?? 0} testValue={testStats?.blockChance ?? 0} formatFn={formatPercent} color="text-blue-400" goalValue={substatGoals?.blockChance} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Zap className="w-4 h-4 text-purple-400" />} label="Double %" originalValue={originalStats?.doubleDamageChance ?? 0} testValue={testStats?.doubleDamageChance ?? 0} formatFn={formatPercent} color="text-purple-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Zap className="w-4 h-4 text-purple-400" />} label="Double %" originalValue={originalStats?.doubleDamageChance ?? 0} testValue={testStats?.doubleDamageChance ?? 0} formatFn={formatPercent} color="text-purple-400" goalValue={substatGoals?.doubleDamageChance} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-purple-400" />} label="Lifesteal %" originalValue={originalStats?.lifeSteal ?? 0} testValue={testStats?.lifeSteal ?? 0} formatFn={formatPercent} color="text-purple-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-purple-400" />} label="Lifesteal %" originalValue={originalStats?.lifeSteal ?? 0} testValue={testStats?.lifeSteal ?? 0} formatFn={formatPercent} color="text-purple-400" goalValue={substatGoals?.lifeSteal} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-purple-400" />} label="Regen %" originalValue={originalStats?.healthRegen ?? 0} testValue={testStats?.healthRegen ?? 0} formatFn={formatPercent} color="text-purple-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-purple-400" />} label="Regen %" originalValue={originalStats?.healthRegen ?? 0} testValue={testStats?.healthRegen ?? 0} formatFn={formatPercent} color="text-purple-400" goalValue={substatGoals?.healthRegen} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-orange-400" />} label="Atk Speed" originalValue={originalStats?.attackSpeedMultiplier ?? 0} testValue={testStats?.attackSpeedMultiplier ?? 0} formatFn={formatMultiplier} color="text-orange-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-orange-400" />} label="Atk Speed" originalValue={originalStats?.attackSpeedMultiplier ?? 0} testValue={testStats?.attackSpeedMultiplier ?? 0} formatFn={formatMultiplier} color="text-orange-400" goalValue={substatGoals?.attackSpeedMultiplier} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-emerald-400" />} label="Skill CDR" originalValue={originalStats?.skillCooldownReduction ?? 0} testValue={testStats?.skillCooldownReduction ?? 0} formatFn={formatPercent} color="text-emerald-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<TrendingUp className="w-4 h-4 text-emerald-400" />} label="Skill CDR" originalValue={originalStats?.skillCooldownReduction ?? 0} testValue={testStats?.skillCooldownReduction ?? 0} formatFn={formatPercent} color="text-emerald-400" goalValue={substatGoals?.skillCooldownReduction} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-red-400" />} label="Damage %" originalValue={originalStats?.secondaryDamageMulti ?? 0} testValue={testStats?.secondaryDamageMulti ?? 0} formatFn={formatPercent} color="text-red-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-red-400" />} label="Damage %" originalValue={originalStats?.secondaryDamageMulti ?? 0} testValue={testStats?.secondaryDamageMulti ?? 0} formatFn={formatPercent} color="text-red-400" goalValue={substatGoals?.secondaryDamageMulti} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-green-400" />} label="Health %" originalValue={originalStats?.secondaryHealthMulti ?? 0} testValue={testStats?.secondaryHealthMulti ?? 0} formatFn={formatPercent} color="text-green-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-green-400" />} label="Health %" originalValue={originalStats?.secondaryHealthMulti ?? 0} testValue={testStats?.secondaryHealthMulti ?? 0} formatFn={formatPercent} color="text-green-400" goalValue={substatGoals?.secondaryHealthMulti} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-amber-400" />} label="Melee DMG %" originalValue={originalStats?.meleeDamageMultiplier ?? 0} testValue={testStats?.meleeDamageMultiplier ?? 0} formatFn={formatPercent} color="text-amber-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-amber-400" />} label="Melee DMG %" originalValue={originalStats?.meleeDamageMultiplier ?? 0} testValue={testStats?.meleeDamageMultiplier ?? 0} formatFn={formatPercent} color="text-amber-400" goalValue={substatGoals?.meleeDamageMultiplier} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Crosshair className="w-4 h-4 text-sky-400" />} label="Ranged DMG %" originalValue={originalStats?.rangedDamageMultiplier ?? 0} testValue={testStats?.rangedDamageMultiplier ?? 0} formatFn={formatPercent} color="text-sky-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Crosshair className="w-4 h-4 text-sky-400" />} label="Ranged DMG %" originalValue={originalStats?.rangedDamageMultiplier ?? 0} testValue={testStats?.rangedDamageMultiplier ?? 0} formatFn={formatPercent} color="text-sky-400" goalValue={substatGoals?.rangedDamageMultiplier} />
                             </div>
                         </>
                     ) : (
@@ -1590,9 +1591,9 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             )}
                         </div>
                     </div>
-                    {statGoals ? (
+                    {(statGoals || substatGoals) ? (
                         <div className="space-y-1">
-                            {([
+                            {statGoals && ([
                                 { key: 'power', label: 'Power', color: 'text-purple-400' },
                                 { key: 'totalDamage', label: 'Damage', color: 'text-red-400' },
                                 { key: 'meleeDamage', label: 'Melee DMG', color: 'text-amber-400' },
@@ -1622,11 +1623,56 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     </div>
                                 );
                             })}
+                            {substatGoals && (
+                                <>
+                                    <p className="pt-1.5 text-4xs font-black uppercase tracking-widest text-text-muted opacity-60">Substat goals</p>
+                                    {([
+                                        { key: 'criticalChance', label: 'Crit %', fmt: formatPercent },
+                                        { key: 'criticalDamage', label: 'Crit DMG', fmt: formatMultiplier },
+                                        { key: 'blockChance', label: 'Block %', fmt: formatPercent },
+                                        { key: 'doubleDamageChance', label: 'Double %', fmt: formatPercent },
+                                        { key: 'lifeSteal', label: 'Lifesteal %', fmt: formatPercent },
+                                        { key: 'healthRegen', label: 'Regen %', fmt: formatPercent },
+                                        { key: 'attackSpeedMultiplier', label: 'Atk Speed', fmt: formatMultiplier },
+                                        { key: 'skillCooldownReduction', label: 'Skill CDR', fmt: formatPercent },
+                                        { key: 'secondaryDamageMulti', label: 'Damage %', fmt: formatPercent },
+                                        { key: 'secondaryHealthMulti', label: 'Health %', fmt: formatPercent },
+                                        { key: 'meleeDamageMultiplier', label: 'Melee %', fmt: formatPercent },
+                                        { key: 'rangedDamageMultiplier', label: 'Ranged %', fmt: formatPercent },
+                                    ] as const).map(({ key, label, fmt }) => {
+                                        const goal = substatGoals[key];
+                                        // Zero-value goals are noise: the calculator saves every key,
+                                        // but only the stats you actually allocated matter.
+                                        if (goal === undefined || goal === 0) return null;
+                                        const current = (fullStats as any)?.[key] ?? 0;
+                                        const pct = goal > 0 ? (current / goal) * 100 : 100;
+                                        const reached = current >= goal;
+                                        return (
+                                            <div key={key} className="flex items-center gap-2 text-3xs font-mono">
+                                                <span className="font-bold uppercase tracking-wide w-20 shrink-0 font-sans text-text-secondary">{label}</span>
+                                                <div className="flex-1 h-1 bg-gray-700/60 rounded-full overflow-hidden">
+                                                    <div
+                                                        className={cn('h-full rounded-full', reached ? 'bg-green-500' : 'bg-accent-primary')}
+                                                        style={{ width: `${Math.min(100, pct)}%` }}
+                                                    />
+                                                </div>
+                                                <span className="text-text-muted tabular-nums shrink-0">
+                                                    {fmt(current)} / {fmt(goal)}
+                                                </span>
+                                                <span className={cn('tabular-nums font-bold w-12 text-right shrink-0', reached ? 'text-green-400' : 'text-text-muted')}>
+                                                    {reached ? <Check className="w-3 h-3 inline" /> : `${pct.toFixed(0)}%`}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+                                </>
+                            )}
                         </div>
                     ) : (
                         <p className="text-4xs text-text-muted leading-snug">
-                            Save your desired stats (e.g. after tuning a build in the optimizer). Comparison
-                            rows then show thumbs up/down as changes move you closer or farther.
+                            Save your desired stats: aggregates from here or the Loadout Optimizer, passive
+                            targets from the Substats Calculator. Comparison rows then show thumbs up/down
+                            as changes move you closer or farther.
                         </p>
                     )}
                 </div>

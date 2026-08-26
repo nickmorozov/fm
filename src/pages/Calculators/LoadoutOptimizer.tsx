@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Heart, Zap, Activity, Check, Trophy, Info, PawPrint, Bike, Undo2, Layers } from 'lucide-react';
+import { Heart, Zap, Activity, Check, Trophy, Info, PawPrint, Bike, Undo2, Layers, Target } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext';
 import { useGameData } from '../../hooks/useGameData';
 import { useLoadoutSweep, SweepMetric, LoadoutCombo, ExpandedLoadout } from '../../hooks/useLoadoutSweep';
@@ -90,6 +90,24 @@ export default function LoadoutOptimizer() {
         updateNestedProfile('mount', { active: snapshot.mount });
         setSnapshot(null);
         toast.info('Previous loadout restored');
+    };
+
+    // Store the winning loadout's aggregate stats as the profile's stat goal (same shape the
+    // stats drawer and Substats Calculator save). calcStats is the substats-ON reading, matching
+    // what the drawer's "Set from equipped" captures.
+    const handleSaveAsGoal = () => {
+        if (!bestExpanded) return;
+        const s = bestExpanded.calcStats;
+        updateNestedProfile('misc', {
+            statGoals: {
+                power: s.power,
+                totalDamage: s.totalDamage,
+                meleeDamage: s.meleeDamage,
+                rangedDamage: s.rangedDamage,
+                totalHealth: s.totalHealth,
+            },
+        });
+        toast.success('Saved the best loadout as your stat goal');
     };
 
     return (
@@ -209,6 +227,15 @@ export default function LoadoutOptimizer() {
                                 Revert
                             </Button>
                         )}
+                        <Button
+                            variant="ghost"
+                            onClick={handleSaveAsGoal}
+                            className="gap-2 border border-purple-500/40 text-purple-400 hover:bg-purple-500/10"
+                            title="Save this loadout's stats as your goal — comparison rows then show thumbs up/down against it"
+                        >
+                            <Target className="w-4 h-4" />
+                            Save as Goal
+                        </Button>
                         <Button onClick={handleEquip} className="gap-2">
                             <Check className="w-4 h-4" />
                             Equip this combination

@@ -107,7 +107,8 @@ export default function AppShell() {
     const [isSidebarPinned, setIsSidebarPinned] = usePersistentState('fm_sidebar_pinned', false);
     // Collapsing the sidebar's Info section also hides the floating coffee pill below.
     const [isInfoCollapsed, setIsInfoCollapsed] = usePersistentState('fm_info_collapsed', false);
-    const [isStatsOpen, setIsStatsOpen] = useState(false);
+    // Persisted so the Character Stats drawer survives a reload.
+    const [isStatsOpen, setIsStatsOpen] = usePersistentState('fm_stats_open', false);
     const [isHoveringCoffee, setIsHoveringCoffee] = useState(false);
     const [showVersionPopup, setShowVersionPopup] = useState(false);
     const [popupVersion, setPopupVersion] = useState('');
