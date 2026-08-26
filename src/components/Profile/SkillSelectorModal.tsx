@@ -282,7 +282,7 @@ export function SkillSelectorModal({ isOpen, onClose, onSelect, currentSkill, is
                                                     />
                                                 </div>
                                             )}
-                                            <span className="text-[9px] font-bold text-center whitespace-nowrap overflow-hidden text-clip w-full">{skill.id}</span>
+                                            <span className="text-4xs font-bold text-center whitespace-nowrap overflow-hidden text-clip w-full">{skill.id}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -317,28 +317,28 @@ export function SkillSelectorModal({ isOpen, onClose, onSelect, currentSkill, is
                                     <div className="grid grid-cols-2 gap-2 text-xs">
                                         {selectedStats.damage > 0 && (
                                             <div className="bg-bg-input p-2 rounded border border-border/50">
-                                                <div className="text-text-muted text-[10px] uppercase">Damage</div>
+                                                <div className="text-text-muted text-3xs uppercase">Damage</div>
                                                 <div className="font-mono font-bold text-accent-primary">{formatCompactNumber(selectedStats.damage)}</div>
                                             </div>
                                         )}
                                         {selectedStats.health > 0 && (
                                             <div className="bg-bg-input p-2 rounded border border-border/50">
-                                                <div className="text-text-muted text-[10px] uppercase">Health</div>
+                                                <div className="text-text-muted text-3xs uppercase">Health</div>
                                                 <div className="font-mono font-bold text-green-400">{formatCompactNumber(selectedStats.health)}</div>
                                             </div>
                                         )}
                                         <div className="bg-bg-input p-2 rounded border border-border/50">
-                                            <div className="text-text-muted text-[10px] uppercase">Cooldown</div>
+                                            <div className="text-text-muted text-3xs uppercase">Cooldown</div>
                                             <div className="font-mono flex items-center gap-1">
                                                 <span className="text-accent-primary font-bold">{selectedStats.effectiveCooldown.toFixed(2)}s</span>
                                                 {selectedStats.reduction > 0 && (
-                                                    <span className="text-[10px] text-green-400">(-{(selectedStats.reduction * 100).toFixed(0)}%)</span>
+                                                    <span className="text-3xs text-green-400">(-{(selectedStats.reduction * 100).toFixed(0)}%)</span>
                                                 )}
                                             </div>
-                                            <div className="text-[9px] text-text-muted">Base: {selectedStats.cooldown}s</div>
+                                            <div className="text-4xs text-text-muted">Base: {selectedStats.cooldown}s</div>
                                         </div>
                                         <div className="bg-bg-input p-2 rounded border border-border/50">
-                                            <div className="text-text-muted text-[10px] uppercase">Duration</div>
+                                            <div className="text-text-muted text-3xs uppercase">Duration</div>
                                             <div className="font-mono">{selectedStats.duration}s</div>
                                         </div>
                                     </div>
@@ -457,7 +457,7 @@ export function SkillSelectorModal({ isOpen, onClose, onSelect, currentSkill, is
                                                 />
                                             </div>
                                         )}
-                                        <span className="text-[10px] font-bold text-center whitespace-nowrap overflow-hidden text-clip w-full px-1">{skill.id}</span>
+                                        <span className="text-3xs font-bold text-center whitespace-nowrap overflow-hidden text-clip w-full px-1">{skill.id}</span>
                                     </button>
                                 ))}
                             </div>
@@ -509,7 +509,7 @@ export function SkillSelectorModal({ isOpen, onClose, onSelect, currentSkill, is
                                     <div className="grid grid-cols-2 gap-2 text-xs">
                                         {selectedStats.damage > 0 && (
                                             <div className="bg-bg-input p-2 rounded border border-border/50">
-                                                <div className="text-text-muted text-[10px] uppercase">Damage</div>
+                                                <div className="text-text-muted text-3xs uppercase">Damage</div>
                                                 <div className="font-mono font-bold text-accent-primary text-sm whitespace-nowrap overflow-hidden text-clip" title={selectedStats.damage.toLocaleString()}>
                                                     {formatCompactNumber(selectedStats.damage)}
                                                 </div>
@@ -517,24 +517,24 @@ export function SkillSelectorModal({ isOpen, onClose, onSelect, currentSkill, is
                                         )}
                                         {selectedStats.health > 0 && (
                                             <div className="bg-bg-input p-2 rounded border border-border/50">
-                                                <div className="text-text-muted text-[10px] uppercase">Health</div>
+                                                <div className="text-text-muted text-3xs uppercase">Health</div>
                                                 <div className="font-mono font-bold text-green-400 text-sm whitespace-nowrap overflow-hidden text-clip" title={selectedStats.health.toLocaleString()}>
                                                     {formatCompactNumber(selectedStats.health)}
                                                 </div>
                                             </div>
                                         )}
                                         <div className="bg-bg-input p-2 rounded border border-border/50">
-                                            <div className="text-text-muted text-[10px] uppercase">Cooldown</div>
+                                            <div className="text-text-muted text-3xs uppercase">Cooldown</div>
                                             <div className="font-mono flex items-center gap-1">
                                                 <span className="text-accent-primary font-bold">{selectedStats.effectiveCooldown.toFixed(2)}s</span>
                                                 {selectedStats.reduction > 0 && (
-                                                    <span className="text-[10px] text-green-400">(-{(selectedStats.reduction * 100).toFixed(0)}%)</span>
+                                                    <span className="text-3xs text-green-400">(-{(selectedStats.reduction * 100).toFixed(0)}%)</span>
                                                 )}
                                             </div>
-                                            <div className="text-[9px] text-text-muted">Base: {selectedStats.cooldown}s</div>
+                                            <div className="text-4xs text-text-muted">Base: {selectedStats.cooldown}s</div>
                                         </div>
                                         <div className="bg-bg-input p-2 rounded border border-border/50">
-                                            <div className="text-text-muted text-[10px] uppercase">Duration</div>
+                                            <div className="text-text-muted text-3xs uppercase">Duration</div>
                                             <div className="font-mono text-text-primary text-sm">{selectedStats.duration}s</div>
                                         </div>
                                     </div>

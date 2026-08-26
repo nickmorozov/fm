@@ -303,17 +303,17 @@ export default function Clan() {
                         {/* War stats */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <Card className="p-4 border-2 border-red-500/30 bg-red-500/5">
-                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-red-400 mb-2"><Swords className="w-4 h-4" /> Attack during War</div>
+                                <div className="flex items-center gap-2 text-3xs font-black uppercase tracking-widest text-red-400 mb-2"><Swords className="w-4 h-4" /> Attack during War</div>
                                 <div className="text-2xl font-black text-white">{formatCompactNumber((stats?.totalDamage || 0) * (1 + warDamageMult))}</div>
-                                <div className="text-[11px] text-text-muted mt-1">Base {formatCompactNumber(stats?.totalDamage || 0)}{warDamageMult > 0 && <span className="text-red-400"> · +{(warDamageMult * 100).toFixed(0)}% war</span>}</div>
+                                <div className="text-2xs text-text-muted mt-1">Base {formatCompactNumber(stats?.totalDamage || 0)}{warDamageMult > 0 && <span className="text-red-400"> · +{(warDamageMult * 100).toFixed(0)}% war</span>}</div>
                             </Card>
                             <Card className="p-4 border-2 border-green-500/30 bg-green-500/5">
-                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-green-400 mb-2"><Heart className="w-4 h-4" /> Health during War</div>
+                                <div className="flex items-center gap-2 text-3xs font-black uppercase tracking-widest text-green-400 mb-2"><Heart className="w-4 h-4" /> Health during War</div>
                                 <div className="text-2xl font-black text-white">{formatCompactNumber((stats?.totalHealth || 0) * (1 + warHealthMult))}</div>
-                                <div className="text-[11px] text-text-muted mt-1">Base {formatCompactNumber(stats?.totalHealth || 0)}{warHealthMult > 0 && <span className="text-green-400"> · +{(warHealthMult * 100).toFixed(0)}% war</span>}</div>
+                                <div className="text-2xs text-text-muted mt-1">Base {formatCompactNumber(stats?.totalHealth || 0)}{warHealthMult > 0 && <span className="text-green-400"> · +{(warHealthMult * 100).toFixed(0)}% war</span>}</div>
                             </Card>
                         </div>
-                        <div className="flex items-start gap-2 text-[11px] text-text-muted">
+                        <div className="flex items-start gap-2 text-2xs text-text-muted">
                             <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-accent-primary" />
                             <span>
                                 {canEditClanTree
@@ -346,7 +346,7 @@ export default function Clan() {
                                                     </div>
                                                     <div className="min-w-0 flex-1">
                                                         <h4 className="text-xs font-bold whitespace-nowrap overflow-hidden text-clip">{nodeName}</h4>
-                                                        <p className="text-[9px] text-text-muted uppercase tracking-wider flex items-center gap-1.5 flex-wrap">
+                                                        <p className="text-4xs text-text-muted uppercase tracking-wider flex items-center gap-1.5 flex-wrap">
                                                             <span>Rank {level}/{maxLevel}</span>
                                                             {/* The clan's published level, but only when it disagrees with this
                                                                 copy: printing "clan 7" next to a 7 would be noise on 61 cards. */}
@@ -359,7 +359,7 @@ export default function Clan() {
                                                                 </span>
                                                             )}
                                                         </p>
-                                                        <div className="text-[9px] font-mono flex items-center gap-1 mt-0.5 flex-wrap">
+                                                        <div className="text-4xs font-mono flex items-center gap-1 mt-0.5 flex-wrap">
                                                             <SpriteIcon name="GuildPotions" size={11} />
                                                             <span className="text-green-400">{(def?.PointsPerLevel ?? 0).toLocaleString()}</span><span className="opacity-60">/lvl</span>
                                                             {valPerLevel > 0 && <span className="opacity-60">· +{(valPerLevel * 100).toFixed(valPerLevel < 0.1 ? 1 : 0)}%/lvl</span>}
@@ -367,7 +367,7 @@ export default function Clan() {
                                                     </div>
                                                     {valPerLevel > 0 && level > 0 && (
                                                         <div className="text-right shrink-0">
-                                                            <div className="text-[8px] text-text-muted uppercase tracking-wider">Now</div>
+                                                            <div className="text-5xs text-text-muted uppercase tracking-wider">Now</div>
                                                             <div className="text-xs font-black text-accent-primary">+{(valPerLevel * level * 100).toFixed(valPerLevel < 0.1 ? 1 : 0)}%</div>
                                                         </div>
                                                     )}
@@ -398,7 +398,7 @@ export default function Clan() {
                                                         type="button"
                                                         aria-label={`${nodeName}: ten levels down`}
                                                         title="-10"
-                                                        className="px-1.5 py-1.5 text-[10px] font-bold text-text-muted hover:text-white active:scale-90 transition disabled:opacity-30 disabled:hover:text-text-muted"
+                                                        className="px-1.5 py-1.5 text-3xs font-bold text-text-muted hover:text-white active:scale-90 transition disabled:opacity-30 disabled:hover:text-text-muted"
                                                         disabled={level <= 0}
                                                         onClick={() => setClanLevel(globalId, Math.max(0, level - 10), maxLevel)}
                                                     >
@@ -436,7 +436,7 @@ export default function Clan() {
                                                         type="button"
                                                         aria-label={`${nodeName}: ten levels up`}
                                                         title="+10"
-                                                        className="px-1.5 py-1.5 text-[10px] font-bold text-text-muted hover:text-white active:scale-90 transition disabled:opacity-30 disabled:hover:text-text-muted"
+                                                        className="px-1.5 py-1.5 text-3xs font-bold text-text-muted hover:text-white active:scale-90 transition disabled:opacity-30 disabled:hover:text-text-muted"
                                                         disabled={level >= maxLevel}
                                                         onClick={() => setClanLevel(globalId, Math.min(maxLevel, level + 10), maxLevel)}
                                                     >
@@ -624,13 +624,13 @@ const ClanTreeSyncBar: React.FC<{ diff: TreeDiff; localLevels: Map<number, numbe
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-2xs">
                             <div className="rounded-lg border border-border bg-bg-input/60 px-3 py-2">
-                                <div className="text-[9px] uppercase tracking-widest text-text-muted">Nodes changing</div>
+                                <div className="text-4xs uppercase tracking-widest text-text-muted">Nodes changing</div>
                                 <div className="font-black text-white text-base">{diff.changed}</div>
                             </div>
                             <div className="rounded-lg border border-border bg-bg-input/60 px-3 py-2">
-                                <div className="text-[9px] uppercase tracking-widest text-text-muted">Direction</div>
+                                <div className="text-4xs uppercase tracking-widest text-text-muted">Direction</div>
                                 <div className="font-bold">
                                     <span className="text-green-400">{goingUp} up</span>
                                     <span className="text-text-muted"> · </span>
@@ -638,7 +638,7 @@ const ClanTreeSyncBar: React.FC<{ diff: TreeDiff; localLevels: Map<number, numbe
                                 </div>
                             </div>
                             <div className="rounded-lg border border-border bg-bg-input/60 px-3 py-2">
-                                <div className="text-[9px] uppercase tracking-widest text-text-muted">Total levels</div>
+                                <div className="text-4xs uppercase tracking-widest text-text-muted">Total levels</div>
                                 <div className="font-bold text-white">
                                     {from.levels.toLocaleString()} <span className="text-text-muted">→</span> {to.levels.toLocaleString()}
                                     <span className="text-text-muted font-normal"> ({from.nodes} → {to.nodes} nodes)</span>
@@ -671,7 +671,7 @@ const ClanTreeSyncBar: React.FC<{ diff: TreeDiff; localLevels: Map<number, numbe
                     squeezed to a couple of characters wide and the description came out one word
                     per line. Taking the whole first row lets the buttons wrap underneath instead. */}
                 <div className="min-w-0 basis-full sm:basis-0 sm:flex-1">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-accent-primary">
+                    <div className="flex items-center gap-2 text-3xs font-black uppercase tracking-widest text-accent-primary">
                         <Users className="w-3.5 h-3.5" />
                         {clan.clan.name} [{clan.clan.tag}] · shared tree
                     </div>
@@ -694,7 +694,7 @@ const ClanTreeSyncBar: React.FC<{ diff: TreeDiff; localLevels: Map<number, numbe
                         )}
                     </p>
                     {clan.treeInfo?.updated_at && (
-                        <p className="text-[10px] text-text-muted mt-0.5">
+                        <p className="text-3xs text-text-muted mt-0.5">
                             Clan tree last written {new Date(clan.treeInfo.updated_at).toLocaleString()}
                             {clan.treeInfo.updated_by_name ? ` by ${clan.treeInfo.updated_by_name}` : ' by a member who has since left'}
                         </p>
@@ -704,7 +704,7 @@ const ClanTreeSyncBar: React.FC<{ diff: TreeDiff; localLevels: Map<number, numbe
                         themselves. And only as the last line of the description, because it
                         explains the state the rest of this bar is describing. */}
                     {clan.clanSyncEnabled && !clan.autoPull && (
-                        <p className="text-[10px] text-text-muted mt-0.5">
+                        <p className="text-3xs text-text-muted mt-0.5">
                             Clan sync is on: these levels follow the clan&apos;s published tree by themselves.
                         </p>
                     )}

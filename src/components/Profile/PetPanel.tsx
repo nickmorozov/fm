@@ -351,7 +351,7 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                         <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 px-2 text-[10px] font-bold border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40 text-red-400 gap-1 active:scale-95 transition-all w-fit"
+                            className="h-7 px-2 text-3xs font-bold border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40 text-red-400 gap-1 active:scale-95 transition-all w-fit"
                             onClick={() => handleAutoOptimize('dps')}
                             disabled={!isReady || autoDisabled}
                             title="Select best 3 pets + mount for Max DPS"
@@ -362,7 +362,7 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                         <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 px-2 text-[10px] font-bold border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40 text-amber-500 gap-1 active:scale-95 transition-all w-fit"
+                            className="h-7 px-2 text-3xs font-bold border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40 text-amber-500 gap-1 active:scale-95 transition-all w-fit"
                             onClick={() => handleAutoOptimize('power')}
                             disabled={!isReady || autoDisabled}
                             title="Select best 3 pets + mount for Max Power"
@@ -373,7 +373,7 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                         <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 px-2 text-[10px] font-bold border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40 text-purple-400 gap-1 active:scale-95 transition-all w-fit"
+                            className="h-7 px-2 text-3xs font-bold border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40 text-purple-400 gap-1 active:scale-95 transition-all w-fit"
                             onClick={() => handleAutoOptimize('lifesteal')}
                             disabled={!isReady || autoDisabled}
                             title="Select best 3 pets + mount for Max Lifesteal/sec"
@@ -384,7 +384,7 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                         <Button
                             variant="outline"
                             size="sm"
-                            className="h-7 px-2 text-[10px] font-bold border-violet-500/20 hover:bg-violet-500/10 hover:border-violet-500/40 text-violet-400 gap-1 active:scale-95 transition-all w-fit"
+                            className="h-7 px-2 text-3xs font-bold border-violet-500/20 hover:bg-violet-500/10 hover:border-violet-500/40 text-violet-400 gap-1 active:scale-95 transition-all w-fit"
                             onClick={() => handleAutoOptimize('balanced')}
                             disabled={!isReady || autoDisabled}
                             title="Select best 3 pets + mount for a balance of DPS and HPS (same scoring as the Loadout Optimizer)"
@@ -396,7 +396,7 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                             <Button 
                                 variant="ghost" 
                                 size="sm" 
-                                className="h-7 px-2 text-[10px] font-bold text-text-muted hover:text-white gap-1 active:scale-95 transition-all w-fit"
+                                className="h-7 px-2 text-3xs font-bold text-text-muted hover:text-white gap-1 active:scale-95 transition-all w-fit"
                                 onClick={handleRevert}
                             >
                                 <RotateCcw className="w-3 h-3" />
@@ -516,7 +516,7 @@ export function PetPanel({ variant = 'default', title, comparePets }: PetPanelPr
                                so it rides beside the name with the rarity. */
                             tags={(
                                 <span className={cn(
-                                    "text-[8px] font-black uppercase tracking-wider px-1 rounded border",
+                                    "text-5xs font-black uppercase tracking-wider px-1 rounded border",
                                     petType === 'Damage' ? 'text-red-400 border-red-400/30 bg-red-400/10' :
                                         petType === 'Health' ? 'text-green-400 border-green-400/30 bg-green-400/10'
                                             : 'text-blue-400 border-blue-400/30 bg-blue-400/10'

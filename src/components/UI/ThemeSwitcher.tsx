@@ -104,7 +104,7 @@ export function ThemeSwitcher() {
         onPick: (id: T) => void,
     ) => (
         <div>
-            <p className="px-2.5 pt-2 pb-1 text-[10px] font-black uppercase tracking-widest text-text-muted">{title}</p>
+            <p className="px-2.5 pt-2 pb-1 text-3xs font-black uppercase tracking-widest text-text-muted">{title}</p>
             {themes.map(({ id, label, swatch }) => (
                 <button
                     key={id}
@@ -157,7 +157,7 @@ export function ThemeSwitcher() {
                                 onClick={() => update({ mode: id })}
                                 title={label}
                                 className={cn(
-                                    'flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md text-[10px] font-black uppercase tracking-wide transition-colors',
+                                    'flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md text-3xs font-black uppercase tracking-wide transition-colors',
                                     config.mode === id
                                         ? 'bg-accent-primary/20 text-accent-primary'
                                         : 'text-text-muted hover:text-text-primary hover:bg-bg-card-hover'

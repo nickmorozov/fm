@@ -826,7 +826,7 @@ export default function TechTree() {
                                                                         <h4 className="text-xs font-bold text-text-primary whitespace-nowrap overflow-hidden text-clip">
                                                                             {getTechNodeName(node.type)}
                                                                         </h4>
-                                                                        <p className="text-[9px] text-text-muted mt-0.5 font-bold uppercase tracking-tight">
+                                                                        <p className="text-4xs text-text-muted mt-0.5 font-bold uppercase tracking-tight">
                                                                             Rank {currentRank}/{maxLevel}
                                                                         </p>
                                                                     </div>
@@ -842,7 +842,7 @@ export default function TechTree() {
                                                                             <Minus className="w-3.5 h-3.5 text-white" />
                                                                         </div>
 
-                                                                        <div className="text-[9px] font-mono text-text-muted flex items-center gap-1 font-bold">
+                                                                        <div className="text-4xs font-mono text-text-muted flex items-center gap-1 font-bold">
                                                                             <SpriteIcon name="GuildPotions" size={12} />
                                                                             <span className="text-green-400">{pointsPerLevel.toLocaleString()}</span>
                                                                             <span className="opacity-60">/lvl</span>
@@ -977,7 +977,7 @@ export default function TechTree() {
                                                     </div>
 
                                                     <div className="min-w-0 w-full mb-6">
-                                                        <div className="text-[10px] font-bold text-text-muted uppercase mb-0.5">Tier {node.tier + 1}</div>
+                                                        <div className="text-3xs font-bold text-text-muted uppercase mb-0.5">Tier {node.tier + 1}</div>
                                                         <h4 className="text-xs font-bold text-text-primary leading-tight line-clamp-2 min-h-[2.5em]">
                                                             {getTechNodeName(node.type)}
                                                         </h4>
@@ -1003,7 +1003,7 @@ export default function TechTree() {
                                                                 {currentRank}/{maxLevel}
                                                             </div>
                                                             {/* Time remaining for this specific node */}
-                                                            <div className="text-[8px] text-text-muted flex items-center gap-1">
+                                                            <div className="text-5xs text-text-muted flex items-center gap-1">
                                                                 <div className="inline-block shrink-0" role="img" aria-label="Timer" style={{
                                                                     width: '8px',
                                                                     height: '8px',
@@ -1058,7 +1058,7 @@ export default function TechTree() {
                         <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
                             Tech Wiki
                         </h1>
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-[10px] sm:text-xs text-text-muted font-bold mt-1">
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-3xs sm:text-xs text-text-muted font-bold mt-1">
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-1">
                                     <div className="inline-block shrink-0" role="img" aria-label="Timer" style={{
@@ -1164,19 +1164,19 @@ export default function TechTree() {
             <Card className="p-2 mb-4 flex flex-wrap items-center justify-between gap-3 border-accent-primary/20 shrink-0 bg-accent-primary/5">
                 <div className="flex items-center gap-2 px-2 py-1">
                     <Info className="w-4 h-4 text-accent-primary" />
-                    <span className="text-[11px] font-bold text-text-secondary uppercase">Simulation Mode</span>
+                    <span className="text-2xs font-bold text-text-secondary uppercase">Simulation Mode</span>
                 </div>
                 <div className="flex gap-2">
                     <button
                         onClick={resetToProfile}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-bg-input border border-border hover:bg-white/5 text-[11px] font-bold transition-all"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-bg-input border border-border hover:bg-white/5 text-2xs font-bold transition-all"
                     >
                         <RefreshCw className="w-3 h-3" />
                         Reload My Profile
                     </button>
                     <button
                         onClick={maxOutCurrentTree}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-primary/10 border border-accent-primary/20 hover:bg-accent-primary/20 text-accent-primary text-[11px] font-bold transition-all"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-primary/10 border border-accent-primary/20 hover:bg-accent-primary/20 text-accent-primary text-2xs font-bold transition-all"
                     >
                         <Zap className="w-3 h-3 fill-current" />
                         Max Tree
@@ -1184,7 +1184,7 @@ export default function TechTree() {
                     {activeTab !== 'Clan' && (
                         <button
                             onClick={centerView}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-secondary/20 border border-accent-secondary/30 hover:bg-accent-secondary/30 text-accent-secondary text-[11px] font-bold transition-all"
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-secondary/20 border border-accent-secondary/30 hover:bg-accent-secondary/30 text-accent-secondary text-2xs font-bold transition-all"
                         >
                             <RefreshCw className="w-3 h-3" />
                             Center View
@@ -1192,7 +1192,7 @@ export default function TechTree() {
                     )}
                     <button
                         onClick={maxOutTree}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-primary/20 border border-accent-primary/30 hover:bg-accent-primary/30 text-accent-primary text-[11px] font-bold transition-all"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-primary/20 border border-accent-primary/30 hover:bg-accent-primary/30 text-accent-primary text-2xs font-bold transition-all"
                     >
                         <Star className="w-3 h-3 fill-current" />
                         Max Everything
@@ -1201,14 +1201,14 @@ export default function TechTree() {
                         <>
                             <button
                                 onClick={exportClanTech}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-primary/20 border border-accent-primary/30 hover:bg-accent-primary/30 text-accent-primary text-[11px] font-bold transition-all"
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-primary/20 border border-accent-primary/30 hover:bg-accent-primary/30 text-accent-primary text-2xs font-bold transition-all"
                             >
                                 <Download className="w-3 h-3" />
                                 Export Clan Tech
                             </button>
                             <button
                                 onClick={() => setShowImportModal(true)}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-secondary/20 border border-accent-secondary/30 hover:bg-accent-secondary/30 text-accent-secondary text-[11px] font-bold transition-all"
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-secondary/20 border border-accent-secondary/30 hover:bg-accent-secondary/30 text-accent-secondary text-2xs font-bold transition-all"
                             >
                                 <Upload className="w-3 h-3" />
                                 Import Clan Tech
@@ -1291,7 +1291,7 @@ export default function TechTree() {
                                                             backgroundRepeat: 'no-repeat',
                                                             imageRendering: 'pixelated'
                                                         }} />
-                                                        <span className="text-[10px] uppercase font-bold text-text-muted">Total Time</span>
+                                                        <span className="text-3xs uppercase font-bold text-text-muted">Total Time</span>
                                                     </div>
                                                     <span className="text-xs font-bold font-mono text-text-primary ml-4">{formatTime(stats.totalTime)}</span>
                                                 </div>
@@ -1306,7 +1306,7 @@ export default function TechTree() {
                                                             backgroundRepeat: 'no-repeat',
                                                             imageRendering: 'pixelated'
                                                         }} />
-                                                        <span className="text-[10px] uppercase font-bold text-text-muted">Remaining Time</span>
+                                                        <span className="text-3xs uppercase font-bold text-text-muted">Remaining Time</span>
                                                     </div>
                                                     <span className="text-xs font-bold font-mono text-accent-primary ml-4">{formatTime(stats.remainingTime)}</span>
                                                 </div>
@@ -1321,7 +1321,7 @@ export default function TechTree() {
                                                             backgroundRepeat: 'no-repeat',
                                                             imageRendering: 'pixelated'
                                                         }} />
-                                                        <span className="text-[10px] uppercase font-bold text-text-muted">Total Costs</span>
+                                                        <span className="text-3xs uppercase font-bold text-text-muted">Total Costs</span>
                                                     </div>
                                                     <span className="text-xs font-bold font-mono text-text-primary ml-4">{stats.totalCost.toLocaleString()}</span>
                                                 </div>
@@ -1336,7 +1336,7 @@ export default function TechTree() {
                                                             backgroundRepeat: 'no-repeat',
                                                             imageRendering: 'pixelated'
                                                         }} />
-                                                        <span className="text-[10px] uppercase font-bold text-text-muted">Remaining Costs</span>
+                                                        <span className="text-3xs uppercase font-bold text-text-muted">Remaining Costs</span>
                                                     </div>
                                                     <span className="text-xs font-bold font-mono text-accent-primary ml-4">{stats.remainingCost.toLocaleString()}</span>
                                                 </div>
@@ -1346,7 +1346,7 @@ export default function TechTree() {
 
                                     <div className="space-y-4">
                                         <div>
-                                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-2 block">Function</label>
+                                            <label className="text-3xs font-bold text-text-muted uppercase tracking-wider mb-2 block">Function</label>
                                             <p className="text-sm text-text-secondary leading-relaxed bg-accent-primary/5 p-3 rounded-lg border border-accent-primary/20 italic">
                                                 "{getTechNodeDescription(selectedNode.type, selectedEffect)}"
                                             </p>
@@ -1354,7 +1354,7 @@ export default function TechTree() {
 
                                         {/* SIMULATION RANK CONTROL */}
                                         <div>
-                                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3 block">Simulate Rank</label>
+                                            <label className="text-3xs font-bold text-text-muted uppercase tracking-wider mb-3 block">Simulate Rank</label>
                                             <div className="flex items-center gap-4 bg-bg-input rounded-2xl p-2 border border-border">
                                                 <button
                                                     onClick={() => handleLocalUpdate(selectedNode.id, -1, selectedTree)}
@@ -1364,7 +1364,7 @@ export default function TechTree() {
                                                     <div className="text-2xl font-mono font-bold text-accent-primary">
                                                         {(localRanks[selectedTree] || {})[selectedNode.id] || 0}
                                                     </div>
-                                                    <div className="text-[9px] text-text-muted uppercase font-bold tracking-tighter">Level Rank</div>
+                                                    <div className="text-4xs text-text-muted uppercase font-bold tracking-tighter">Level Rank</div>
                                                 </div>
                                                 <button
                                                     onClick={() => handleLocalUpdate(selectedNode.id, 1, selectedTree)}
@@ -1374,7 +1374,7 @@ export default function TechTree() {
                                         </div>
 
                                         <div>
-                                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-2 block">Bonus Analytics</label>
+                                            <label className="text-3xs font-bold text-text-muted uppercase tracking-wider mb-2 block">Bonus Analytics</label>
                                             {selectedEffect?.Stats?.map((stat: any, i: number) => {
                                                 const currentVal = (localRanks[selectedTree] || {})[selectedNode.id] || 0;
                                                 const maxLevel = selectedEffect.MaxLevel || 1;
@@ -1383,14 +1383,14 @@ export default function TechTree() {
                                                     <div key={i} className="bg-bg-input/50 rounded-xl border border-border p-4 space-y-3">
                                                         <div className="flex justify-between items-center text-xs">
                                                             <span className="text-text-muted font-bold">{stat.StatNode?.UniqueStat?.StatType}</span>
-                                                            <span className="font-mono bg-accent-secondary/20 text-accent-secondary px-2 py-0.5 rounded text-[10px]">
+                                                            <span className="font-mono bg-accent-secondary/20 text-accent-secondary px-2 py-0.5 rounded text-3xs">
                                                                 {stat.StatNode?.UniqueStat?.StatNature}
                                                             </span>
                                                         </div>
 
                                                         <div className="grid grid-cols-2 gap-4">
                                                             <div>
-                                                                <div className="text-[10px] text-text-muted uppercase font-bold mb-1">Simulated Rank</div>
+                                                                <div className="text-3xs text-text-muted uppercase font-bold mb-1">Simulated Rank</div>
                                                                 <div className="text-base font-mono font-bold text-accent-primary">
                                                                     {stat.StatNode?.UniqueStat?.StatNature === 'Additive'
                                                                         ? `+${(stat.Value * currentVal).toFixed(1)}`
@@ -1399,7 +1399,7 @@ export default function TechTree() {
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div className="text-[10px] text-text-muted uppercase font-bold mb-1">Node Max</div>
+                                                                <div className="text-3xs text-text-muted uppercase font-bold mb-1">Node Max</div>
                                                                 <div className="text-base font-mono font-bold text-text-muted opacity-50">
                                                                     {stat.StatNode?.UniqueStat?.StatNature === 'Additive'
                                                                         ? `+${(stat.Value * maxLevel).toFixed(1)}`
@@ -1416,7 +1416,7 @@ export default function TechTree() {
 
                                     {selectedNode.requirements?.length > 0 && (
                                         <div className="pt-2">
-                                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-2 block">Unlocks after:</label>
+                                            <label className="text-3xs font-bold text-text-muted uppercase tracking-wider mb-2 block">Unlocks after:</label>
                                             <div className="space-y-1.5">
                                                 {selectedNode.requirements.map((reqId: number) => {
                                                     const reqNode = nodeById[reqId] as any;
@@ -1439,7 +1439,7 @@ export default function TechTree() {
                                     {activeTab === 'Clan' ? (
                                         <div className="pt-4 mt-4 border-t border-border">
                                             <div className="flex items-center justify-between mb-2">
-                                                <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Upgrade Costs</label>
+                                                <label className="text-3xs font-bold text-text-muted uppercase tracking-wider">Upgrade Costs</label>
                                             </div>
                                             <div className="bg-bg-input/50 rounded-xl border border-border p-3 flex justify-between items-center text-xs">
                                                 <div className="flex items-center gap-1 text-text-muted font-bold">
@@ -1461,14 +1461,14 @@ export default function TechTree() {
                                         upgradeLibrary && upgradeLibrary[selectedNode.tier] && (
                                             <div className="pt-4 mt-4 border-t border-border">
                                                 <div className="flex items-center justify-between mb-2">
-                                                    <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Upgrade Costs (Tier {selectedNode.tier + 1})</label>
-                                                    <div className="flex gap-2 text-[9px] font-bold uppercase">
+                                                    <label className="text-3xs font-bold text-text-muted uppercase tracking-wider">Upgrade Costs (Tier {selectedNode.tier + 1})</label>
+                                                    <div className="flex gap-2 text-4xs font-bold uppercase">
                                                         <span className="text-text-muted">Base</span>
                                                         <span className="text-accent-primary">My Cost</span>
                                                     </div>
                                                 </div>
                                                 <div className="bg-bg-input/50 rounded-xl border border-border overflow-hidden">
-                                                    <div className="grid grid-cols-3 gap-2 p-2 bg-white/5 text-[10px] font-bold text-text-muted uppercase">
+                                                    <div className="grid grid-cols-3 gap-2 p-2 bg-white/5 text-3xs font-bold text-text-muted uppercase">
                                                         <div>Rank</div>
                                                         <div className="flex items-center gap-1">
                                                             <div className="inline-block shrink-0 drop-shadow-md" role="img" aria-label="Potion" style={{
@@ -1515,7 +1515,7 @@ export default function TechTree() {
                                                             )}>
                                                                 <div className={cn("font-bold", isUnlocked ? "text-accent-primary" : "text-text-muted")}>{rank}</div>
                                                                 <div className="flex flex-col">
-                                                                    <div className="flex items-center gap-1 text-text-muted text-[10px] line-through decoration-white/30 opacity-70">
+                                                                    <div className="flex items-center gap-1 text-text-muted text-3xs line-through decoration-white/30 opacity-70">
                                                                         {lvl.Cost}
                                                                     </div>
                                                                     <div className={cn("flex items-center gap-1 font-bold", isUnlocked ? "text-accent-secondary" : "text-white")}>
@@ -1532,7 +1532,7 @@ export default function TechTree() {
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex flex-col">
-                                                                    <div className="text-[10px] text-text-muted line-through decoration-white/30 opacity-70">
+                                                                    <div className="text-3xs text-text-muted line-through decoration-white/30 opacity-70">
                                                                         {formatTime(lvl.Duration)}
                                                                     </div>
                                                                     <div className={cn("flex items-center gap-1 font-bold", isUnlocked ? "text-accent-secondary" : "text-white")}>
@@ -1557,7 +1557,7 @@ export default function TechTree() {
                                     )}
 
                                     <div className="pt-6 border-t border-border mt-4">
-                                        <div className="text-[10px] text-text-muted text-center italic leading-tight">
+                                        <div className="text-3xs text-text-muted text-center italic leading-tight">
                                             <b>READ ONLY:</b> Individual changes are for simulation only. To update your profile, use the Research panel.
                                         </div>
                                     </div>

@@ -237,7 +237,7 @@ export default function LoadoutOptimizer() {
                                         {'  -  '}
                                         {describeMount(result.mount)}
                                     </div>
-                                    <div className="text-[11px] font-mono text-text-muted mt-1">
+                                    <div className="text-2xs font-mono text-text-muted mt-1">
                                         DPS {formatNumber(result.dps)}
                                         {'  -  '}LS/s {formatNumber(result.lifestealPerSec)}
                                         {'  -  '}HPS {formatNumber(result.healPerSec)}
@@ -288,7 +288,7 @@ function StatStrip({ loadout }: { loadout: ExpandedLoadout | null }) {
         <div className="mt-3 flex flex-wrap gap-x-8 gap-y-3">
             {cells.map(c => (
                 <div key={c.label} className="min-w-0">
-                    <div className="text-[10px] uppercase font-bold tracking-widest text-text-muted whitespace-nowrap">{c.label}</div>
+                    <div className="text-3xs uppercase font-bold tracking-widest text-text-muted whitespace-nowrap">{c.label}</div>
                     <div className={cn("text-xl md:text-2xl font-mono font-bold mt-0.5", c.color)}>{formatNumber(c.value)}</div>
                 </div>
             ))}

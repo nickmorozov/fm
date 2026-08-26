@@ -90,7 +90,7 @@ export const BreakpointTables = memo(({
                     <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
                     Attack-speed value (10-tick engine)
                 </div>
-                <p className="text-[11px] text-white/60 leading-relaxed">
+                <p className="text-2xs text-white/60 leading-relaxed">
                     Combat advances in <strong>0.1s ticks</strong>. Attack speed only helps when it crosses a tick
                     threshold, so speed between breakpoints is wasted. The list below shows only the attack-speed values
                     that <strong>actually lower your time&nbsp;per&nbsp;hit</strong> (weighted by your{' '}
@@ -103,16 +103,16 @@ export const BreakpointTables = memo(({
             {/* Current + next + best summary */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="bg-black/25 border border-white/5 rounded-lg p-3">
-                    <div className="text-[9px] uppercase tracking-wider text-white/40">Now (+{currentBonus.toFixed(0)}%)</div>
-                    <div className="text-lg font-black text-white">{cur.effective.toFixed(2)}s<span className="text-[10px] text-white/40 font-normal"> /hit</span></div>
-                    <div className="text-[9px] text-white/40 font-mono">single {cur.single.toFixed(1)}s · double {(cur.single + cur.delay).toFixed(1)}s</div>
+                    <div className="text-4xs uppercase tracking-wider text-white/40">Now (+{currentBonus.toFixed(0)}%)</div>
+                    <div className="text-lg font-black text-white">{cur.effective.toFixed(2)}s<span className="text-3xs text-white/40 font-normal"> /hit</span></div>
+                    <div className="text-4xs text-white/40 font-mono">single {cur.single.toFixed(1)}s · double {(cur.single + cur.delay).toFixed(1)}s</div>
                 </div>
                 <div className={cn('rounded-lg p-3 border', nextGain ? 'bg-purple-500/10 border-purple-500/30' : 'bg-black/25 border-white/5')}>
-                    <div className="text-[9px] uppercase tracking-wider text-purple-300/70">Next worthwhile target</div>
+                    <div className="text-4xs uppercase tracking-wider text-purple-300/70">Next worthwhile target</div>
                     {nextGain ? (
                         <>
                             <div className="text-lg font-black text-purple-300">+{nextGain.reqBonus.toFixed(1)}%</div>
-                            <div className="text-[9px] text-white/50 font-mono">
+                            <div className="text-4xs text-white/50 font-mono">
                                 → {nextGain.effective.toFixed(2)}s/hit ({((dps(nextGain.effective) / dps(cur.effective) - 1) * 100).toFixed(1)}% DPS)
                             </div>
                         </>
@@ -121,9 +121,9 @@ export const BreakpointTables = memo(({
                     )}
                 </div>
                 <div className="bg-black/25 border border-white/5 rounded-lg p-3">
-                    <div className="text-[9px] uppercase tracking-wider text-white/40">Best reachable</div>
-                    <div className="text-lg font-black text-green-400">{bestEff.toFixed(2)}s<span className="text-[10px] text-white/40 font-normal"> /hit</span></div>
-                    <div className="text-[9px] text-white/40 font-mono">at gear cap +{(maxPossibleSpeedBonus - 0.1).toFixed(0)}%</div>
+                    <div className="text-4xs uppercase tracking-wider text-white/40">Best reachable</div>
+                    <div className="text-lg font-black text-green-400">{bestEff.toFixed(2)}s<span className="text-3xs text-white/40 font-normal"> /hit</span></div>
+                    <div className="text-4xs text-white/40 font-mono">at gear cap +{(maxPossibleSpeedBonus - 0.1).toFixed(0)}%</div>
                 </div>
             </div>
 
@@ -131,9 +131,9 @@ export const BreakpointTables = memo(({
             <div className="space-y-2">
                 <h3 className="text-sm font-bold text-white tracking-wide">Worthwhile attack-speed breakpoints</h3>
                 <div className="overflow-x-auto custom-scrollbar border border-white/5 rounded-lg bg-black/25">
-                    <table className="w-full text-left font-mono text-[10px] md:text-xs">
+                    <table className="w-full text-left font-mono text-3xs md:text-xs">
                         <thead>
-                            <tr className="text-white/30 uppercase text-[9px] border-b border-white/5">
+                            <tr className="text-white/30 uppercase text-4xs border-b border-white/5">
                                 <th className="p-2.5 font-sans font-bold w-[84px]">Req. Speed</th>
                                 <th className="p-2.5 font-sans font-bold w-[80px]">Time / hit</th>
                                 <th className="p-2.5 font-sans font-bold w-[72px]">Interval</th>
@@ -167,7 +167,7 @@ export const BreakpointTables = memo(({
                                         <td className={cn('p-2.5 font-bold', (g.cause === 'single' || g.cause === 'both') ? 'text-orange-400' : 'text-white/45')}>{g.single.toFixed(1)}s</td>
                                         <td className={cn('p-2.5 font-bold', (g.cause === 'double' || g.cause === 'both') ? 'text-purple-300' : 'text-white/45')}>{(g.single + g.delay).toFixed(1)}s</td>
                                         <td className="p-2.5 text-green-400/90">+{dpsGain.toFixed(1)}%</td>
-                                        <td className="p-2.5 text-right font-sans font-bold text-[9px] uppercase">
+                                        <td className="p-2.5 text-right font-sans font-bold text-4xs uppercase">
                                             {isReached ? <span className="text-green-400">Reached</span>
                                                 : isNext ? <span className="text-purple-200">Next</span>
                                                     : <span className="text-accent-primary/80">Target</span>}
@@ -178,12 +178,12 @@ export const BreakpointTables = memo(({
                         </tbody>
                     </table>
                 </div>
-                <p className="text-[10px] text-white/40">
+                <p className="text-3xs text-white/40">
                     <strong>Interval</strong> = time between normal attacks; <strong>Double</strong> = full time for a double sequence
                     (both absolute. Lower is better). The coloured column is the one that improves at that breakpoint
                     (orange = single, purple = double). Double breakpoints only matter while your double chance &gt; 0.
                 </p>
-                <p className="text-[10px] text-emerald-400/70 flex items-start gap-1.5">
+                <p className="text-3xs text-emerald-400/70 flex items-start gap-1.5">
                     <Heart className="w-3 h-3 mt-0.5 shrink-0" />
                     <span>
                         These same breakpoints also raise your <strong>lifesteal HPS</strong>. It scales 1:1 with the real attack
@@ -198,7 +198,7 @@ export const BreakpointTables = memo(({
 
 // Formula reference — reverse-engineered from the game binary (libil2cpp.so, 2.8.2).
 export const BreakpointExplanation = memo(() => (
-    <div className="mt-8 space-y-4 text-[11px] text-white/50 leading-relaxed border-t border-white/10 pt-6 font-sans">
+    <div className="mt-8 space-y-4 text-2xs text-white/50 leading-relaxed border-t border-white/10 pt-6 font-sans">
         <h4 className="text-xs font-bold text-white uppercase tracking-wider">How attack timing works (from the game binary)</h4>
         <p className="text-white/50">
             Combat runs at <strong>10 sim-ticks per second</strong> (0.1s per tick). Each unit has one continuous
@@ -209,8 +209,8 @@ export const BreakpointExplanation = memo(() => (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
                 <div>
-                    <span className="text-orange-400 font-bold uppercase block mb-0.5 text-[10px]">Single-attack interval</span>
-                    <span className="font-mono text-[9px] bg-white/5 px-1 py-0.5 rounded text-orange-300 block w-fit mb-1 font-bold">
+                    <span className="text-orange-400 font-bold uppercase block mb-0.5 text-3xs">Single-attack interval</span>
+                    <span className="font-mono text-4xs bg-white/5 px-1 py-0.5 rounded text-orange-300 block w-fit mb-1 font-bold">
                         interval = (ceil(AttackDuration / inc) + 1) × 0.1s
                     </span>
                     Time between normal attacks. <strong>Identical for every weapon and skin</strong>. It depends only on
@@ -218,8 +218,8 @@ export const BreakpointExplanation = memo(() => (
                     re-acquire tick.
                 </div>
                 <div>
-                    <span className="text-purple-400 font-bold uppercase block mb-0.5 text-[10px]">Double 2nd-hit delay</span>
-                    <span className="font-mono text-[9px] bg-white/5 px-1 py-0.5 rounded text-purple-300 block w-fit mb-1 font-bold">
+                    <span className="text-purple-400 font-bold uppercase block mb-0.5 text-3xs">Double 2nd-hit delay</span>
+                    <span className="font-mono text-4xs bg-white/5 px-1 py-0.5 rounded text-purple-300 block w-fit mb-1 font-bold">
                         delay = ceil(0.25 × Windup / inc) × 0.1s  (min 0.1s)
                     </span>
                     The gap before the second strike when Double Damage procs. When a double triggers, the timer is
@@ -229,16 +229,16 @@ export const BreakpointExplanation = memo(() => (
             </div>
             <div className="space-y-4">
                 <div>
-                    <span className="text-fuchsia-400 font-bold uppercase block mb-0.5 text-[10px]">Effective time / hit</span>
-                    <span className="font-mono text-[9px] bg-white/5 px-1 py-0.5 rounded text-fuchsia-300 block w-fit mb-1 font-bold">
+                    <span className="text-fuchsia-400 font-bold uppercase block mb-0.5 text-3xs">Effective time / hit</span>
+                    <span className="font-mono text-4xs bg-white/5 px-1 py-0.5 rounded text-fuchsia-300 block w-fit mb-1 font-bold">
                         timePerHit = (interval + doubleChance × delay) / (1 + doubleChance)
                     </span>
                     What the breakpoint table optimises. A double turns one cycle into two hits, so higher double chance
                     makes the windup-driven double breakpoints matter more.
                 </div>
                 <div>
-                    <span className="text-white/70 font-bold uppercase block mb-0.5 text-[10px]">inc (per-tick advance)</span>
-                    <span className="font-mono text-[9px] bg-white/5 px-1 py-0.5 rounded text-white/70 block w-fit mb-1 font-bold">
+                    <span className="text-white/70 font-bold uppercase block mb-0.5 text-3xs">inc (per-tick advance)</span>
+                    <span className="font-mono text-4xs bg-white/5 px-1 py-0.5 rounded text-white/70 block w-fit mb-1 font-bold">
                         inc = floor(dt_raw × round(attackSpeed × 1e6) / 2³²)
                     </span>
                     Fixed-point (FD6) increment per tick. Truncation of both <code>dt</code> and this product is what makes

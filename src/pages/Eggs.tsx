@@ -100,7 +100,7 @@ export default function Eggs() {
                 <p className="text-text-secondary">Optimize your egg hatching for Guild Wars</p>
                 {eggWarBoost > 0 && (
                     <div className="flex justify-center pt-2">
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-3xs font-black uppercase tracking-wider">
                             <Trophy size={14} />
                             Clan Boost: +{(eggWarBoost * 100).toFixed(0)}% War Points
                         </div>
@@ -176,7 +176,7 @@ export default function Eggs() {
                                 {/* Level & Progress */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-3 bg-bg-primary/30 p-4 rounded-xl border border-white/5">
-                                        <label className="text-[10px] font-bold text-text-secondary uppercase">Current Level</label>
+                                        <label className="text-3xs font-bold text-text-secondary uppercase">Current Level</label>
                                         <div className="flex items-center justify-between gap-2">
                                             <button
                                                 onClick={() => eggSummon.setLevel(Math.max(1, eggSummon.level - 1))}
@@ -201,10 +201,10 @@ export default function Eggs() {
                                                 <Plus className="w-3 h-3 text-text-primary" />
                                             </button>
                                         </div>
-                                        <div className="text-[10px] text-text-muted text-center font-mono opacity-50">Max: {eggSummon.maxPossibleLevel}</div>
+                                        <div className="text-3xs text-text-muted text-center font-mono opacity-50">Max: {eggSummon.maxPossibleLevel}</div>
                                     </div>
                                     <div className="space-y-3 bg-bg-primary/30 p-4 rounded-xl border border-white/5">
-                                        <label className="text-[10px] font-bold text-text-secondary uppercase">Current Progress</label>
+                                        <label className="text-3xs font-bold text-text-secondary uppercase">Current Progress</label>
                                         <div className="flex items-center justify-between gap-2">
                                             <button
                                                 onClick={() => eggSummon.setProgress(Math.max(0, eggSummon.progress - 1))}
@@ -234,7 +234,7 @@ export default function Eggs() {
                                                 <Plus className="w-3 h-3 text-text-primary" />
                                             </button>
                                         </div>
-                                        <div className="text-[10px] text-text-muted text-center font-mono opacity-50">
+                                        <div className="text-3xs text-text-muted text-center font-mono opacity-50">
                                             Next: {eggSummon.level >= eggSummon.maxPossibleLevel ? 'MAX' : (eggSummon.levels[Math.min(eggSummon.level - 1, eggSummon.levels.length - 1)]?.SummonsRequired?.toLocaleString() || '?')}
                                         </div>
                                     </div>
@@ -260,7 +260,7 @@ export default function Eggs() {
                                                 min="0"
                                             />
                                         </div>
-                                        <div className="text-[10px] text-text-muted px-1">
+                                        <div className="text-3xs text-text-muted px-1">
                                             Estimated cost per summon: <span className="text-accent-primary font-bold">{eggSummon.finalCostPerSummon}</span> 🥚
                                         </div>
                                     </div>
@@ -273,7 +273,7 @@ export default function Eggs() {
                                         </div>
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-1.5">
-                                                <label className="text-[10px] text-text-muted uppercase font-bold">Target Ascension</label>
+                                                <label className="text-3xs text-text-muted uppercase font-bold">Target Ascension</label>
                                                 <select
                                                     value={targetAscension}
                                                     onChange={(e) => setTargetAscension(Number(e.target.value))}
@@ -285,7 +285,7 @@ export default function Eggs() {
                                                 </select>
                                             </div>
                                             <div className="space-y-1.5">
-                                                <label className="text-[10px] text-text-muted uppercase font-bold">Target Level</label>
+                                                <label className="text-3xs text-text-muted uppercase font-bold">Target Level</label>
                                                 <select
                                                     value={targetLevel}
                                                     onChange={(e) => setTargetLevel(Number(e.target.value))}
@@ -307,12 +307,12 @@ export default function Eggs() {
                                             </div>
                                         </div>
                                         <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-                                            <div className="text-[10px] text-text-muted">
+                                            <div className="text-3xs text-text-muted">
                                                 Required: <span className="text-white font-bold">{eggSummon.calculateNeededCurrency(targetLevel, targetAscension).toLocaleString()}</span> {eggSummon.currency}
                                             </div>
                                             <button
                                                 onClick={() => eggSummon.setEggshellCount(eggSummon.calculateNeededCurrency(targetLevel, targetAscension))}
-                                                className="text-[10px] bg-accent-primary/10 hover:bg-accent-primary/20 text-accent-primary px-3 py-1 rounded border border-accent-primary/30 transition-colors font-bold uppercase active:scale-95"
+                                                className="text-3xs bg-accent-primary/10 hover:bg-accent-primary/20 text-accent-primary px-3 py-1 rounded border border-accent-primary/30 transition-colors font-bold uppercase active:scale-95"
                                             >
                                                 Set as Available
                                             </button>
@@ -336,7 +336,7 @@ export default function Eggs() {
                                                 <div className="w-11 h-6 bg-bg-input peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
                                             </label>
                                         </div>
-                                        <p className="text-[10px] text-text-muted leading-relaxed">
+                                        <p className="text-3xs text-text-muted leading-relaxed">
                                             When ON, reaching max level resets it to 1 of the next tier. When OFF, extra eggshells progress only the max level.
                                         </p>
                                     </div>
@@ -363,7 +363,7 @@ export default function Eggs() {
                                                 </div>
                                                 <div className="flex-1">
                                                     <div className="text-xs font-bold text-amber-400 uppercase">Max Level Milestone</div>
-                                                    <div className="text-[11px] text-text-secondary leading-relaxed">
+                                                    <div className="text-2xs text-text-secondary leading-relaxed">
                                                         You reach <span className="text-white font-bold">Max Level</span> in <span className="text-amber-400 font-bold">{eggSummon.results.summonsToMax.toLocaleString()} summons</span> ({(eggSummon.results.summonsToMax * eggSummon.results.finalCost).toLocaleString()} shells).
                                                         The remaining <span className="text-white font-bold">{((eggSummon.results.totalSummons - eggSummon.results.summonsToMax) * eggSummon.results.finalCost).toLocaleString()}</span> shells progress
                                                         into <span className="text-amber-400 font-bold">{eggSummon.results.simulateAscension ? `Ascension ${eggSummon.results.endAscensionLevel}` : 'Max Level'}</span>.
@@ -376,31 +376,31 @@ export default function Eggs() {
                                         {/* Summons Info Grid */}
                                         <div className="grid grid-cols-3 gap-3 pb-2 border-b border-white/5">
                                             <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                                <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">Summons</div>
+                                                <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">Summons</div>
                                                 <div className="text-lg font-mono font-bold text-white">
                                                     {eggSummon.results.totalSummons.toLocaleString()}
                                                 </div>
                                             </div>
                                             <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                                <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">End Level</div>
+                                                <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">End Level</div>
                                                 <div className="text-lg font-mono font-bold text-accent-primary flex flex-col justify-center">
                                                     <div className="flex items-center gap-1">
                                                         <span className="text-xs opacity-50 font-normal">Lv.{eggSummon.level} ➔</span>
                                                         Lv.{eggSummon.results.endLevel}
                                                     </div>
                                                     {eggSummon.results.endAscensionLevel > (profile.misc.petAscensionLevel || 0) && (
-                                                        <div className="text-[10px] text-amber-500 font-bold">
+                                                        <div className="text-3xs text-amber-500 font-bold">
                                                             (Ascension {eggSummon.results.endAscensionLevel})
                                                         </div>
                                                     )}
                                                 </div>
                                             </div>
                                             <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                                <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">Price</div>
+                                                <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">Price</div>
                                                 <div className="text-lg font-mono font-bold text-green-400 flex items-baseline gap-1">
                                                     {eggSummon.results.finalCost}
                                                     {eggSummon.results.costReduction > 0 && (
-                                                        <span className="text-[10px] text-text-muted line-through font-normal decoration-white/30">
+                                                        <span className="text-3xs text-text-muted line-through font-normal decoration-white/30">
                                                             {eggSummon.results.baseCost}
                                                         </span>
                                                     )}
@@ -436,7 +436,7 @@ export default function Eggs() {
                                                                 <div className="flex flex-wrap gap-1 justify-end max-w-[150px] mt-1">
                                                                     {(item.phaseCounts || []).map((p, pIdx) => (
                                                                         <div key={pIdx} className={`px-1 rounded border ${p.ascension > 0 ? 'bg-amber-500/5 border-amber-500/10' : 'bg-white/5 border-white/5'}`}>
-                                                                            <div className="flex items-center gap-0.5 text-[8px] font-mono leading-tight">
+                                                                            <div className="flex items-center gap-0.5 text-5xs font-mono leading-tight">
                                                                                 <span className={p.ascension > 0 ? 'text-amber-500/80 font-bold' : 'text-text-muted'}>
                                                                                     {p.ascension === 0 ? 'N' : `A${p.ascension}`}:
                                                                                 </span>
@@ -630,7 +630,7 @@ export default function Eggs() {
                                         <div key={rarity} className="relative flex flex-col items-center gap-2 p-3 bg-bg-tertiary rounded-lg border border-border/50 pt-6">
                                             {/* Points Info */}
                                             {warPoints && warPoints[rarity] && (
-                                                <div className="absolute top-1 left-0 right-0 flex justify-center gap-2 text-[9px] font-mono text-text-tertiary opacity-80">
+                                                <div className="absolute top-1 left-0 right-0 flex justify-center gap-2 text-4xs font-mono text-text-tertiary opacity-80">
                                                     <span>H:<span className="text-text-primary ml-0.5">{Math.round(warPoints[rarity].hatch)}</span></span>
                                                     <span>M:<span className="text-text-primary ml-0.5">{Math.round(warPoints[rarity].merge)}</span></span>
                                                 </div>
@@ -664,7 +664,7 @@ export default function Eggs() {
                                             </div>
 
                                             {hatchValues && hatchValues[rarity] && (
-                                                <div className="flex items-center gap-1 text-[10px] text-text-tertiary bg-black/20 px-2 py-0.5 rounded-full">
+                                                <div className="flex items-center gap-1 text-3xs text-text-tertiary bg-black/20 px-2 py-0.5 rounded-full">
                                                     <SpriteIcon name="Timer" size={12} />
                                                     {formatTime(hatchValues[rarity])}
                                                 </div>
@@ -724,7 +724,7 @@ export default function Eggs() {
                                                                     <div className="text-xs font-bold text-text-primary">
                                                                         {formatTime(slotDuration * 60)}
                                                                     </div>
-                                                                    <div className="text-[10px] text-text-tertiary font-mono">
+                                                                    <div className="text-3xs text-text-tertiary font-mono">
                                                                         {slotEvents.length} Eggs
                                                                     </div>
                                                                 </div>
@@ -773,20 +773,20 @@ export default function Eggs() {
                                                                                         {event.rarity}
                                                                                     </div>
 
-                                                                                    <div className="flex items-center gap-2 text-[10px] text-text-muted font-mono">
+                                                                                    <div className="flex items-center gap-2 text-3xs text-text-muted font-mono">
                                                                                         <span>{formatTime(event.startTime * 60)}</span>
                                                                                         <span className="text-text-tertiary">➜</span>
                                                                                         <span>{formatTime(event.endTime * 60)}</span>
                                                                                     </div>
 
                                                                                     {event.efficiency > 0 && (
-                                                                                        <div className="justify-self-start text-[10px] font-mono text-text-tertiary bg-black/30 px-1.5 py-0.5 rounded border border-white/5 whitespace-nowrap">
+                                                                                        <div className="justify-self-start text-3xs font-mono text-text-tertiary bg-black/30 px-1.5 py-0.5 rounded border border-white/5 whitespace-nowrap">
                                                                                             {event.efficiency.toFixed(4)} PPS
                                                                                         </div>
                                                                                     )}
 
                                                                                     {event.gemCost && event.gemCost > 0 && (
-                                                                                        <div className="flex items-center gap-1 text-[10px] font-bold text-accent-primary bg-accent-primary/5 px-1.5 py-0.5 rounded border border-accent-primary/20 w-fit">
+                                                                                        <div className="flex items-center gap-1 text-3xs font-bold text-accent-primary bg-accent-primary/5 px-1.5 py-0.5 rounded border border-accent-primary/20 w-fit">
                                                                                             <SpriteIcon name="GemSquare" size={12} />
                                                                                             {Math.ceil(event.gemCost)}
                                                                                         </div>

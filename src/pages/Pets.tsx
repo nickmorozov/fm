@@ -278,12 +278,12 @@ export default function Pets() {
                                 />
                             </div>
                             <span className={cn(
-                                "text-[10px] font-black uppercase tracking-widest",
+                                "text-3xs font-black uppercase tracking-widest",
                                 `text-rarity-${rarity.toLowerCase()}`
                             )}>
                                 {rarity}
                             </span>
-                            <div className="text-[10px] font-mono text-text-muted bg-white/5 px-2 py-0.5 rounded-full border border-white/5">
+                            <div className="text-3xs font-mono text-text-muted bg-white/5 px-2 py-0.5 rounded-full border border-white/5">
                                 Exp: {(petUpgrades?.[rarity]?.LevelInfo?.[0]?.Experience || 0).toLocaleString()}
                             </div>
                         </div>
@@ -346,13 +346,13 @@ export default function Pets() {
                                         <h3 className="font-bold text-text-primary text-lg leading-tight whitespace-nowrap overflow-hidden text-clip">{pet.name}</h3>
                                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                                             <span className={cn(
-                                                "text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-white/5",
+                                                "text-3xs font-bold uppercase px-2 py-0.5 rounded-full bg-white/5",
                                                 `text-rarity-${pet.rarity.toLowerCase()}`
                                             )}>
                                                 {pet.rarity}
                                             </span>
                                             <span className={cn(
-                                                "text-[10px] font-bold uppercase px-2 py-0.5 rounded-full",
+                                                "text-3xs font-bold uppercase px-2 py-0.5 rounded-full",
                                                 pet.type === 'Damage' ? "bg-red-500/20 text-red-400" :
                                                     pet.type === 'Health' ? "bg-green-500/20 text-green-400" :
                                                         "bg-blue-500/20 text-blue-400"
@@ -368,7 +368,7 @@ export default function Pets() {
                                 {/* Stats at global level */}
                                 <div className="grid grid-cols-2 gap-2 mt-auto">
                                     <div className="bg-bg-input/50 p-2 rounded flex flex-col items-center">
-                                        <div className="flex items-center gap-1 text-[10px] text-text-muted mb-0.5 uppercase font-bold">
+                                        <div className="flex items-center gap-1 text-3xs text-text-muted mb-0.5 uppercase font-bold">
                                             <Sword className="w-3 h-3 text-red-400" /> Base Dmg
                                         </div>
                                         <div className="font-mono font-bold text-red-200">
@@ -376,7 +376,7 @@ export default function Pets() {
                                         </div>
                                     </div>
                                     <div className="bg-bg-input/50 p-2 rounded flex flex-col items-center">
-                                        <div className="flex items-center gap-1 text-[10px] text-green-400 mb-1 uppercase font-bold">
+                                        <div className="flex items-center gap-1 text-3xs text-green-400 mb-1 uppercase font-bold">
                                             <Heart className="w-3 h-3" /> Health
                                         </div>
                                         <div className="font-mono font-bold text-green-200">
@@ -388,7 +388,7 @@ export default function Pets() {
                                 {/* Experience Stats */}
                                 <div className="grid grid-cols-2 gap-2 mt-2">
                                     <div className="bg-bg-primary/50 p-2 rounded border border-white/5 flex flex-col items-center">
-                                        <div className="flex items-center gap-1 text-[9px] text-text-muted mb-0.5 uppercase font-bold">
+                                        <div className="flex items-center gap-1 text-4xs text-text-muted mb-0.5 uppercase font-bold">
                                             <TrendingUp className="w-2.5 h-2.5 text-accent-primary" /> Next Lvl
                                         </div>
                                         <div className="font-mono font-bold text-accent-primary text-xs">
@@ -396,7 +396,7 @@ export default function Pets() {
                                         </div>
                                     </div>
                                     <div className="bg-bg-primary/50 p-2 rounded border border-white/5 flex flex-col items-center">
-                                        <div className="flex items-center gap-1 text-[9px] text-text-muted mb-0.5 uppercase font-bold">
+                                        <div className="flex items-center gap-1 text-4xs text-text-muted mb-0.5 uppercase font-bold">
                                             <BookOpen className="w-2.5 h-2.5 text-accent-secondary" /> Total Exp
                                         </div>
                                         <div className="font-mono font-bold text-accent-secondary text-xs">
@@ -406,7 +406,7 @@ export default function Pets() {
                                 </div>
 
                                 <div className="flex items-center justify-between mt-4 pb-1">
-                                    <div className="text-[10px] font-bold text-text-muted uppercase">Skills</div>
+                                    <div className="text-3xs font-bold text-text-muted uppercase">Skills</div>
                                     <div className="bg-accent-primary/10 text-accent-primary px-2 py-0.5 rounded text-xs font-mono font-bold">
                                         {ascensionLevel > 0 ? 2 : (petUnlockLib?.[pet.rarity]?.NumberOfSecondStats || 0)}
                                     </div>

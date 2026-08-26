@@ -30,8 +30,8 @@ function BreakdownSection({ data, label, color }: { data: StatBreakdown; label: 
 
     return (
         <div>
-            <div className={cn("text-[10px] font-black uppercase tracking-tighter mb-1 border-b pb-0.5", `text-${color}-400 border-${color}-400/20`)}>{label} Breakdown</div>
-            <div className="space-y-1 text-[10px] font-mono">
+            <div className={cn("text-3xs font-black uppercase tracking-tighter mb-1 border-b pb-0.5", `text-${color}-400 border-${color}-400/20`)}>{label} Breakdown</div>
+            <div className="space-y-1 text-3xs font-mono">
                 <div className="flex justify-between">
                     <span className="text-text-muted">Base Value</span>
                     <span className="text-white">{data.base.toFixed(1)}</span>
@@ -39,7 +39,7 @@ function BreakdownSection({ data, label, color }: { data: StatBreakdown; label: 
 
                 {hasSkillLayer && (
                     <>
-                        <div className="text-[8px] text-white/30 uppercase mt-1">Skill Layer</div>
+                        <div className="text-5xs text-white/30 uppercase mt-1">Skill Layer</div>
                         <div className="flex justify-between">
                             <span className="text-text-muted">Base</span>
                             <span className="text-white/60">1.00</span>
@@ -79,7 +79,7 @@ function BreakdownSection({ data, label, color }: { data: StatBreakdown; label: 
 
                 {hasCommon && (
                     <>
-                        <div className="text-[8px] text-white/30 uppercase mt-1">Common Layer</div>
+                        <div className="text-5xs text-white/30 uppercase mt-1">Common Layer</div>
                         <div className="flex justify-between">
                             <span className="text-text-muted">× Common Multi</span>
                             <span className="text-orange-400 font-bold">×{data.commonMulti!.toFixed(2)}</span>
@@ -119,7 +119,7 @@ export function StatBreakdownTooltip({ damage, health, isMelee }: StatBreakdownT
                 {damage && <BreakdownSection data={damage} label="Damage" color="red" />}
                 {health && <BreakdownSection data={health} label="Health" color="green" />}
             </div>
-            <div className="mt-2 pt-2 border-t border-white/10 text-[8px] text-text-muted italic text-center">
+            <div className="mt-2 pt-2 border-t border-white/10 text-5xs text-text-muted italic text-center">
                 (1 + Tech + Items) × Asc × Common
             </div>
         </div>

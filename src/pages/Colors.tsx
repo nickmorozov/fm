@@ -393,7 +393,7 @@ export default function Colors() {
                             <div className="flex items-center justify-between pt-2">
                                 <div className="flex flex-col">
                                     <span className="text-sm font-medium">Force Short Hex</span>
-                                    <span className="text-[10px] text-text-muted">Round all colors to 3-digit hex (#RGB) to save characters</span>
+                                    <span className="text-3xs text-text-muted">Round all colors to 3-digit hex (#RGB) to save characters</span>
                                 </div>
                                 <button
                                     onClick={() => setUseShortHex(!useShortHex)}
@@ -447,7 +447,7 @@ export default function Colors() {
                                         onChange={(e) => setStartAlpha(parseInt(e.target.value))}
                                         className="flex-1 h-1.5 bg-bg-input rounded-lg appearance-none cursor-pointer accent-accent-primary"
                                     />
-                                    <span className="text-[10px] font-mono w-8 text-right text-text-muted">{Math.round((startAlpha / 255) * 100)}%</span>
+                                    <span className="text-3xs font-mono w-8 text-right text-text-muted">{Math.round((startAlpha / 255) * 100)}%</span>
                                 </div>
                             </div>
 
@@ -482,7 +482,7 @@ export default function Colors() {
                                             onChange={(e) => updateMiddleAlpha(c.id, parseInt(e.target.value))}
                                             className="flex-1 h-1.5 bg-bg-input rounded-lg appearance-none cursor-pointer accent-accent-primary"
                                         />
-                                        <span className="text-[10px] font-mono w-8 text-right text-text-muted">{Math.round((c.alpha / 255) * 100)}%</span>
+                                        <span className="text-3xs font-mono w-8 text-right text-text-muted">{Math.round((c.alpha / 255) * 100)}%</span>
                                     </div>
                                 </div>
                             ))}
@@ -513,7 +513,7 @@ export default function Colors() {
                                             onChange={(e) => setEndAlpha(parseInt(e.target.value))}
                                             className="flex-1 h-1.5 bg-bg-input rounded-lg appearance-none cursor-pointer accent-accent-primary"
                                         />
-                                        <span className="text-[10px] font-mono w-8 text-right text-text-muted">{Math.round((endAlpha / 255) * 100)}%</span>
+                                        <span className="text-3xs font-mono w-8 text-right text-text-muted">{Math.round((endAlpha / 255) * 100)}%</span>
                                     </div>
                                 </div>
                             )}
@@ -548,7 +548,7 @@ export default function Colors() {
                                 {generatedCode.length} / 280 characters
                             </span>
                             {generatedCode.length > 280 && (
-                                <span className="text-[10px] text-red-400 font-bold uppercase tracking-wider">Too long for chat!</span>
+                                <span className="text-3xs text-red-400 font-bold uppercase tracking-wider">Too long for chat!</span>
                             )}
                         </div>
                         <div className="mt-4 flex justify-end">

@@ -135,7 +135,7 @@ function PullFromClanButton() {
                 {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ArrowDownToLine className="w-3.5 h-3.5" />}
                 Update from clan
             </button>
-            {result && <span className="text-[11px] text-text-secondary max-w-[22rem] text-right">{result}</span>}
+            {result && <span className="text-2xs text-text-secondary max-w-[22rem] text-right">{result}</span>}
             <ConfirmModal
                 isOpen={confirming}
                 onCancel={() => setConfirming(false)}
@@ -333,11 +333,11 @@ export function TechTreePanel() {
                 <div key={sig} className="flex flex-col gap-0.5 border-t border-white/5 pt-1 mt-1 first:border-0 first:pt-0 first:mt-0">
                     <span className="font-bold text-accent-primary leading-tight">
                         {statType}: {formatVal(totalValue)}
-                        <span className="text-text-muted text-[9px] font-normal ml-1 opacity-75">
+                        <span className="text-text-muted text-4xs font-normal ml-1 opacity-75">
                             (+{formatInc(increase)}/lvl)
                         </span>
                     </span>
-                    <span className="text-[9px] text-text-secondary">
+                    <span className="text-4xs text-text-secondary">
                         Global Pool: <span className="text-white/80">{formatVal(globalTotal)}</span>
                     </span>
                 </div>
@@ -720,7 +720,7 @@ const maxLevel = upgradeDef?.MaxLevel || 20;
                                                         <div className="text-xs font-bold whitespace-nowrap overflow-hidden text-clip">
                                                             {name}
                                                         </div>
-                                                        <div className="text-[9px] text-text-muted flex items-center gap-1">
+                                                        <div className="text-4xs text-text-muted flex items-center gap-1">
                                                             <span>ID: {globalId} •</span>
                                                             <SpriteIcon name="GuildPotions" size={11} />
                                                             <span className="font-bold text-green-400">{(upgradeDef?.PointsPerLevel || 0).toLocaleString()}</span>
@@ -735,7 +735,7 @@ const maxLevel = upgradeDef?.MaxLevel || 20;
                                                         disabled={currentLevel === 0}
                                                         title="-10"
                                                         className={cn(
-                                                            "w-7 h-6 rounded flex items-center justify-center font-bold text-[10px] transition-colors",
+                                                            "w-7 h-6 rounded flex items-center justify-center font-bold text-3xs transition-colors",
                                                             currentLevel > 0
                                                                 ? "bg-bg-secondary hover:bg-white/10"
                                                                 : "text-text-muted cursor-not-allowed"
@@ -773,7 +773,7 @@ const maxLevel = upgradeDef?.MaxLevel || 20;
                                                         disabled={currentLevel >= maxLevel}
                                                         title="+10"
                                                         className={cn(
-                                                            "w-7 h-6 rounded flex items-center justify-center font-bold text-[10px] transition-colors",
+                                                            "w-7 h-6 rounded flex items-center justify-center font-bold text-3xs transition-colors",
                                                             currentLevel < maxLevel
                                                                 ? "bg-bg-secondary hover:bg-white/10"
                                                                 : "text-text-muted cursor-not-allowed"
@@ -782,7 +782,7 @@ const maxLevel = upgradeDef?.MaxLevel || 20;
                                                 </div>
 
                                                 {currentLevel > 0 && clanEffect && (
-                                                    <div className="text-[10px] mt-1 text-accent-secondary whitespace-nowrap overflow-hidden text-clip">
+                                                    <div className="text-3xs mt-1 text-accent-secondary whitespace-nowrap overflow-hidden text-clip">
                                                         {formatStatDescription(clanEffect, currentLevel)}
                                                     </div>
                                                 )}
@@ -878,7 +878,7 @@ const maxLevel = upgradeDef?.MaxLevel || 20;
                                             )}>
                                                 {name}
                                             </div>
-                                            <div className="text-[10px] text-text-muted">
+                                            <div className="text-3xs text-text-muted">
                                                 T{node.tier + 1} • ID: {node.id}
                                             </div>
                                         </div>
@@ -918,7 +918,7 @@ const maxLevel = upgradeDef?.MaxLevel || 20;
                                     </div>
 
                                     {unlocked && currentLevel > 0 && (
-                                        <div className="text-[10px] mt-1 text-accent-secondary whitespace-nowrap overflow-hidden text-clip animate-fade-in">
+                                        <div className="text-3xs mt-1 text-accent-secondary whitespace-nowrap overflow-hidden text-clip animate-fade-in">
                                             {formatStatDescription(effect, currentLevel)}
                                         </div>
                                     )}

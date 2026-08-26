@@ -91,7 +91,7 @@ export default function SecondaryStatsWiki() {
         const isPositive = diff > 0;
         return (
             <span className={cn(
-                "text-[10px] font-bold ml-1 px-1 rounded",
+                "text-3xs font-bold ml-1 px-1 rounded",
                 isPositive ? "text-green-400 bg-green-500/10" : "text-red-400 bg-red-500/10"
             )}>
                 {isPositive ? '+' : ''}{(diff * 100).toFixed(2)}%
@@ -123,7 +123,7 @@ export default function SecondaryStatsWiki() {
 
                 <Card className="p-2 flex items-center gap-4 bg-bg-secondary/50 border-border/50 shrink-0">
                     <div className="flex flex-col">
-                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-1">Compare Base</label>
+                        <label className="text-3xs font-bold text-text-muted uppercase tracking-widest ml-1">Compare Base</label>
                         <select
                             value={baseVersion}
                             onChange={(e) => setBaseVersion(e.target.value)}
@@ -136,7 +136,7 @@ export default function SecondaryStatsWiki() {
                     </div>
                     <ArrowRight className="w-4 h-4 text-text-muted mt-3" />
                     <div className="flex flex-col">
-                        <label className="text-[10px] font-bold text-accent-primary uppercase tracking-widest ml-1">Target Version</label>
+                        <label className="text-3xs font-bold text-accent-primary uppercase tracking-widest ml-1">Target Version</label>
                         <select
                             value={targetVersion}
                             onChange={(e) => setTargetVersion(e.target.value)}
@@ -214,7 +214,7 @@ export default function SecondaryStatsWiki() {
                                                                 {getStatName(name)}
                                                             </span>
                                                         </div>
-                                                        <span className="font-mono text-[10px] text-text-muted opacity-50">
+                                                        <span className="font-mono text-3xs text-text-muted opacity-50">
                                                             {name}
                                                         </span>
                                                     </div>
@@ -229,7 +229,7 @@ export default function SecondaryStatsWiki() {
                                                         {base && target && renderDiff(base.LowerRange, target.LowerRange)}
                                                     </div>
                                                     {isModified && base && (
-                                                        <span className="text-[10px] text-text-muted line-through">
+                                                        <span className="text-3xs text-text-muted line-through">
                                                             {formatValue(base.LowerRange)}
                                                         </span>
                                                     )}
@@ -244,7 +244,7 @@ export default function SecondaryStatsWiki() {
                                                         {base && target && renderDiff(base.UpperRange, target.UpperRange)}
                                                     </div>
                                                     {isModified && base && (
-                                                        <span className="text-[10px] text-text-muted line-through">
+                                                        <span className="text-3xs text-text-muted line-through">
                                                             {formatValue(base.UpperRange)}
                                                         </span>
                                                     )}
@@ -256,10 +256,10 @@ export default function SecondaryStatsWiki() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                {isNew && <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded font-black uppercase tracking-tighter">New</span>}
-                                                {isRemoved && <span className="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-black uppercase tracking-tighter">Deleted</span>}
-                                                {isModified && <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded font-black uppercase tracking-tighter">Modified</span>}
-                                                {!isNew && !isRemoved && !isModified && <span className="text-[10px] text-text-muted font-bold opacity-30">Unchanged</span>}
+                                                {isNew && <span className="text-3xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded font-black uppercase tracking-tighter">New</span>}
+                                                {isRemoved && <span className="text-3xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-black uppercase tracking-tighter">Deleted</span>}
+                                                {isModified && <span className="text-3xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded font-black uppercase tracking-tighter">Modified</span>}
+                                                {!isNew && !isRemoved && !isModified && <span className="text-3xs text-text-muted font-bold opacity-30">Unchanged</span>}
                                             </td>
                                         </tr>
                                     );

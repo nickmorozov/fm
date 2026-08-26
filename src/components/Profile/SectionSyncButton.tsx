@@ -81,7 +81,7 @@ export function SectionSyncButton({ preset, label = 'Sync', className }: {
                 type="button"
                 onClick={() => setOpen(true)}
                 title={`Sync your ${PRESET_TITLE[preset]} from screenshots`}
-                className="h-7 px-2 rounded-lg border border-accent-primary/20 hover:bg-accent-primary/10 hover:border-accent-primary/40 text-accent-primary text-[10px] font-bold flex items-center gap-1 transition-all active:scale-95 whitespace-nowrap"
+                className="h-7 px-2 rounded-lg border border-accent-primary/20 hover:bg-accent-primary/10 hover:border-accent-primary/40 text-accent-primary text-3xs font-bold flex items-center gap-1 transition-all active:scale-95 whitespace-nowrap"
             >
                 <span aria-hidden>📷</span> {label}
             </button>
@@ -112,7 +112,7 @@ export function SectionSyncButton({ preset, label = 'Sync', className }: {
                         <div className="flex items-start gap-2 p-3 border-b border-border/70 shrink-0">
                             <div className="min-w-0 flex-1">
                                 <p className="text-xs font-black text-white">Take a screenshot like this</p>
-                                <p className="text-[10px] text-text-muted mt-0.5">Example: {PRESET_TITLE[preset]}</p>
+                                <p className="text-3xs text-text-muted mt-0.5">Example: {PRESET_TITLE[preset]}</p>
                             </div>
                             <button type="button" onClick={closeInfo} aria-label="Close"
                                 className="p-1 -m-1 rounded-lg text-text-muted hover:text-white hover:bg-white/10 shrink-0">
@@ -122,10 +122,10 @@ export function SectionSyncButton({ preset, label = 'Sync', className }: {
 
                         {/* scrolls on short viewports instead of overflowing them */}
                         <div className="overflow-y-auto p-3 space-y-2 overscroll-contain">
-                            <p className="text-[11px] font-bold text-amber-400/90">
+                            <p className="text-2xs font-bold text-amber-400/90">
                                 Capture the WHOLE screen. Don't crop it.
                             </p>
-                            <p className="text-[10px] text-text-secondary">
+                            <p className="text-3xs text-text-secondary">
                                 The reader finds each panel from the screen edges and the bottom tab bar, so a cropped
                                 image usually reads nothing. Your phone's normal screenshot is exactly right.
                             </p>
@@ -137,7 +137,7 @@ export function SectionSyncButton({ preset, label = 'Sync', className }: {
                                     <Maximize2 className="w-3 h-3" />
                                 </span>
                             </button>
-                            <p className="text-[10px] text-text-secondary">{PRESET_HINT[preset]}</p>
+                            <p className="text-3xs text-text-secondary">{PRESET_HINT[preset]}</p>
                         </div>
                     </div>
                 </div>,

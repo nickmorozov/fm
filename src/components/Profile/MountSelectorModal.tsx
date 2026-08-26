@@ -424,17 +424,17 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                     <Bookmark className={cn("hidden md:block w-4 h-4", activeTab === 'saved' && "fill-accent-primary")} />
                                     <div className="flex-1 text-left">
                                         <span className="block">Saved Builds</span>
-                                        <span className="text-[10px] text-text-muted normal-case font-normal md:hidden">
+                                        <span className="text-3xs text-text-muted normal-case font-normal md:hidden">
                                             {profile.mount.savedBuilds?.length || 0} items
                                         </span>
                                     </div>
-                                    <span className="hidden md:block ml-auto bg-black/20 px-1.5 rounded-full text-[10px]">
+                                    <span className="hidden md:block ml-auto bg-black/20 px-1.5 rounded-full text-3xs">
                                         {profile.mount.savedBuilds?.length || 0}
                                     </span>
                                 </button>
                             )}
 
-                            <div className="hidden md:block px-4 py-2 text-[10px] font-bold text-text-muted/60 uppercase tracking-widest mt-2">
+                            <div className="hidden md:block px-4 py-2 text-3xs font-bold text-text-muted/60 uppercase tracking-widest mt-2">
                                 Mount Library
                             </div>
                             {RARITIES.map((rarity) => (
@@ -460,7 +460,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                     </div>
                                     <div className="flex-1 text-left">
                                         <span className="block">{rarity}</span>
-                                        <span className="text-[10px] text-text-muted font-normal md:hidden">
+                                        <span className="text-3xs text-text-muted font-normal md:hidden">
                                             Library Selection
                                         </span>
                                     </div>
@@ -523,7 +523,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                     className="w-16 h-16 drop-shadow-lg"
                                                 />
                                             </div>
-                                            <span className="text-[10px] text-center text-text-primary font-bold whitespace-nowrap overflow-hidden text-clip w-full leading-tight select-none">
+                                            <span className="text-3xs text-center text-text-primary font-bold whitespace-nowrap overflow-hidden text-clip w-full leading-tight select-none">
                                                 {mount.name}
                                             </span>
                                         </button>
@@ -538,7 +538,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                     <select
                                                         value={savedSortField}
                                                         onChange={(e) => setSavedSortField(e.target.value as SortField)}
-                                                        className="bg-transparent text-[10px] font-black uppercase tracking-wider px-2 py-1 outline-none cursor-pointer text-text-primary"
+                                                        className="bg-transparent text-3xs font-black uppercase tracking-wider px-2 py-1 outline-none cursor-pointer text-text-primary"
                                                     >
                                                         {(['level', 'name', 'rarity', 'perfection'] as SortField[]).map(field => (
                                                             <option key={field} value={field} className="bg-bg-secondary text-text-primary">
@@ -560,7 +560,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => setShowFilters(!showFilters)}
-                                                className={cn("h-8 gap-2 text-[10px] font-black uppercase tracking-wider ml-auto md:ml-0", showFilters && "text-accent-primary bg-accent-primary/10")}
+                                                className={cn("h-8 gap-2 text-3xs font-black uppercase tracking-wider ml-auto md:ml-0", showFilters && "text-accent-primary bg-accent-primary/10")}
                                             >
                                                 <Settings className="w-3.5 h-3.5" />
                                                 Filters {(filterRarities.length > 0 || minPerfection > 0 || filterStats.length > 0) && `(${(filterRarities.length > 0 ? 1 : 0) + (minPerfection > 0 ? 1 : 0) + (filterStats.length > 0 ? 1 : 0)})`}
@@ -570,14 +570,14 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                         {showFilters && (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-border/30 animate-in fade-in slide-in-from-top-1">
                                                 <div className="space-y-2">
-                                                    <label className="text-[9px] font-black text-text-muted uppercase tracking-widest">Rarity</label>
+                                                    <label className="text-4xs font-black text-text-muted uppercase tracking-widest">Rarity</label>
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {RARITIES.map(rarity => (
                                                             <button
                                                                 key={rarity}
                                                                 onClick={() => setFilterRarities(prev => prev.includes(rarity) ? prev.filter(r => r !== rarity) : [...prev, rarity])}
                                                                 className={cn(
-                                                                    "px-2 py-0.5 rounded text-[9px] font-bold border transition-all",
+                                                                    "px-2 py-0.5 rounded text-4xs font-bold border transition-all",
                                                                     filterRarities.includes(rarity)
                                                                         ? `bg-rarity-${rarity.toLowerCase()}/20 border-rarity-${rarity.toLowerCase()} text-rarity-${rarity.toLowerCase()}`
                                                                         : "bg-bg-input border-border text-text-muted hover:border-border/80"
@@ -589,7 +589,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                     </div>
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label className="text-[9px] font-black text-text-muted uppercase tracking-widest">Min Perfection: {minPerfection}%</label>
+                                                    <label className="text-4xs font-black text-text-muted uppercase tracking-widest">Min Perfection: {minPerfection}%</label>
                                                     <input
                                                         type="range"
                                                         min="0"
@@ -600,14 +600,14 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                     />
                                                 </div>
                                                 <div className="space-y-2 md:col-span-2">
-                                                    <label className="text-[9px] font-black text-text-muted uppercase tracking-widest">Required Stats (Multiselect)</label>
+                                                    <label className="text-4xs font-black text-text-muted uppercase tracking-widest">Required Stats (Multiselect)</label>
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {STAT_TYPES.map(statId => (
                                                             <button
                                                                 key={statId}
                                                                 onClick={() => setFilterStats(prev => prev.includes(statId) ? prev.filter(s => s !== statId) : [...prev, statId])}
                                                                 className={cn(
-                                                                    "px-2 py-1 rounded-md text-[9px] font-bold border transition-all",
+                                                                    "px-2 py-1 rounded-md text-4xs font-bold border transition-all",
                                                                     filterStats.includes(statId)
                                                                         ? "bg-accent-primary/20 border-accent-primary text-accent-primary"
                                                                         : "bg-bg-input border-border text-text-muted hover:border-border/80"
@@ -621,7 +621,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                 {(filterRarities.length > 0 || minPerfection > 0 || filterStats.length > 0) && (
                                                     <button
                                                         onClick={() => { setFilterRarities([]); setMinPerfection(0); setFilterStats([]); }}
-                                                        className="md:col-span-2 text-[9px] font-black text-red-400 hover:text-red-300 uppercase tracking-widest text-center py-1"
+                                                        className="md:col-span-2 text-4xs font-black text-red-400 hover:text-red-300 uppercase tracking-widest text-center py-1"
                                                     >
                                                         Clear All Filters
                                                     </button>
@@ -735,7 +735,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                             <h2 className="text-xl font-bold text-text-primary leading-tight">
                                                 {(Object.values(mountsConfig?.mapping || {}) as any[]).find((p: any) => p.id === selectedMountId && p.rarity === selectedRarity)?.name || `Mount #${selectedMountId}`}
                                             </h2>
-                                            <div className={cn("text-[10px] font-bold uppercase tracking-widest mt-1", `text-rarity-${selectedRarity.toLowerCase()}`)}>
+                                            <div className={cn("text-3xs font-bold uppercase tracking-widest mt-1", `text-rarity-${selectedRarity.toLowerCase()}`)}>
                                                 {selectedRarity} Companion
                                             </div>
                                         </div>
@@ -743,7 +743,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                         <div className="space-y-3">
                                             {activeTab === 'saved' && selectedSavedIndex !== null && (
                                                 <div className="space-y-1.5">
-                                                    <label className="text-[10px] font-black text-text-muted uppercase tracking-widest px-1">Preset Name</label>
+                                                    <label className="text-3xs font-black text-text-muted uppercase tracking-widest px-1">Preset Name</label>
                                                     <div className="relative group">
                                                         <input
                                                             placeholder="Enter preset name"
@@ -765,7 +765,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                             )}
 
                                             <div className="space-y-1.5">
-                                                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest px-1">Companion Level</label>
+                                                <label className="text-3xs font-black text-text-muted uppercase tracking-widest px-1">Companion Level</label>
                                                 <ModalLevelSelector
                                                     level={mountLevel}
                                                     onChange={setMountLevel}
@@ -779,7 +779,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
 
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-[10px] font-black text-text-muted uppercase tracking-widest">
+                                            <h3 className="text-3xs font-black text-text-muted uppercase tracking-widest">
                                                 Passive Stats ({manualStats.length}/{maxSlots})
                                             </h3>
                                             {manualStats.length < maxSlots && (
@@ -787,7 +787,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                                     variant="ghost"
                                                     size="sm"
                                                     onClick={addStat}
-                                                    className="h-7 px-2 text-[10px] font-black text-accent-primary hover:bg-accent-primary/10 uppercase tracking-wider"
+                                                    className="h-7 px-2 text-3xs font-black text-accent-primary hover:bg-accent-primary/10 uppercase tracking-wider"
                                                 >
                                                     <Plus className="w-3.5 h-3.5 mr-1" />
                                                     Add Stat
@@ -817,12 +817,12 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                             })}
                                             {manualStats.length === 0 && (
                                                 <div className="bg-bg-input/10 border-2 border-dashed border-border/50 rounded-2xl p-6 text-center">
-                                                    <p className="text-[11px] text-text-muted font-bold uppercase tracking-wider">No stats added</p>
+                                                    <p className="text-2xs text-text-muted font-bold uppercase tracking-wider">No stats added</p>
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
                                                         onClick={addStat}
-                                                        className="mt-2 text-[10px] font-black text-accent-primary hover:bg-accent-primary/10 uppercase tracking-widest"
+                                                        className="mt-2 text-3xs font-black text-accent-primary hover:bg-accent-primary/10 uppercase tracking-widest"
                                                     >
                                                         Add first stat
                                                     </Button>
@@ -838,7 +838,7 @@ export function MountSelectorModal({ isOpen, onClose, onSelect, currentMount, co
                                     </div>
                                     <div>
                                         <p className="text-sm font-black text-text-primary uppercase tracking-tight">No Mount Selected</p>
-                                        <p className="text-[11px] text-text-muted font-medium mt-1">Select a companion from the library to configure its stats</p>
+                                        <p className="text-2xs text-text-muted font-medium mt-1">Select a companion from the library to configure its stats</p>
                                     </div>
                                 </div>
                             )}

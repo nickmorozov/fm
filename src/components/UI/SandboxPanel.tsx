@@ -35,7 +35,7 @@ export function SandboxPanel({ fields, onReset, children, isModified }: { fields
                 {modified && (
                     <button
                         onClick={onReset}
-                        className="inline-flex items-center gap-1 text-[11px] text-accent-primary hover:text-white underline"
+                        className="inline-flex items-center gap-1 text-2xs text-accent-primary hover:text-white underline"
                     >
                         <RotateCcw size={12} /> Restore to profile
                     </button>
@@ -47,7 +47,7 @@ export function SandboxPanel({ fields, onReset, children, isModified }: { fields
                         const isMod = Math.abs(f.value - f.profileValue) > 1e-9;
                         return (
                             <div key={f.key} className="space-y-1">
-                                <div className="flex justify-between text-[11px]">
+                                <div className="flex justify-between text-2xs">
                                     <span className="text-text-secondary">{f.label}</span>
                                     <span className={cn('font-mono font-bold', isMod ? 'text-purple-300' : 'text-white')}>{fmt(f.value)}</span>
                                 </div>

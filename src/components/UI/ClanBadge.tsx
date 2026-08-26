@@ -149,7 +149,7 @@ const SwatchRow: React.FC<SwatchRowProps> = ({ options, selected, onSelect, labe
     const grid = useRovingGrid(1, options.length, at, i => onSelect(options[i].ColorId));
     return (
         <div>
-            <div className="mb-1.5 flex items-center justify-between text-[11px] uppercase tracking-wide text-text-muted">
+            <div className="mb-1.5 flex items-center justify-between text-2xs uppercase tracking-wide text-text-muted">
                 <span>{label}</span>
                 <span className="font-mono lowercase">{options[at]?.HexCode ?? ''}</span>
             </div>
@@ -299,7 +299,7 @@ export const ClanBadgePicker: React.FC<ClanBadgePickerProps> = ({
                             <button
                                 type="button"
                                 onClick={() => emit(randomBadge(colors))}
-                                className="h-7 rounded-lg border border-border px-2 text-[11px] text-text-secondary hover:border-accent-primary/50 hover:text-text-primary"
+                                className="h-7 rounded-lg border border-border px-2 text-2xs text-text-secondary hover:border-accent-primary/50 hover:text-text-primary"
                             >
                                 Random
                             </button>
@@ -392,7 +392,7 @@ export const ClanBadgePicker: React.FC<ClanBadgePickerProps> = ({
                 </div>
             )}
 
-            <div className="mt-2 text-[11px] text-text-muted">
+            <div className="mt-2 text-2xs text-text-muted">
                 {BADGE_SHAPE_COUNT} shapes x {BADGE_ICON_COUNT} symbols x{' '}
                 {colors.background.length} shape colors x {colors.foreground.length} symbol colors
             </div>

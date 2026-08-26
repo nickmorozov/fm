@@ -173,7 +173,7 @@ export function MiscPanel() {
 
                     {/* Upgrade Cost / Ascension Display */}
                     {upgradeStats ? (
-                        <div className="mt-3 space-y-2 text-[10px] font-mono">
+                        <div className="mt-3 space-y-2 text-3xs font-mono">
                             {/* Costs */}
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="flex flex-col items-center bg-yellow-500/10 py-2 rounded border border-yellow-500/20">
@@ -182,7 +182,7 @@ export function MiscPanel() {
                                         {new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(upgradeStats.cost)}
                                     </span>
                                     {upgradeStats.reduction > 0 && (
-                                        <span className="text-text-muted line-through text-[9px]">
+                                        <span className="text-text-muted line-through text-4xs">
                                             {new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(upgradeStats.baseCost)}
                                         </span>
                                     )}
@@ -192,7 +192,7 @@ export function MiscPanel() {
                                     <span className="font-bold text-yellow-400">
                                         {new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(upgradeStats.costPerTier)}
                                     </span>
-                                    <span className="text-[9px] text-text-muted">
+                                    <span className="text-4xs text-text-muted">
                                         {upgradeStats.tiers} Steps
                                     </span>
                                 </div>
@@ -225,15 +225,15 @@ export function MiscPanel() {
                                         return (
                                             <div className="bg-accent-primary/5 border border-accent-primary/20 rounded-lg p-3">
                                                 <div className="flex items-center justify-between mb-2">
-                                                    <span className="text-[10px] uppercase font-bold text-accent-primary">Ascension Available</span>
-                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-yellow-400">
+                                                    <span className="text-3xs uppercase font-bold text-accent-primary">Ascension Available</span>
+                                                    <div className="flex items-center gap-1 text-3xs font-bold text-yellow-400">
                                                         <SpriteIcon name="Coin" size={12} />
                                                         {new Intl.NumberFormat('en-US').format(nextAscConfig.Cost.Amount)}
                                                     </div>
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     {nextAscConfig.StatContributions.map((s: any, idx: number) => (
-                                                        <div key={idx} className="flex items-center justify-between text-[10px]">
+                                                        <div key={idx} className="flex items-center justify-between text-3xs">
                                                             <span className="text-text-muted">{s.StatNode.UniqueStat.StatType} Bonus</span>
                                                             <span className="text-green-400">x{(s.Value + 1).toFixed(1)} (+{s.Value * 100}%)</span>
                                                         </div>
@@ -315,17 +315,17 @@ export function MiscPanel() {
                 >
                     <span className="flex items-center gap-2 font-bold min-w-0">
                         <GitBranch className="w-4 h-4 text-accent-primary shrink-0" /> Tech Tree
-                        <span className="text-[11px] font-normal text-text-muted whitespace-nowrap overflow-hidden text-clip">
+                        <span className="text-2xs font-normal text-text-muted whitespace-nowrap overflow-hidden text-clip">
                             {treeRecap.nodes} nodes · {treeRecap.levels} levels
                             {treeRecap.per.Clan > 0 && ` · ${treeRecap.per.Clan} clan`}
                         </span>
                         {treeRecap.pct !== null && treeRecap.pct < 100 && (
-                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-amber-500/15 text-amber-400 border border-amber-500/30 shrink-0">
+                            <span className="px-1.5 py-0.5 rounded text-4xs font-bold uppercase bg-amber-500/15 text-amber-400 border border-amber-500/30 shrink-0">
                                 to complete · {treeRecap.pct}%
                             </span>
                         )}
                         {(treeRecap.staleDays === null || treeRecap.staleDays >= 2) && (
-                            <span className={cn('px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border shrink-0',
+                            <span className={cn('px-1.5 py-0.5 rounded text-4xs font-bold uppercase border shrink-0',
                                 treeRecap.staleDays === null
                                     ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
                                     : 'bg-red-500/15 text-red-400 border-red-500/30')}>
@@ -358,7 +358,7 @@ export function MiscPanel() {
                 >
                     <span className="flex items-center gap-2 font-bold">
                         <Coins className="w-4 h-4 text-accent-primary" /> Resources
-                        <span className="text-[10px] font-normal text-text-muted hidden sm:inline">coins · gems · eggs · keys </span>
+                        <span className="text-3xs font-normal text-text-muted hidden sm:inline">coins · gems · eggs · keys </span>
                     </span>
                     <ChevronDown className={cn('w-4 h-4 text-text-muted transition-transform', resourcesOpen && 'rotate-180')} />
                 </button>

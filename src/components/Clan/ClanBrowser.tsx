@@ -159,14 +159,14 @@ const ClanRow: React.FC<ClanRowProps> = ({ clan, mine, onPick }) => {
             <div className="min-w-0 flex-1 text-left">
                 <div className="flex items-baseline gap-2 min-w-0">
                     <span className="font-bold text-white whitespace-nowrap overflow-hidden text-clip">{clan.name}</span>
-                    <span className="shrink-0 font-mono text-[11px] font-bold uppercase tracking-wider text-accent-primary bg-accent-primary/15 rounded px-1.5 py-0.5">
+                    <span className="shrink-0 font-mono text-2xs font-bold uppercase tracking-wider text-accent-primary bg-accent-primary/15 rounded px-1.5 py-0.5">
                         {clan.tag}
                     </span>
                 </div>
                 {/* Each fact keeps its own separator INSIDE its nowrap span. A separate "·" element
                     ends up orphaned at the end of a line as soon as the row wraps, which is exactly
                     what a 360px viewport does to it. */}
-                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-text-muted">
+                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-2xs text-text-muted">
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
                         <Users className="w-3 h-3" />
                         {clan.member_count}/{clan.member_cap} members
@@ -191,7 +191,7 @@ const ClanRow: React.FC<ClanRowProps> = ({ clan, mine, onPick }) => {
             </div>
             <span
                 className={cn(
-                    'shrink-0 text-[11px] font-bold uppercase tracking-wider rounded-lg px-2 py-1 border',
+                    'shrink-0 text-2xs font-bold uppercase tracking-wider rounded-lg px-2 py-1 border',
                     actionable
                         ? 'text-accent-primary border-accent-primary/40 bg-accent-primary/10'
                         : 'text-text-muted border-border bg-white/5',
@@ -536,7 +536,7 @@ export const ClanBrowser: React.FC<ClanBrowserProps> = ({
                     </div>
 
                     {/* Says which list is on screen, so "10 rows" is never read as "all the clans". */}
-                    <p className="text-[11px] text-text-muted">
+                    <p className="text-2xs text-text-muted">
                         {searchMode
                             ? 'Best matches, ranked by the server. Exact tags first.'
                             : `The ${rows} most recently active clans. Search to find any other one — the full list is never downloaded.`}

@@ -458,7 +458,7 @@ export function EnemyBuilder() {
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="font-bold text-sm whitespace-nowrap overflow-hidden text-clip">{skill.id}</div>
-                        <div className={cn("text-[10px] uppercase font-bold", `text-rarity-${skill.rarity.toLowerCase()}`)}>
+                        <div className={cn("text-3xs uppercase font-bold", `text-rarity-${skill.rarity.toLowerCase()}`)}>
                             {skill.rarity}
                         </div>
                     </div>
@@ -475,7 +475,7 @@ export function EnemyBuilder() {
                         <div className="space-y-1">
                             <div className="flex items-center gap-2 bg-bg-input/50 rounded p-1.5 relative">
                                 <Sword className="w-3 h-3 text-red-400 shrink-0" />
-                                <span className="text-[10px] text-text-muted uppercase w-10">DMG</span>
+                                <span className="text-3xs text-text-muted uppercase w-10">DMG</span>
                                 {renderPreview(skill.damage)}
                                 <Input
                                     type="number"
@@ -488,7 +488,7 @@ export function EnemyBuilder() {
                                     )}
                                 />
                             </div>
-                            <div className="text-[9px] text-text-muted/70 italic px-1">
+                            <div className="text-4xs text-text-muted/70 italic px-1">
                                 → Value <span className="text-accent-primary font-bold">X</span> from skill description
                             </div>
                         </div>
@@ -497,7 +497,7 @@ export function EnemyBuilder() {
                         <div className="space-y-1">
                             <div className="flex items-center gap-2 bg-bg-input/50 rounded p-1.5 relative">
                                 <Heart className="w-3 h-3 text-green-400 shrink-0" />
-                                <span className="text-[10px] text-text-muted uppercase w-10">HP</span>
+                                <span className="text-3xs text-text-muted uppercase w-10">HP</span>
                                 {renderPreview(skill.health)}
                                 <Input
                                     type="number"
@@ -510,14 +510,14 @@ export function EnemyBuilder() {
                                     )}
                                 />
                             </div>
-                            <div className="text-[9px] text-text-muted/70 italic px-1">
+                            <div className="text-4xs text-text-muted/70 italic px-1">
                                 → Value <span className="text-green-400 font-bold">{skill.hasDamage ? 'Y' : 'X'}</span> from skill description
                             </div>
                         </div>
                     )}
                 </div>
 
-                <div className="flex items-center justify-around text-[9px] text-text-muted pt-1 border-t border-border/30">
+                <div className="flex items-center justify-around text-4xs text-text-muted pt-1 border-t border-border/30">
                     <span>CD: {skill.cooldown}s</span>
                     {skill.duration > 0 && <span>Dur: {skill.duration}s</span>}
                 </div>
@@ -530,7 +530,7 @@ export function EnemyBuilder() {
     const renderPreview = (val: number | undefined) => {
         if (!val || val < 1000) return null;
         return (
-            <span className="absolute -top-2.5 right-0 text-[10px] text-accent-primary font-mono bg-black/80 px-1 rounded pointer-events-none z-10 border border-accent-primary/20">
+            <span className="absolute -top-2.5 right-0 text-3xs text-accent-primary font-mono bg-black/80 px-1 rounded pointer-events-none z-10 border border-accent-primary/20">
                 {formatCompactNumber(val)}
             </span>
         );
@@ -779,7 +779,7 @@ export function EnemyBuilder() {
 
                     {(enemy.skinEntries || []).map((entry: SkinEntry, idx: number) => (
                         <div key={idx} className="flex items-center gap-2 bg-bg-input/50 rounded-lg p-2 border border-border/30">
-                            <span className="text-[10px] font-bold text-text-muted w-10 shrink-0">#{idx + 1}</span>
+                            <span className="text-3xs font-bold text-text-muted w-10 shrink-0">#{idx + 1}</span>
                             <div className="flex items-center gap-1.5 flex-1">
                                 <Sword className="w-3 h-3 text-red-400 shrink-0" />
                                 <Input
@@ -790,10 +790,10 @@ export function EnemyBuilder() {
                                         entries[idx] = { ...entries[idx], dmg: (parseFloat(e.target.value) || 0) / 100 };
                                         return { ...prev, skinEntries: entries };
                                     })}
-                                    className="h-6 text-[11px] font-mono font-bold text-right flex-1 min-w-0"
+                                    className="h-6 text-2xs font-mono font-bold text-right flex-1 min-w-0"
                                     step="0.1"
                                 />
-                                <span className="text-[10px] text-text-muted">%</span>
+                                <span className="text-3xs text-text-muted">%</span>
                             </div>
                             <div className="flex items-center gap-1.5 flex-1">
                                 <Heart className="w-3 h-3 text-green-400 shrink-0" />
@@ -805,10 +805,10 @@ export function EnemyBuilder() {
                                         entries[idx] = { ...entries[idx], hp: (parseFloat(e.target.value) || 0) / 100 };
                                         return { ...prev, skinEntries: entries };
                                     })}
-                                    className="h-6 text-[11px] font-mono font-bold text-right flex-1 min-w-0"
+                                    className="h-6 text-2xs font-mono font-bold text-right flex-1 min-w-0"
                                     step="0.1"
                                 />
-                                <span className="text-[10px] text-text-muted">%</span>
+                                <span className="text-3xs text-text-muted">%</span>
                             </div>
                             <button
                                 onClick={() => setEnemy(prev => ({
@@ -825,7 +825,7 @@ export function EnemyBuilder() {
                     {/* Skin Totals */}
                     {(enemy.skinEntries || []).length > 0 && (
                         <div className="flex items-center gap-4 px-2 pt-1 border-t border-border/20">
-                            <span className="text-[10px] font-bold text-text-muted uppercase">Total:</span>
+                            <span className="text-3xs font-bold text-text-muted uppercase">Total:</span>
                             <span className="text-xs font-mono font-bold text-red-400">
                                 DMG +{((enemy.skinEntries || []).reduce((s, e) => s + (e.dmg || 0), 0) * 100).toFixed(1)}%
                             </span>
@@ -842,7 +842,7 @@ export function EnemyBuilder() {
                         <Award className="w-4 h-4 text-amber-400" />
                         <div>
                             <span className="text-xs font-bold uppercase text-text-muted">Complete Set</span>
-                            <div className="text-[10px] text-text-muted/60">+10% DMG, +10% HP</div>
+                            <div className="text-3xs text-text-muted/60">+10% DMG, +10% HP</div>
                         </div>
                     </div>
                     <button
@@ -916,13 +916,13 @@ export function EnemyBuilder() {
                                         {/* HP Input */}
                                         {pet && (
                                             <div className="flex items-center gap-1 relative pt-2">
-                                                <span className="text-[10px] text-text-muted font-bold">HP</span>
+                                                <span className="text-3xs text-text-muted font-bold">HP</span>
                                                 {renderPreview(pet.hp)}
                                                 <Input
                                                     type="number"
                                                     value={pet.hp || ''}
                                                     onChange={(e) => updatePetHp(idx, Math.max(0, parseFloat(e.target.value) || 0))}
-                                                    className="h-6 w-20 bg-transparent border-0 border-b border-border rounded-none px-0 text-center font-mono font-bold focus:ring-0 text-[10px]"
+                                                    className="h-6 w-20 bg-transparent border-0 border-b border-border rounded-none px-0 text-center font-mono font-bold focus:ring-0 text-3xs"
                                                     placeholder="HP"
                                                 />
                                             </div>
@@ -966,11 +966,11 @@ export function EnemyBuilder() {
                                             )}
                                         </div>
                                         <div className="z-10 text-center">
-                                            <div className={cn("text-[10px] font-bold", `text-rarity-${enemy.mount.rarity.toLowerCase()}`)}>
+                                            <div className={cn("text-3xs font-bold", `text-rarity-${enemy.mount.rarity.toLowerCase()}`)}>
                                                 {enemy.mount.rarity}
                                             </div>
                                             <div className="flex items-center gap-1 justify-center mt-2 border-t border-border/20 pt-2">
-                                                <span className="text-[10px] text-green-400 font-bold">HP</span>
+                                                <span className="text-3xs text-green-400 font-bold">HP</span>
                                                 {renderPreview(enemy.mount.hp)}
                                                 <Input
                                                     type="number"
@@ -980,7 +980,7 @@ export function EnemyBuilder() {
                                                         setEnemy(prev => prev.mount ? { ...prev, mount: { ...prev.mount, hp: val } } : prev);
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="h-6 w-20 bg-transparent border-0 border-b border-border rounded-none px-0 text-center font-mono font-bold focus:ring-0 text-[10px]"
+                                                    className="h-6 w-20 bg-transparent border-0 border-b border-border rounded-none px-0 text-center font-mono font-bold focus:ring-0 text-3xs"
                                                     placeholder="Mount HP"
                                                 />
                                             </div>
@@ -1004,7 +1004,7 @@ export function EnemyBuilder() {
             <div className="space-y-4">
                 <h3 className="text-sm font-bold uppercase text-text-muted flex items-center gap-2 border-t border-border pt-4">
                     <Sparkles className="w-4 h-4" /> Passive Stats
-                    <span className="text-[10px] bg-bg-input px-2 py-0.5 rounded border border-border/50">
+                    <span className="text-3xs bg-bg-input px-2 py-0.5 rounded border border-border/50">
                         {enabledPassiveCount} enabled
                     </span>
                 </h3>
@@ -1050,7 +1050,7 @@ export function EnemyBuilder() {
                                             placeholder="0"
                                             className="w-16 h-6 text-xs font-mono text-right bg-bg-secondary/50 border-0 p-1"
                                         />
-                                        <span className="text-[10px] text-text-muted">%</span>
+                                        <span className="text-3xs text-text-muted">%</span>
                                     </div>
                                 )}
                             </div>
@@ -1107,19 +1107,19 @@ export function EnemyBuilder() {
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div className="bg-green-500/10 p-3 rounded-lg border border-green-500/20 text-center">
-                                <div className="text-[10px] text-green-400/80 uppercase mb-1">Win Rate</div>
+                                <div className="text-3xs text-green-400/80 uppercase mb-1">Win Rate</div>
                                 <div className="text-2xl font-bold text-green-400">{simResults.player1WinRate.toFixed(1)}%</div>
                             </div>
                             <div className="bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-center">
-                                <div className="text-[10px] text-red-400/80 uppercase mb-1">Loss Rate</div>
+                                <div className="text-3xs text-red-400/80 uppercase mb-1">Loss Rate</div>
                                 <div className="text-2xl font-bold text-red-400">{simResults.player2WinRate.toFixed(1)}%</div>
                             </div>
                             <div className="bg-bg-primary/50 p-3 rounded-lg border border-border/50 text-center">
-                                <div className="text-[10px] text-text-muted uppercase mb-1">Tie / Timeout</div>
+                                <div className="text-3xs text-text-muted uppercase mb-1">Tie / Timeout</div>
                                 <div className="text-xl font-bold">{simResults.tieRate.toFixed(1)}%</div>
                             </div>
                             <div className="bg-bg-primary/50 p-3 rounded-lg border border-border/50 text-center">
-                                <div className="text-[10px] text-text-muted uppercase mb-1">Avg Duration</div>
+                                <div className="text-3xs text-text-muted uppercase mb-1">Avg Duration</div>
                                 <div className="text-xl font-bold">{simResults.avgTime.toFixed(1)}s</div>
                             </div>
                         </div>

@@ -258,7 +258,7 @@ export default function Mounts() {
                                     <div className="flex-1 min-w-0">
                                         <h3 className="font-bold text-text-primary text-lg leading-tight whitespace-nowrap overflow-hidden text-clip">{mount.name}</h3>
                                         <span className={cn(
-                                            "text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-white/5 mt-1 inline-block",
+                                            "text-3xs font-bold uppercase px-2 py-0.5 rounded-full bg-white/5 mt-1 inline-block",
                                             `text-rarity-${mount.rarity.toLowerCase()}`
                                         )}>
                                             {mount.rarity}
@@ -279,13 +279,13 @@ export default function Mounts() {
                                         return (
                                             <>
                                                 <div className="bg-bg-input/50 p-2 rounded flex flex-col items-center">
-                                                    <span className="text-[10px] text-text-muted uppercase font-bold mb-1">Base Dmg</span>
+                                                    <span className="text-3xs text-text-muted uppercase font-bold mb-1">Base Dmg</span>
                                                     <span className="font-mono font-bold text-red-200">
                                                         +{formatStatValue((damageStat?.Value || 0) * ascensionMulti.dmg)}
                                                     </span>
                                                 </div>
                                                 <div className="bg-bg-input/50 p-2 rounded flex flex-col items-center">
-                                                    <span className="text-[10px] text-text-muted uppercase font-bold mb-1">Base HP</span>
+                                                    <span className="text-3xs text-text-muted uppercase font-bold mb-1">Base HP</span>
                                                     <span className="font-mono font-bold text-green-200">
                                                         +{formatStatValue((healthStat?.Value || 0) * ascensionMulti.hp)}
                                                     </span>
@@ -296,7 +296,7 @@ export default function Mounts() {
                                 </div>
 
                                 <div className="flex items-center justify-between mb-2">
-                                    <div className="text-[10px] font-bold text-text-muted uppercase">Skills</div>
+                                    <div className="text-3xs font-bold text-text-muted uppercase">Skills</div>
                                     <div className="bg-accent-primary/10 text-accent-primary px-2 py-0.5 rounded text-xs font-mono font-bold">
                                         {ascensionLevel > 0 ? 2 : (petUnlockLib?.[mount.rarity]?.NumberOfSecondStats || 0)}
                                     </div>
@@ -309,7 +309,7 @@ export default function Mounts() {
                                         return (
                                             <>
                                                 <div className="bg-bg-primary/50 p-2 rounded border border-white/5 flex flex-col items-center">
-                                                    <div className="flex items-center gap-1 text-[9px] text-text-muted mb-0.5 uppercase font-bold text-center">
+                                                    <div className="flex items-center gap-1 text-4xs text-text-muted mb-0.5 uppercase font-bold text-center">
                                                         <TrendingUp className="w-2.5 h-2.5 text-accent-primary" /> Next Lvl
                                                     </div>
                                                     <div className="font-mono font-bold text-accent-primary text-xs">
@@ -317,7 +317,7 @@ export default function Mounts() {
                                                     </div>
                                                 </div>
                                                 <div className="bg-bg-primary/50 p-2 rounded border border-white/5 flex flex-col items-center">
-                                                    <div className="flex items-center gap-1 text-[9px] text-text-muted mb-0.5 uppercase font-bold text-center">
+                                                    <div className="flex items-center gap-1 text-4xs text-text-muted mb-0.5 uppercase font-bold text-center">
                                                         <BookOpen className="w-2.5 h-2.5 text-accent-secondary" /> Total Exp
                                                     </div>
                                                     <div className="font-mono font-bold text-accent-secondary text-xs">
@@ -331,7 +331,7 @@ export default function Mounts() {
 
                                 {/* Level Display */}
                                 <div className="bg-bg-input/50 rounded-lg p-2 border border-border mt-auto text-center">
-                                    <div className="text-[10px] text-text-muted uppercase">Level Preview</div>
+                                    <div className="text-3xs text-text-muted uppercase">Level Preview</div>
                                     <div className="font-bold text-accent-primary">{globalLevel}</div>
                                 </div>
                             </Card>

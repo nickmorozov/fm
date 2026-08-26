@@ -19,7 +19,7 @@ export function AscensionStars({ value, onChange, maxLevel = 3, className, size 
             {!isXS && (
                 <span className={cn(
                     "font-bold uppercase tracking-wider text-amber-500/80",
-                    isSM ? "text-[9px]" : "text-[10px]"
+                    isSM ? "text-4xs" : "text-3xs"
                 )}>
                     Ascension
                 </span>
@@ -32,7 +32,7 @@ export function AscensionStars({ value, onChange, maxLevel = 3, className, size 
                         "rounded-full flex items-center justify-center transition-all hover:scale-110 border tabular-nums shrink-0",
                         // 16px was not pressable with a finger. Sizes below are the mouse size;
                         // a coarse pointer gets the finger size.
-                        isXS ? "w-6 h-6 text-[10px] pointer-coarse:w-9 pointer-coarse:h-9" : isSM ? "w-5 h-5 text-[9px] pointer-coarse:w-9 pointer-coarse:h-9" : "w-6 h-6 text-[10px] pointer-coarse:w-10 pointer-coarse:h-10",
+                        isXS ? "w-6 h-6 text-3xs pointer-coarse:w-9 pointer-coarse:h-9" : isSM ? "w-5 h-5 text-4xs pointer-coarse:w-9 pointer-coarse:h-9" : "w-6 h-6 text-3xs pointer-coarse:w-10 pointer-coarse:h-10",
                         value === 0
                             ? "bg-red-500/20 border-red-500/40 text-red-500 shadow-[0_0_8px_rgba(239,68,68,0.2)]"
                             : "bg-bg-input/30 border-transparent text-text-muted/40 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20"

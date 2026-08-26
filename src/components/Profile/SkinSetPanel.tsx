@@ -50,12 +50,12 @@ function SkinSetCard({ set, spriteMapping, version }: { set: SkinSetInfo, sprite
                     )}>
                         {displayName}
                     </div>
-                    <div className="text-[10px] text-text-muted font-bold">
+                    <div className="text-3xs text-text-muted font-bold">
                         {set.equippedCount} / {set.totalPieces} Pieces
                     </div>
                 </div>
                 {set.isComplete && (
-                    <div className="bg-yellow-500/20 text-yellow-400 text-[9px] font-black px-1.5 py-0.5 rounded border border-yellow-500/30 uppercase tracking-tighter">
+                    <div className="bg-yellow-500/20 text-yellow-400 text-4xs font-black px-1.5 py-0.5 rounded border border-yellow-500/30 uppercase tracking-tighter">
                         Complete
                     </div>
                 )}
@@ -82,7 +82,7 @@ function SkinSetCard({ set, spriteMapping, version }: { set: SkinSetInfo, sprite
             {set.bonuses.length > 0 && (
                 <div className="space-y-1">
                     {set.bonuses.map((bonus, idx) => (
-                        <div key={idx} className="flex items-center justify-between text-[10px] bg-black/20 px-2 py-1 rounded">
+                        <div key={idx} className="flex items-center justify-between text-3xs bg-black/20 px-2 py-1 rounded">
                             <span className="text-text-muted">{bonus.type} Bonus</span>
                             <span className="text-green-400 font-bold">
                                 +{(bonus.value * 100).toFixed(0)}%

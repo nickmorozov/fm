@@ -177,7 +177,7 @@ export default function MissionsWiki() {
                     <div className="space-y-1 relative z-10">
                         <div className="flex items-center gap-2 text-accent-primary">
                             <Activity size={16} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Target Mission Level</span>
+                            <span className="text-3xs font-black uppercase tracking-widest">Target Mission Level</span>
                         </div>
                         <h2 className="text-4xl font-black text-white">Lvl {clanPoints}</h2>
                     </div>
@@ -191,7 +191,7 @@ export default function MissionsWiki() {
                             onChange={(e) => setClanPoints(parseInt(e.target.value))}
                             className="w-full h-2 bg-bg-input rounded-lg appearance-none cursor-pointer accent-accent-primary"
                         />
-                        <div className="flex justify-between text-[10px] font-black text-text-muted uppercase tracking-tighter">
+                        <div className="flex justify-between text-3xs font-black text-text-muted uppercase tracking-tighter">
                             <span>Level 1</span>
                             <span>Level 60</span>
                         </div>
@@ -199,14 +199,14 @@ export default function MissionsWiki() {
 
                     <div className="pt-4 border-t border-border/50 space-y-3 relative z-10">
                         <div className="flex flex-col gap-1">
-                            <span className="text-[9px] font-black text-text-muted uppercase leading-none">Hammer Thief Level to find it</span>
+                            <span className="text-4xs font-black text-text-muted uppercase leading-none">Hammer Thief Level to find it</span>
                             <span className="text-sm font-bold text-accent-secondary">{formatStage(currentClanLevelInfo?.MinHammerThiefLevel || 0)}</span>
                         </div>
                         <div className="flex flex-col gap-1">
-                            <span className="text-[9px] font-black text-text-muted uppercase leading-none">Available Rally Wait Times</span>
+                            <span className="text-4xs font-black text-text-muted uppercase leading-none">Available Rally Wait Times</span>
                             <div className="flex gap-2">
                                 {Object.values(rallyTimeLibrary || {}).map(r => (
-                                    <span key={r.Id} className="text-[10px] bg-accent-primary/10 text-accent-primary px-2 py-0.5 rounded font-black border border-accent-primary/20">{r.TimeInSeconds}s</span>
+                                    <span key={r.Id} className="text-3xs bg-accent-primary/10 text-accent-primary px-2 py-0.5 rounded font-black border border-accent-primary/20">{r.TimeInSeconds}s</span>
                                 ))}
                             </div>
                         </div>
@@ -233,13 +233,13 @@ export default function MissionsWiki() {
                         {displayRewards.map((r, idx) => (
                             <div key={idx} className="bg-bg-primary/50 p-4 rounded-xl border border-border/50 flex flex-col items-center text-center group hover:border-accent-primary/50 transition-all">
                                 <GameIcon name={getRewardIcon(r.Type)} className="w-12 h-12 mb-2 group-hover:scale-110 transition-transform" />
-                                <div className="text-[9px] font-black text-text-muted uppercase mb-1">{r.Type.replace(/([A-Z])/g, ' $1').trim()}</div>
+                                <div className="text-4xs font-black text-text-muted uppercase mb-1">{r.Type.replace(/([A-Z])/g, ' $1').trim()}</div>
                                 <div className="text-lg font-black text-white">{formatNumber(r.Amount)}</div>
                             </div>
                         ))}
                         <div className="bg-accent-primary/5 p-4 rounded-xl border border-accent-primary/30 flex flex-col items-center text-center group">
                             <GameIcon name="Hammer" className="w-12 h-12 mb-2 group-hover:rotate-12 transition-transform" />
-                            <div className="text-[9px] font-black text-accent-primary uppercase mb-1">Shared Hammers</div>
+                            <div className="text-4xs font-black text-accent-primary uppercase mb-1">Shared Hammers</div>
                             <div className="text-lg font-black text-white">{currentAllMemberReward?.Hammers ?? currentAllMemberReward?.Reward?.Amount ?? 0}</div>
                         </div>
                     </div>
@@ -292,8 +292,8 @@ export default function MissionsWiki() {
                                 <div className="p-5 border-b border-border/50 flex justify-between items-start bg-gradient-to-r from-bg-secondary/40 to-transparent">
                                     <div className="space-y-1.5">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-[9px] font-black text-accent-primary bg-accent-primary/10 px-2 py-0.5 rounded-md uppercase border border-accent-primary/20">ID {battle.MissionId}</span>
-                                            <div className="flex items-center gap-1 text-[9px] font-bold text-text-muted uppercase">
+                                            <span className="text-4xs font-black text-accent-primary bg-accent-primary/10 px-2 py-0.5 rounded-md uppercase border border-accent-primary/20">ID {battle.MissionId}</span>
+                                            <div className="flex items-center gap-1 text-4xs font-bold text-text-muted uppercase">
                                                 <Target size={10} />
                                                 Min Stage {formatStage(battle.MinLevel)}
                                             </div>
@@ -308,7 +308,7 @@ export default function MissionsWiki() {
                                 <div className="p-5 space-y-6 flex-1">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1">
-                                            <div className="flex items-center gap-1.5 text-[9px] font-black text-red-400 uppercase opacity-80">
+                                            <div className="flex items-center gap-1.5 text-4xs font-black text-red-400 uppercase opacity-80">
                                                 Enemy ATK
                                             </div>
                                             <div className="text-xl font-black text-white tracking-tighter">
@@ -316,7 +316,7 @@ export default function MissionsWiki() {
                                             </div>
                                         </div>
                                         <div className="space-y-1">
-                                            <div className="flex items-center gap-1.5 text-[9px] font-black text-green-400 uppercase opacity-80">
+                                            <div className="flex items-center gap-1.5 text-4xs font-black text-green-400 uppercase opacity-80">
                                                 <Heart size={10} /> Enemy HP
                                             </div>
                                             <div className="text-xl font-black text-white tracking-tighter">
@@ -328,13 +328,13 @@ export default function MissionsWiki() {
                                     {/* Suggested Power Badge */}
                                     <div className="bg-bg-input/50 border border-border/50 rounded-xl p-3 flex flex-col items-center justify-center text-center group/power relative overflow-hidden">
                                         <div className="absolute inset-0 bg-accent-primary/5 opacity-0 group-hover/power:opacity-100 transition-opacity" />
-                                        <div className="flex items-center gap-2 text-[9px] font-black text-accent-primary uppercase tracking-widest relative z-10">
+                                        <div className="flex items-center gap-2 text-4xs font-black text-accent-primary uppercase tracking-widest relative z-10">
                                             <Activity size={12} /> Suggested Power
                                         </div>
                                         <div className="text-xl font-black text-white tracking-tighter relative z-10">
                                             {formatNumber(suggestedPower)}
                                         </div>
-                                        <div className="text-[8px] font-bold text-text-muted mt-0.5 opacity-0 group-hover/power:opacity-100 transition-all translate-y-2 group-hover/power:translate-y-0 relative z-10 text-center px-2">
+                                        <div className="text-5xs font-bold text-text-muted mt-0.5 opacity-0 group-hover/power:opacity-100 transition-all translate-y-2 group-hover/power:translate-y-0 relative z-10 text-center px-2">
                                             Formula: 0.8 × {battle.UnitCount} units × (8×Dmg + HP)
                                         </div>
                                     </div>
@@ -344,9 +344,9 @@ export default function MissionsWiki() {
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-accent-secondary" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Enemy Loadout</span>
+                                                <span className="text-3xs font-black uppercase tracking-widest text-text-secondary">Enemy Loadout</span>
                                             </div>
-                                            <span className="text-[10px] font-bold text-text-muted uppercase">Units: {battle.UnitCount}</span>
+                                            <span className="text-3xs font-bold text-text-muted uppercase">Units: {battle.UnitCount}</span>
                                         </div>
 
                                         <div className="grid grid-cols-1 gap-3">
@@ -392,9 +392,9 @@ function ElegantDropSection({ label, chance, items, autoMapping, version }: { la
     return (
         <div className="space-y-2 group/section">
             <div className="flex justify-between items-center">
-                <span className="text-[9px] font-black text-text-muted uppercase tracking-widest group-hover/section:text-text-secondary transition-colors">{label}</span>
+                <span className="text-4xs font-black text-text-muted uppercase tracking-widest group-hover/section:text-text-secondary transition-colors">{label}</span>
                 <span className={cn(
-                    "text-[8px] font-black px-1.5 py-0.5 rounded-sm border",
+                    "text-5xs font-black px-1.5 py-0.5 rounded-sm border",
                     chance >= 1 ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
                 )}>
                     {(chance * 100).toFixed(0)}% CHANCE
@@ -422,10 +422,10 @@ function ElegantDropSection({ label, chance, items, autoMapping, version }: { la
                                     }}
                                 />
                             ) : (
-                                <div className="text-[10px] text-text-muted font-black opacity-30">?</div>
+                                <div className="text-3xs text-text-muted font-black opacity-30">?</div>
                             )}
 
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 bg-bg-secondary text-[9px] font-black text-white rounded-lg opacity-0 group-hover/drop:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 border border-accent-primary/30 shadow-xl translate-y-1 group-hover/drop:translate-y-0">
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 bg-bg-secondary text-4xs font-black text-white rounded-lg opacity-0 group-hover/drop:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 border border-accent-primary/30 shadow-xl translate-y-1 group-hover/drop:translate-y-0">
                                 {itemName || 'Unknown Item'}
                             </div>
                         </div>
@@ -440,7 +440,7 @@ function ConfigStat({ label, value, suffix = '', icon: Icon }: { label: string, 
     return (
         <div className="bg-bg-secondary/40 border border-border/40 rounded-2xl p-3 flex flex-col items-center justify-center text-center hover:border-accent-primary/30 hover:bg-bg-secondary/60 transition-all group">
             <Icon size={18} className="text-text-muted group-hover:text-accent-primary transition-all group-hover:scale-110 mb-1" />
-            <div className="text-[9px] font-black text-text-muted uppercase mb-0.5 whitespace-nowrap tracking-tighter">{label}</div>
+            <div className="text-4xs font-black text-text-muted uppercase mb-0.5 whitespace-nowrap tracking-tighter">{label}</div>
             <div className="text-xs font-black text-white">{value}{suffix}</div>
         </div>
     );

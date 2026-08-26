@@ -407,7 +407,7 @@ export default function Dungeons() {
                                 <div key={tab.id} className="flex flex-col items-center gap-2">
                                     <div className="relative group">
                                         <SpriteIcon name={tab.icon} size={32} className="drop-shadow-md" />
-                                        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/90 px-1.5 py-0.5 rounded text-[9px] border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none text-white">
+                                        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/90 px-1.5 py-0.5 rounded text-4xs border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none text-white">
                                             {totalPts} pts ({pts}/key)
                                         </span>
                                     </div>
@@ -504,14 +504,14 @@ export default function Dungeons() {
                                     {wave.enemies.map((enemy, eIdx) => (
                                         <div key={eIdx} className="flex items-center gap-4 bg-black/20 p-3 rounded-lg border border-white/5 relative">
                                             {/* Enemy Icon */}
-                                            <div className="absolute -bottom-2 -right-2 bg-black/80 px-1.5 rounded text-[10px] font-bold border border-white/10">
+                                            <div className="absolute -bottom-2 -right-2 bg-black/80 px-1.5 rounded text-3xs font-bold border border-white/10">
                                                 x{enemy.count}
                                             </div>
 
                                             <div className="flex-1 space-y-1">
                                                 <div className="flex justify-between items-start">
                                                     <span className="font-bold text-sm text-white whitespace-nowrap overflow-hidden text-clip w-32">{enemy.config?.Name || `Enemy ${enemy.id}`}</span>
-                                                    {enemy.config?.IsBoss && <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 rounded border border-red-500/30">BOSS</span>}
+                                                    {enemy.config?.IsBoss && <span className="text-3xs bg-red-500/20 text-red-400 px-1.5 rounded border border-red-500/30">BOSS</span>}
                                                 </div>
 
                                                 {/* Stats */}
@@ -545,7 +545,7 @@ export default function Dungeons() {
 
                                                     {/* Range Type Indicator */}
                                                     <div className={cn(
-                                                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border",
+                                                        "flex items-center gap-1 px-1.5 py-0.5 rounded text-4xs font-bold uppercase border",
                                                         (enemy.weapon.AttackRange || 0) > 1.0
                                                             ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30"
                                                             : "bg-red-500/10 text-red-400 border-red-500/30"

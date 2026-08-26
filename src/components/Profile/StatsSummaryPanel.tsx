@@ -80,12 +80,12 @@ function StatRow({ icon, label, value, subValue, count, perf, color = 'text-acce
                                 title="Show Detailed Breakdown"
                             >
                                 <Sparkles className="w-3 h-3 animate-pulse text-orange-400 group-hover:text-orange-300" />
-                                <span className="text-[9px] font-bold uppercase tracking-wider">Details</span>
+                                <span className="text-4xs font-bold uppercase tracking-wider">Details</span>
                             </button>
                         )}
                     </div>
                     {count !== undefined && count > 0 && (
-                        <div className="text-[11px] text-text-muted mt-0.5">
+                        <div className="text-2xs text-text-muted mt-0.5">
                             {count} {count === 1 ? 'Slot' : 'Slots'}
                             {perf !== undefined && ` (${perf.toFixed(1)}% Perfection)`}
                         </div>
@@ -114,7 +114,7 @@ function CompactStat({ icon, label, value, subValue, count, perf, color = 'text-
                 <div className="flex flex-col min-w-0">
                     <span className="text-sm text-text-muted break-words leading-tight block">{label}</span>
                     {count !== undefined && count > 0 && (
-                        <span className="text-[9px] text-text-muted leading-none mt-0.5">
+                        <span className="text-4xs text-text-muted leading-none mt-0.5">
                             {count} {count === 1 ? 'Slot' : 'Slots'}
                             {perf !== undefined && ` (${perf.toFixed(1)}% Perf)`}
                         </span>
@@ -126,7 +126,7 @@ function CompactStat({ icon, label, value, subValue, count, perf, color = 'text-
                     {value}
                 </div>
                 {subValue && (
-                    <div className="text-[9px] text-text-muted leading-tight opacity-70 font-medium text-right mt-0.5">
+                    <div className="text-4xs text-text-muted leading-tight opacity-70 font-medium text-right mt-0.5">
                         {subValue}
                     </div>
                 )}
@@ -244,16 +244,16 @@ export function ComparisonStatRow({
                     {React.cloneElement(icon as React.ReactElement, { className: 'w-3 h-3' })}
                 </div>
                 <div className="flex flex-col min-w-0">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted leading-tight">{label}</span>
+                    <span className="text-3xs uppercase font-bold tracking-wider text-text-muted leading-tight">{label}</span>
                     <div className="flex items-center gap-2 mt-0.5">
                         <div className="flex items-center gap-1.5">
-                            <span className="text-[11px] font-mono text-text-muted">{finalFormat(originalValue)}</span>
-                            <span className="text-[10px] text-text-muted/50">→</span>
-                            <span className={cn("text-[11px] font-mono font-bold", !isExactlySame && testIsHigher ? color : (testIsHigher ? color : 'text-text-primary'))}>
+                            <span className="text-2xs font-mono text-text-muted">{finalFormat(originalValue)}</span>
+                            <span className="text-3xs text-text-muted/50">→</span>
+                            <span className={cn("text-2xs font-mono font-bold", !isExactlySame && testIsHigher ? color : (testIsHigher ? color : 'text-text-primary'))}>
                                 {finalFormat(testValue)}
                             </span>
                         </div>
-                        <div className={cn("flex items-center gap-0.5 font-mono font-bold text-[10px]", deltaStyle.color)}>
+                        <div className={cn("flex items-center gap-0.5 font-mono font-bold text-3xs", deltaStyle.color)}>
                             {deltaStyle.icon && React.cloneElement(deltaStyle.icon as React.ReactElement, { className: 'w-2.5 h-2.5' })}
                             <span>{delta.percent}</span>
                         </div>
@@ -298,7 +298,7 @@ export function ComparisonStatRow({
                                 title="Show Detailed Breakdown (Equipped)"
                             >
                                 <Sparkles className="w-2.5 h-2.5 animate-pulse" />
-                                <span className="text-[8px] font-bold uppercase tracking-wider">Details</span>
+                                <span className="text-5xs font-bold uppercase tracking-wider">Details</span>
                             </button>
                         )}
                     </div>
@@ -306,7 +306,7 @@ export function ComparisonStatRow({
                         {finalFormat(originalValue)}
                     </div>
                     {originalDetails && originalDetails.length > 0 && (
-                        <div className="mt-2 text-[10px] text-text-muted space-y-0.5">
+                        <div className="mt-2 text-3xs text-text-muted space-y-0.5">
                             {originalDetails.map((d, i) => (
                                 <div key={i}>{d.label}: {finalFormat(d.value)}</div>
                             ))}
@@ -327,7 +327,7 @@ export function ComparisonStatRow({
                                 title="Show Detailed Breakdown (Test Build)"
                             >
                                 <Sparkles className="w-2.5 h-2.5 animate-pulse" />
-                                <span className="text-[8px] font-bold uppercase tracking-wider">Details</span>
+                                <span className="text-5xs font-bold uppercase tracking-wider">Details</span>
                             </button>
                         )}
                     </div>
@@ -340,12 +340,12 @@ export function ComparisonStatRow({
                             {deltaStyle.icon}
                             <span>{delta.percent}</span>
                         </div>
-                        <div className="text-[11px] opacity-70 font-mono">
+                        <div className="text-2xs opacity-70 font-mono">
                             {delta.text}
                         </div>
                     </div>
                     {testDetails && testDetails.length > 0 && (
-                        <div className="mt-2 text-[10px] text-text-muted space-y-0.5">
+                        <div className="mt-2 text-3xs text-text-muted space-y-0.5">
                             {testDetails.map((d, i) => {
                                 const detailDelta = detailDeltas?.[i];
                                 const detailIsZero = detailDelta && originalDetails?.[i]?.value === testDetails[i]?.value;
@@ -839,7 +839,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     {/* Theoretical Block */}
                     <div className="bg-white/5 rounded-xl border border-white/5 overflow-hidden">
                         <div className="px-3 py-1.5 bg-white/5 border-b border-white/5 flex items-center gap-2">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Theoretical Metrics</span>
+                            <span className="text-3xs font-bold uppercase tracking-wider text-text-muted">Theoretical Metrics</span>
                         </div>
                         <div className="p-2 space-y-2">
                             <ComparisonStatRow
@@ -911,7 +911,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     <div className="bg-orange-500/5 rounded-xl border border-orange-500/10 overflow-hidden ring-1 ring-orange-500/10">
                         <div className="px-3 py-1.5 bg-orange-500/10 border-b border-orange-500/10 flex items-center gap-2">
                             <Zap className="w-3 h-3 text-orange-400" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-orange-400">Real-Time Metrics</span>
+                            <span className="text-3xs font-bold uppercase tracking-wider text-orange-400">Real-Time Metrics</span>
                         </div>
                         <div className="p-2 space-y-2">
                             <ComparisonStatRow
@@ -986,7 +986,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     {/* Base Hit Card */}
                     <div className="bg-black/20 rounded-xl border border-white/5 overflow-hidden">
                         <div className="px-3 py-1.5 bg-white/5 border-b border-white/5">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Base Hit</span>
+                            <span className="text-3xs font-bold uppercase tracking-wider text-text-muted">Base Hit</span>
                         </div>
                         <div className="p-2 space-y-2">
                             <ComparisonStatRow
@@ -1014,7 +1014,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     {(testFullStats.hitDamageBuffed !== testFullStats.hitDamage || originalFullStats.hitDamageBuffed !== originalFullStats.hitDamage) && (
                         <div className="bg-orange-500/5 rounded-xl border border-orange-500/10 overflow-hidden ring-1 ring-orange-500/10">
                             <div className="px-3 py-1.5 bg-orange-500/10 border-b border-orange-500/10">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-orange-400">All Buffs Active</span>
+                                <span className="text-3xs font-bold uppercase tracking-wider text-orange-400">All Buffs Active</span>
                             </div>
                             <div className="p-2 space-y-2">
                                 <ComparisonStatRow
@@ -1051,7 +1051,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                 {/* Centered Comparison Label - Floating above */}
                 <div className="absolute left-1/2 -top-3.5 -translate-x-1/2 bg-bg-secondary border border-accent-primary/40 px-1.5 sm:px-3 py-1 rounded-full flex items-center gap-2 shadow-xl z-20 backdrop-blur-xl">
                     <AnimatedClock className="w-3.5 h-3.5 text-accent-primary" />
-                    <span className="hidden sm:block text-[10px] font-black uppercase tracking-widest text-accent-primary leading-none">Comparison Mode</span>
+                    <span className="hidden sm:block text-3xs font-black uppercase tracking-widest text-accent-primary leading-none">Comparison Mode</span>
                 </div>
 
                 {/* View Mode Toggler - Floating Top Left */}
@@ -1066,7 +1066,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             title="General Stats"
                         >
                             <Layout className="w-3 h-3" />
-                            <span className="hidden sm:block text-[8px] font-black uppercase tracking-tighter">General</span>
+                            <span className="hidden sm:block text-5xs font-black uppercase tracking-tighter">General</span>
                         </button>
                         <button
                             onClick={() => setViewTab('metrics')}
@@ -1077,7 +1077,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             title="DPS & HPS Metrics"
                         >
                             <Zap className="w-3 h-3" />
-                            <span className="hidden sm:block text-[8px] font-black uppercase tracking-tighter">Metrics</span>
+                            <span className="hidden sm:block text-5xs font-black uppercase tracking-tighter">Metrics</span>
                         </button>
                         <button
                             onClick={() => setViewTab('hits')}
@@ -1088,7 +1088,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             title="Hit Damage"
                         >
                             <Swords className="w-3 h-3" />
-                            <span className="hidden sm:block text-[8px] font-black uppercase tracking-tighter">Hits</span>
+                            <span className="hidden sm:block text-5xs font-black uppercase tracking-tighter">Hits</span>
                         </button>
                         <button
                             onClick={() => setViewTab('passives')}
@@ -1099,7 +1099,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             title="Secondary Stats"
                         >
                             <Sparkles className="w-3 h-3" />
-                            <span className="hidden sm:block text-[8px] font-black uppercase tracking-tighter">Stats</span>
+                            <span className="hidden sm:block text-5xs font-black uppercase tracking-tighter">Stats</span>
                         </button>
                     </div>
                 </div>
@@ -1240,7 +1240,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             <Button 
                                 variant="ghost" 
                                 size="sm" 
-                                className="h-8 sm:h-10 px-2 flex flex-col items-center justify-center p-0 gap-0.5 text-[9px] text-cyan-400/70 hover:text-cyan-400 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/20 transition-all font-bold uppercase tracking-tight"
+                                className="h-8 sm:h-10 px-2 flex flex-col items-center justify-center p-0 gap-0.5 text-4xs text-cyan-400/70 hover:text-cyan-400 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/20 transition-all font-bold uppercase tracking-tight"
                             >
                                 <Download className="w-3.5 h-3.5" />
                                 <span>Load</span>
@@ -1263,17 +1263,17 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             </select>
                         </div>
                     )}
-                    <Button variant="ghost" size="sm" onClick={exitCompareMode} className="h-8 sm:h-10 px-2 sm:px-6 gap-1 sm:gap-2 text-[10px] sm:text-xs text-text-muted hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all font-bold">
+                    <Button variant="ghost" size="sm" onClick={exitCompareMode} className="h-8 sm:h-10 px-2 sm:px-6 gap-1 sm:gap-2 text-3xs sm:text-xs text-text-muted hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all font-bold">
                         <X className="w-3.5 h-3.5 sm:w-4 h-4" />
                         <span className="hidden sm:inline">Exit Comparison</span>
                         <span className="inline sm:hidden uppercase tracking-tight">Exit</span>
                     </Button>
-                    <Button variant="secondary" size="sm" onClick={keepOriginal} className="h-8 sm:h-10 px-2 sm:px-8 gap-1 sm:gap-2 text-[10px] sm:text-xs font-bold bg-white/5 hover:bg-white/10 border border-white/10 text-text-primary">
+                    <Button variant="secondary" size="sm" onClick={keepOriginal} className="h-8 sm:h-10 px-2 sm:px-8 gap-1 sm:gap-2 text-3xs sm:text-xs font-bold bg-white/5 hover:bg-white/10 border border-white/10 text-text-primary">
                         <Check className="w-3.5 h-3.5 sm:w-4 h-4 text-green-400" />
                         <span className="hidden sm:inline">Keep Equipped</span>
                         <span className="inline sm:hidden uppercase tracking-tight">Keep Equipped</span>
                     </Button>
-                    <Button variant="primary" size="sm" onClick={applyTestBuild} className="h-8 sm:h-10 px-3 sm:px-12 gap-1 sm:gap-2 text-[10px] sm:text-xs font-black uppercase tracking-widest bg-accent-primary hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-accent-primary/25">
+                    <Button variant="primary" size="sm" onClick={applyTestBuild} className="h-8 sm:h-10 px-3 sm:px-12 gap-1 sm:gap-2 text-3xs sm:text-xs font-black uppercase tracking-widest bg-accent-primary hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-accent-primary/25">
                         <ArrowRight className="w-3.5 h-3.5 sm:w-4 h-4" />
                         <span className="hidden sm:inline">Apply Test Build</span>
                         <span className="inline sm:hidden tracking-tight">Apply Test</span>
@@ -1285,20 +1285,20 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                 <div className="flex flex-wrap items-center gap-2 w-full pt-2 sm:justify-between">
                     {/* Equipped build perfection (far left) */}
                     <div className="order-1 flex-1 sm:order-none sm:flex-none flex flex-col gap-1 px-2.5 py-1.5 rounded-lg border border-border bg-bg-input/30 sm:min-w-[120px] shrink-0">
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted/70 text-center">Equipped Perfection</span>
+                        <span className="text-4xs font-bold uppercase tracking-widest text-text-muted/70 text-center">Equipped Perfection</span>
                         <PerfectionMeter value={originalPerfection} className="gap-2" />
                     </div>
 
                     {/* Auto Test Build controls (center) */}
                     <div className="order-3 w-full sm:order-none sm:w-auto grid grid-cols-5 gap-1 sm:flex sm:items-center sm:justify-center sm:gap-1.5 sm:flex-wrap">
-                    <span className="hidden sm:inline text-[9px] font-bold uppercase tracking-widest text-text-muted/60 mr-0.5">Auto Test Build</span>
+                    <span className="hidden sm:inline text-4xs font-bold uppercase tracking-widest text-text-muted/60 mr-0.5">Auto Test Build</span>
                     <button
                         onClick={() => setRespectSavedLevels(v => !v)}
                         role="switch"
                         aria-checked={respectSavedLevels}
                         title="On: score saved builds at their own level. Off: score everything at level 1, so only secondary stats decide. Equipping always keeps the saved level."
                         className={cn(
-                            "h-7 px-2 text-[10px] font-bold rounded border gap-1 inline-flex items-center justify-center active:scale-95 transition-all w-full sm:w-fit",
+                            "h-7 px-2 text-3xs font-bold rounded border gap-1 inline-flex items-center justify-center active:scale-95 transition-all w-full sm:w-fit",
                             respectSavedLevels
                                 ? "border-accent-primary/40 bg-accent-primary/10 text-accent-primary"
                                 : "border-border bg-bg-input/30 text-text-muted hover:text-text-primary"
@@ -1311,7 +1311,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 px-2 text-[10px] font-bold border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40 text-red-400 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                        className="h-7 px-2 text-3xs font-bold border-red-500/20 hover:bg-red-500/10 hover:border-red-500/40 text-red-400 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
                         onClick={() => handleAutoOptimizeTest('dps')}
                         disabled={autoOptimizeDisabled}
                         title="Set best 3 pets + mount for Max DPS on the Test build"
@@ -1323,7 +1323,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 px-2 text-[10px] font-bold border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40 text-amber-500 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                        className="h-7 px-2 text-3xs font-bold border-amber-500/20 hover:bg-amber-500/10 hover:border-amber-500/40 text-amber-500 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
                         onClick={() => handleAutoOptimizeTest('power')}
                         disabled={autoOptimizeDisabled}
                         title="Set best 3 pets + mount for Max Power on the Test build"
@@ -1335,7 +1335,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 px-2 text-[10px] font-bold border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40 text-purple-400 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                        className="h-7 px-2 text-3xs font-bold border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/40 text-purple-400 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
                         onClick={() => handleAutoOptimizeTest('lifesteal')}
                         disabled={autoOptimizeDisabled}
                         title="Set best 3 pets + mount for Max Lifesteal/sec on the Test build"
@@ -1347,7 +1347,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 px-2 text-[10px] font-bold border-violet-500/20 hover:bg-violet-500/10 hover:border-violet-500/40 text-violet-400 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                        className="h-7 px-2 text-3xs font-bold border-violet-500/20 hover:bg-violet-500/10 hover:border-violet-500/40 text-violet-400 gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
                         onClick={() => handleAutoOptimizeTest('balanced')}
                         disabled={autoOptimizeDisabled}
                         title="Set best 3 pets + mount for a balance of DPS and HPS on the Test build (same scoring as the Loadout Optimizer)"
@@ -1360,7 +1360,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 px-2 text-[10px] font-bold text-text-muted hover:text-white gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
+                            className="h-7 px-2 text-3xs font-bold text-text-muted hover:text-white gap-1 active:scale-95 transition-all w-full justify-center sm:w-fit"
                             onClick={handleRevertTest}
                         >
                             <RotateCcw className="w-3 h-3" />
@@ -1371,7 +1371,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
 
                     {/* Test build perfection (far right) */}
                     <div className="order-2 flex-1 sm:order-none sm:flex-none flex flex-col gap-1 px-2.5 py-1.5 rounded-lg border border-accent-primary/30 bg-accent-primary/5 sm:min-w-[120px] shrink-0">
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-accent-primary/80 text-center">Test Perfection</span>
+                        <span className="text-4xs font-bold uppercase tracking-widest text-accent-primary/80 text-center">Test Perfection</span>
                         <PerfectionMeter value={testPerfection} className="gap-2" />
                     </div>
                 </div>
@@ -1423,7 +1423,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 Character Stats
                             </span>
                             <span className={cn(
-                                "text-[9px] font-bold tracking-wider mt-1 uppercase",
+                                "text-4xs font-bold tracking-wider mt-1 uppercase",
                                 excludeSubstats ? "text-purple-400" : "text-orange-400"
                             )}>
                                 {excludeSubstats ? "New Stats (Substats Off)" : "Old Stats (Substats On)"}
@@ -1466,7 +1466,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                 <div className="p-1.5 bg-bg-input/50 rounded-xl border border-border/30 shadow-inner">
                     <div className="flex items-center gap-2 mb-2 px-2">
                         <TreeDeciduous className="w-3.5 h-3.5 text-green-400" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-text-muted opacity-70">Calculation Basis (Tree)</span>
+                        <span className="text-3xs font-black uppercase tracking-widest text-text-muted opacity-70">Calculation Basis (Tree)</span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-1">
@@ -1481,7 +1481,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                         : "border-transparent bg-bg-input/20 text-text-muted hover:bg-bg-input hover:text-text-primary"
                                 )}
                             >
-                                <span className="text-[10px] font-bold uppercase tracking-tight">{treeModeLabels[mode]}</span>
+                                <span className="text-3xs font-bold uppercase tracking-tight">{treeModeLabels[mode]}</span>
                             </button>
                         ))}
                     </div>
@@ -1489,12 +1489,12 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
 
                 {/* Display Format Toggler - Always Visible */}
                 <div className="mt-4 flex items-center justify-between px-2 py-2 bg-bg-input/30 rounded-lg border border-border/20">
-                    <div className="text-[10px] text-text-muted font-bold uppercase tracking-widest opacity-60">Display Format</div>
+                    <div className="text-3xs text-text-muted font-bold uppercase tracking-widest opacity-60">Display Format</div>
                     <div className="flex bg-bg-input/50 rounded-lg p-0.5 border border-border/30">
                         <button
                             onClick={() => setIsCompactStats(true)}
                             className={cn(
-                                "px-3 py-1 rounded text-[9px] font-bold transition-all",
+                                "px-3 py-1 rounded text-4xs font-bold transition-all",
                                 isCompactStats ? "bg-accent-primary text-white shadow-sm" : "text-text-muted hover:text-text-primary"
                             )}
                         >
@@ -1503,7 +1503,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                         <button
                             onClick={() => setIsCompactStats(false)}
                             className={cn(
-                                "px-3 py-1 rounded text-[9px] font-bold transition-all",
+                                "px-3 py-1 rounded text-4xs font-bold transition-all",
                                 !isCompactStats ? "bg-accent-primary text-white shadow-sm" : "text-text-muted hover:text-text-primary"
                             )}
                         >
@@ -1515,7 +1515,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                 {!actualHideActions && isComparing && (
                     <div className="mt-4 pt-4 border-t border-border/30 space-y-4">
                         <div className="space-y-3">
-                            <div className="text-[10px] text-text-muted text-center font-bold uppercase tracking-widest opacity-60">Build Actions</div>
+                            <div className="text-3xs text-text-muted text-center font-bold uppercase tracking-widest opacity-60">Build Actions</div>
                             <div className="grid grid-cols-4 gap-2">
                                 {/* Load Profile - Small Button with hidden select */}
                                 {profiles.length > 1 && (
@@ -1523,7 +1523,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="h-10 w-full flex flex-col items-center justify-center p-0 gap-1 text-[10px] text-cyan-400/70 hover:text-cyan-400 grayscale hover:grayscale-0 transition-all font-bold uppercase tracking-tight border border-transparent hover:border-cyan-500/20 bg-cyan-500/5"
+                                            className="h-10 w-full flex flex-col items-center justify-center p-0 gap-1 text-3xs text-cyan-400/70 hover:text-cyan-400 grayscale hover:grayscale-0 transition-all font-bold uppercase tracking-tight border border-transparent hover:border-cyan-500/20 bg-cyan-500/5"
                                         >
                                             <Download className="w-4 h-4" />
                                             <span>Load</span>
@@ -1550,7 +1550,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     variant="ghost"
                                     size="sm"
                                     onClick={exitCompareMode}
-                                    className="h-10 flex flex-col items-center justify-center p-0 gap-1 text-[10px] text-text-muted hover:text-red-400 grayscale hover:grayscale-0 transition-all font-bold uppercase tracking-tight border border-transparent hover:border-red-500/20"
+                                    className="h-10 flex flex-col items-center justify-center p-0 gap-1 text-3xs text-text-muted hover:text-red-400 grayscale hover:grayscale-0 transition-all font-bold uppercase tracking-tight border border-transparent hover:border-red-500/20"
                                 >
                                     <X className="w-4 h-4" />
                                     <span>Exit</span>
@@ -1559,7 +1559,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     variant="secondary"
                                     size="sm"
                                     onClick={keepOriginal}
-                                    className="h-10 flex flex-col items-center justify-center p-0 gap-1 text-[10px] font-bold uppercase tracking-tight bg-bg-input/50 border border-border/30"
+                                    className="h-10 flex flex-col items-center justify-center p-0 gap-1 text-3xs font-bold uppercase tracking-tight bg-bg-input/50 border border-border/30"
                                 >
                                     <Check className="w-4 h-4 text-green-400" />
                                     <span>Keep Equipped</span>
@@ -1568,7 +1568,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                     variant="primary"
                                     size="sm"
                                     onClick={applyTestBuild}
-                                    className="h-10 flex flex-col items-center justify-center p-0 gap-1 text-[10px] font-bold uppercase tracking-tight bg-accent-primary shadow-lg shadow-accent-primary/10 hover:scale-105 transition-transform"
+                                    className="h-10 flex flex-col items-center justify-center p-0 gap-1 text-3xs font-bold uppercase tracking-tight bg-accent-primary shadow-lg shadow-accent-primary/10 hover:scale-105 transition-transform"
                                 >
                                     <ArrowRight className="w-4 h-4" />
                                     <span>Apply Test</span>
@@ -1600,7 +1600,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             <button
                                 onClick={() => setViewTab('general')}
                                 className={cn(
-                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider min-w-[70px]",
+                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-3xs font-bold uppercase tracking-wider min-w-[70px]",
                                     viewTab === 'general' ? "bg-accent-primary text-white shadow-md" : "text-text-muted hover:text-text-primary"
                                 )}
                             >
@@ -1610,7 +1610,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             <button
                                 onClick={() => setViewTab('metrics')}
                                 className={cn(
-                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider min-w-[70px]",
+                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-3xs font-bold uppercase tracking-wider min-w-[70px]",
                                     viewTab === 'metrics' ? "bg-orange-500 text-white shadow-md" : "text-text-muted hover:text-text-primary"
                                 )}
                             >
@@ -1620,7 +1620,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             <button
                                 onClick={() => setViewTab('hits')}
                                 className={cn(
-                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider min-w-[70px]",
+                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-3xs font-bold uppercase tracking-wider min-w-[70px]",
                                     viewTab === 'hits' ? "bg-red-500 text-white shadow-md" : "text-text-muted hover:text-text-primary"
                                 )}
                             >
@@ -1630,7 +1630,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             <button
                                 onClick={() => setViewTab('passives')}
                                 className={cn(
-                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-wider min-w-[70px]",
+                                    "flex-1 py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-3xs font-bold uppercase tracking-wider min-w-[70px]",
                                     viewTab === 'passives' ? "bg-yellow-500 text-white shadow-md" : "text-text-muted hover:text-text-primary"
                                 )}
                             >
@@ -1699,7 +1699,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             {/* Theoretical Block */}
                             <div className="bg-white/5 rounded-xl border border-white/5 overflow-hidden">
                                 <div className="px-3 py-1.5 bg-white/5 border-b border-white/5 flex items-center gap-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Theoretical Metrics</span>
+                                    <span className="text-3xs font-bold uppercase tracking-wider text-text-muted">Theoretical Metrics</span>
                                 </div>
                                 <div className="p-2 space-y-1">
                                     <StatRow
@@ -1732,7 +1732,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             <div className="bg-orange-500/5 rounded-xl border border-orange-500/10 overflow-hidden ring-1 ring-orange-500/10">
                                 <div className="px-3 py-1.5 bg-orange-500/10 border-b border-orange-500/10 flex items-center gap-2">
                                     <Zap className="w-3 h-3 text-orange-400" />
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-orange-400">Real-Time Metrics</span>
+                                    <span className="text-3xs font-bold uppercase tracking-wider text-orange-400">Real-Time Metrics</span>
                                 </div>
                                 <div className="p-2 space-y-1">
                                     <StatRow
@@ -1792,7 +1792,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 {fullStats.buffHitMetrics && fullStats.buffHitMetrics.length > 0 && (
                                     <div className="mt-2 bg-black/20 rounded-xl border border-white/5 overflow-hidden">
                                         <div className="px-3 py-1.5 bg-white/5 border-b border-white/5">
-                                            <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Buff Scenarios</span>
+                                            <span className="text-3xs font-bold uppercase tracking-wider text-text-muted">Buff Scenarios</span>
                                         </div>
                                         <div className="divide-y divide-white/5">
                                             {fullStats.buffHitMetrics.map((metric, idx) => (
@@ -1802,7 +1802,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                                     </div>
                                                     <div className="flex flex-col items-end shrink-0">
                                                         <span className="text-xs font-mono text-orange-300">{formatValue(metric.damage)}</span>
-                                                        <span className="text-[10px] font-mono text-orange-400/70">Crit: {formatValue(metric.damageCrit)}</span>
+                                                        <span className="text-3xs font-mono text-orange-400/70">Crit: {formatValue(metric.damageCrit)}</span>
                                                     </div>
                                                 </div>
                                             ))}
@@ -2051,7 +2051,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 <div className="p-3 bg-bg-input/30 rounded-lg border border-border/30 mb-1 flex items-center justify-between">
                                     <span className="text-xs text-text-muted">Type</span>
                                     <span className={cn(
-                                        "font-bold px-2 py-0.5 rounded text-[10px]",
+                                        "font-bold px-2 py-0.5 rounded text-3xs",
                                         stats.isRangedWeapon ? "bg-sky-500/20 text-sky-400 border border-sky-500/30" : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                                     )}>
                                         {stats.isRangedWeapon ? '🏹 RANGED' : '⚔️ MELEE'}
@@ -2114,7 +2114,7 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                                 <div className="grid grid-cols-2 gap-2">
                                     {treeBonusEntries.map(([key, value]) => (
                                         <div key={key} className="p-2 bg-bg-input/30 rounded-lg border border-border/30">
-                                            <div className="text-[10px] text-text-muted whitespace-nowrap overflow-hidden text-clip mb-1" title={key}>{key}</div>
+                                            <div className="text-3xs text-text-muted whitespace-nowrap overflow-hidden text-clip mb-1" title={key}>{key}</div>
                                             <div className="font-mono font-bold text-green-400 text-xs">+{(value * 100).toFixed(1)}%</div>
                                         </div>
                                     ))}

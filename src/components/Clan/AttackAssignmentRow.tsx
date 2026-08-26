@@ -143,7 +143,7 @@ export const BudgetBadge: React.FC<{ assigned: number; budget: number; compact?:
             <span className={cn('font-mono text-sm font-bold tabular-nums', VERDICT_TEXT[verdict])}>
                 {assigned}/{budget}
             </span>
-            {!compact && <span className={cn('text-[11px]', VERDICT_TEXT[verdict])}>{words}</span>}
+            {!compact && <span className={cn('text-2xs', VERDICT_TEXT[verdict])}>{words}</span>}
         </span>
     );
 };
@@ -369,13 +369,13 @@ export const AttackAssignmentRow: React.FC<AttackAssignmentRowProps> = ({
                                 </span>
                             )}
                             {isMine && (
-                                <span className="shrink-0 rounded bg-sky-500/20 px-1.5 py-px text-[10px] font-black uppercase tracking-wider text-sky-300">
+                                <span className="shrink-0 rounded bg-sky-500/20 px-1.5 py-px text-3xs font-black uppercase tracking-wider text-sky-300">
                                     You
                                 </span>
                             )}
                             {isDummy && (
                                 <span
-                                    className="shrink-0 rounded bg-white/5 px-1.5 py-px text-[10px] font-bold uppercase tracking-wider text-text-secondary"
+                                    className="shrink-0 rounded bg-white/5 px-1.5 py-px text-3xs font-bold uppercase tracking-wider text-text-secondary"
                                     title="A stand-in: a name on the plan, not a clan account. It gets no notification."
                                 >
                                     Stand-in
@@ -383,7 +383,7 @@ export const AttackAssignmentRow: React.FC<AttackAssignmentRowProps> = ({
                             )}
                             {orphaned && (
                                 <span
-                                    className="inline-flex shrink-0 items-center gap-1 rounded bg-red-500/15 px-1.5 py-px text-[10px] font-bold uppercase tracking-wider text-red-300"
+                                    className="inline-flex shrink-0 items-center gap-1 rounded bg-red-500/15 px-1.5 py-px text-3xs font-bold uppercase tracking-wider text-red-300"
                                     title="This player's profile was deleted. The name is the snapshot taken when they were added."
                                 >
                                     <UserX className="h-3 w-3" /> Profile gone
@@ -391,7 +391,7 @@ export const AttackAssignmentRow: React.FC<AttackAssignmentRowProps> = ({
                             )}
                         </div>
                         {attacker.note && (
-                            <span className="whitespace-nowrap overflow-hidden text-clip text-[11px] text-text-secondary">{attacker.note}</span>
+                            <span className="whitespace-nowrap overflow-hidden text-clip text-2xs text-text-secondary">{attacker.note}</span>
                         )}
                     </div>
                 </div>
@@ -480,7 +480,7 @@ export const AttackAssignmentRow: React.FC<AttackAssignmentRowProps> = ({
                         >
                             <span
                                 className={cn(
-                                    'font-mono text-[10px] font-bold',
+                                    'font-mono text-3xs font-bold',
                                     beyond ? 'text-red-300' : 'text-text-secondary',
                                 )}
                             >
@@ -559,7 +559,7 @@ export const AttackAssignmentRow: React.FC<AttackAssignmentRowProps> = ({
                     </span>
                 )}
                 {verdict === 'under' && orders.length > 0 && (
-                    <span className="text-[11px] text-amber-300">
+                    <span className="text-2xs text-amber-300">
                         {budget - assigned} ticket{budget - assigned === 1 ? '' : 's'} unused
                     </span>
                 )}

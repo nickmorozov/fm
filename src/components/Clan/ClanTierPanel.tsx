@@ -586,7 +586,7 @@ export function ClanTierPanel({ action, className }: ClanTierPanelProps) {
             {/* THE SWING. First, because it is the number that decides whether a war is worth
                 entering, and the one a reader is most likely to misread. */}
             <div>
-                <h5 className="mb-1.5 text-[11px] font-black uppercase tracking-widest text-text-muted">
+                <h5 className="mb-1.5 text-2xs font-black uppercase tracking-widest text-text-muted">
                     What a war does to your tier points
                 </h5>
                 <div className="space-y-1.5">
@@ -599,7 +599,7 @@ export function ClanTierPanel({ action, className }: ClanTierPanelProps) {
                 times two outcomes is twelve rows, and at 360px a row of two lists puts four
                 characters per line in each. */}
             <div>
-                <h5 className="mb-1.5 text-[11px] font-black uppercase tracking-widest text-text-muted">
+                <h5 className="mb-1.5 text-2xs font-black uppercase tracking-widest text-text-muted">
                     What a war pays at tier {current.key}
                 </h5>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -627,7 +627,7 @@ export function ClanTierPanel({ action, className }: ClanTierPanelProps) {
             {/* THE CLIMB. "Is it worth going up" is the leader's real question, and the answer is a
                 delta, not two absolute tables the reader has to subtract in their head. */}
             <div>
-                <h5 className="mb-1.5 text-[11px] font-black uppercase tracking-widest text-text-muted">
+                <h5 className="mb-1.5 text-2xs font-black uppercase tracking-widest text-text-muted">
                     Climbing
                 </h5>
                 <div className="rounded-lg border border-border bg-bg-input/50 p-3">

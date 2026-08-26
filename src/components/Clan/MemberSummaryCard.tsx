@@ -819,7 +819,7 @@ export function readMemberSummary(
  * Small shared bits of chrome
  * ------------------------------------------------------------------------------------------ */
 
-const CHIP = 'px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border shrink-0 whitespace-nowrap';
+const CHIP = 'px-1.5 py-0.5 rounded text-4xs font-bold uppercase border shrink-0 whitespace-nowrap';
 const CHIP_AMBER = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
 const CHIP_RED = 'bg-red-500/15 text-red-400 border-red-500/30';
 const CHIP_MUTED = 'bg-white/5 text-text-muted border-border';
@@ -874,7 +874,7 @@ const ConfidenceCounts: React.FC<{ counts: Record<MemberConfidence, number>; cla
                 return (
                     <span
                         key={key}
-                        className={cn('flex items-center gap-0.5 text-[10px] tabular-nums', meta.text)}
+                        className={cn('flex items-center gap-0.5 text-3xs tabular-nums', meta.text)}
                         title={`${counts[key]} of the eight war categories: ${meta.label} — ${meta.fallback}`}
                     >
                         <ConfidenceIcon confidence={key} />
@@ -995,7 +995,7 @@ export const MemberSummaryCard: React.FC<MemberSummaryCardProps> = ({
             >
                 <div className="flex items-center gap-2 min-w-0">
                     {rank !== null && (
-                        <span className="w-6 shrink-0 text-right font-mono text-[11px] text-text-muted">
+                        <span className="w-6 shrink-0 text-right font-mono text-2xs text-text-muted">
                             {rank}
                         </span>
                     )}
@@ -1120,7 +1120,7 @@ export const MemberSummaryCard: React.FC<MemberSummaryCardProps> = ({
                     Separators TRAIL their item, so a line that wraps on a phone starts with a word
                     and not with an orphaned middle dot. */}
                 <div className="flex items-center gap-2 flex-wrap pl-1">
-                    <span className="flex items-center gap-1.5 text-[11px] text-text-muted min-w-0">
+                    <span className="flex items-center gap-1.5 text-2xs text-text-muted min-w-0">
                         <GitBranch className="w-3 h-3 shrink-0 text-accent-primary" />
                         {hasShare ? (
                             <span className="whitespace-nowrap overflow-hidden text-clip">
@@ -1132,11 +1132,11 @@ export const MemberSummaryCard: React.FC<MemberSummaryCardProps> = ({
                         )}
                     </span>
                     {summary.power !== null && summary.power > 0 && (
-                        <span className="text-[11px] text-text-muted">
+                        <span className="text-2xs text-text-muted">
                             power <span className="text-text-secondary">{formatCompactNumber(summary.power)}</span> ·
                         </span>
                     )}
-                    <span className="text-[11px] text-text-muted">
+                    <span className="text-2xs text-text-muted">
                         synced {formatAge(summary.syncedAt ? clock - summary.syncedAt : null)}
                     </span>
                     {hasShare && <ConfidenceCounts counts={summary.counts} />}
@@ -1166,7 +1166,7 @@ export const MemberSummaryCard: React.FC<MemberSummaryCardProps> = ({
                                             : `${exact(value)} points`
                                     }`}
                                     className={cn(
-                                        'w-9 sm:w-11 rounded px-0.5 py-0.5 text-center font-mono text-[9px] border tabular-nums',
+                                        'w-9 sm:w-11 rounded px-0.5 py-0.5 text-center font-mono text-4xs border tabular-nums',
                                         day === todayIndex
                                             ? 'border-accent-primary/60 bg-accent-primary/10 text-accent-primary'
                                             : 'border-border bg-bg-input text-text-secondary',
@@ -1225,12 +1225,12 @@ export const MemberSummaryCard: React.FC<MemberSummaryCardProps> = ({
                                 config leaves empty. Nobody can reconstruct these from the numbers. */}
                             {summary.notes.length > 0 && (
                                 <div className="space-y-1">
-                                    <h4 className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-accent-primary">
+                                    <h4 className="flex items-center gap-1.5 text-2xs font-bold uppercase tracking-wider text-accent-primary">
                                         <Info className="w-3.5 h-3.5" /> What {summary.name} assumed
                                     </h4>
                                     <ul className="space-y-0.5">
                                         {summary.notes.map((note, index) => (
-                                            <li key={index} className="flex gap-1.5 text-[10px] text-text-secondary leading-relaxed">
+                                            <li key={index} className="flex gap-1.5 text-3xs text-text-secondary leading-relaxed">
                                                 <span className="text-text-muted shrink-0">·</span>
                                                 {/* `break-words` + `min-w-0`: this is member-written
                                                     text, and a 200-character string with no spaces
@@ -1244,7 +1244,7 @@ export const MemberSummaryCard: React.FC<MemberSummaryCardProps> = ({
                             )}
 
                             {!summary.hasProvenance && (
-                                <p className="rounded-lg border border-sky-500/25 bg-sky-500/5 p-2 text-[10px] leading-relaxed text-sky-200">
+                                <p className="rounded-lg border border-sky-500/25 bg-sky-500/5 p-2 text-3xs leading-relaxed text-sky-200">
                                     <span className="font-bold">Older version of the tool.</span>{' '}
                                     This summary was written in summary format v{finite(summary.share?.v)}; this app writes
                                     v{CLAN_SHARE_VERSION}. It carries no record of how each figure was arrived at, so
@@ -1254,7 +1254,7 @@ export const MemberSummaryCard: React.FC<MemberSummaryCardProps> = ({
                                 </p>
                             )}
 
-                            <p className="text-[10px] text-text-muted">
+                            <p className="text-3xs text-text-muted">
                                 Published {formatAge(summary.computedAt === null ? null : clock - summary.computedAt)}
                                 {summary.configVersion && ` · game data ${formatVersion(summary.configVersion)}`}
                                 {' · '}summary format v{finite(summary.share?.v)}
@@ -1297,7 +1297,7 @@ const PartsList: React.FC<{ entry: CategoryBreakdown; total: number }> = ({ entr
         {entry.counted.length > 0 && (
             <ul className="space-y-0.5" data-parts-counted={entry.counted.length}>
                 {entry.counted.map(row => (
-                    <li key={row.key} className="flex items-baseline gap-2 text-[10px]">
+                    <li key={row.key} className="flex items-baseline gap-2 text-3xs">
                         <span className="min-w-0 break-words text-text-secondary">{row.label}</span>
                         <span className="flex-1 border-b border-dotted border-border/60" />
                         <span className="shrink-0 font-mono tabular-nums text-text-primary">{exact(row.points)}</span>
@@ -1309,7 +1309,7 @@ const PartsList: React.FC<{ entry: CategoryBreakdown; total: number }> = ({ entr
         {/* The Σ line. Shown even for a single row: it is what says "these are ALL of them". */}
         {entry.counted.length > 0 && (
             <div
-                className="flex items-baseline gap-2 border-t border-border/60 pt-1 text-[10px]"
+                className="flex items-baseline gap-2 border-t border-border/60 pt-1 text-3xs"
                 data-parts-sum={entry.total}
                 data-parts-headline={total}
             >
@@ -1325,7 +1325,7 @@ const PartsList: React.FC<{ entry: CategoryBreakdown; total: number }> = ({ entr
         {/* A rounding difference is possible by construction — `emit` rounds every part on its own
             — so it is stated rather than hidden. It has never exceeded a couple of points. */}
         {entry.counted.length > 0 && entry.total !== total && (
-            <p className="text-[10px] leading-relaxed text-amber-300">
+            <p className="text-3xs leading-relaxed text-amber-300">
                 The headline says {exact(total)}. The {Math.abs(total - entry.total)}-point difference is
                 rounding: each line above is rounded to a whole point on its own.
             </p>
@@ -1333,20 +1333,20 @@ const PartsList: React.FC<{ entry: CategoryBreakdown; total: number }> = ({ entr
 
         {entry.excluded.length > 0 && (
             <div className="rounded border border-dashed border-border/70 bg-black/20 p-1.5" data-parts-excluded={entry.excluded.length}>
-                <div className="mb-1 flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-text-muted">
+                <div className="mb-1 flex items-center gap-1 text-4xs font-bold uppercase tracking-wider text-text-muted">
                     <EyeOff className="w-3 h-3 shrink-0" aria-hidden="true" />
                     not counted above
                 </div>
                 <ul className="space-y-0.5">
                     {entry.excluded.map(row => (
-                        <li key={row.key} className="flex items-baseline gap-2 text-[10px]">
+                        <li key={row.key} className="flex items-baseline gap-2 text-3xs">
                             <span className="min-w-0 break-words text-text-muted">{row.label}</span>
                             <span className="flex-1" />
                             <span className="shrink-0 font-mono tabular-nums text-text-muted">+ {exact(row.points)}</span>
                         </li>
                     ))}
                 </ul>
-                <p className="mt-1 text-[9px] leading-relaxed text-text-muted">
+                <p className="mt-1 text-4xs leading-relaxed text-text-muted">
                     Ceilings, not amounts. Each needs something the app cannot see — a duplicate to merge, a
                     coin sink to spend into — so none of it is in the {exact(total)} above.
                 </p>
@@ -1354,7 +1354,7 @@ const PartsList: React.FC<{ entry: CategoryBreakdown; total: number }> = ({ entr
         )}
 
         {entry.counted.length === 0 && entry.excluded.length === 0 && (
-            <p className="text-[10px] leading-relaxed text-text-muted">
+            <p className="text-3xs leading-relaxed text-text-muted">
                 Nothing to itemise: this category has no parts, which is what a figure of n/a means.
             </p>
         )}
@@ -1363,7 +1363,7 @@ const PartsList: React.FC<{ entry: CategoryBreakdown; total: number }> = ({ entr
 
 /** Why a category shows no rows. Names the missing input, never the field that holds it. */
 const WithheldNote: React.FC<{ entry: CategoryBreakdown; sameConfig: boolean }> = ({ entry, sameConfig }) => (
-    <p className="text-[10px] leading-relaxed text-text-secondary" data-withheld={entry.withheld?.kind ?? ''}>
+    <p className="text-3xs leading-relaxed text-text-secondary" data-withheld={entry.withheld?.kind ?? ''}>
         <span className="font-bold text-amber-300">Cannot be broken down.</span>{' '}
         Working this figure out again here{' '}
         {entry.withheld?.kind === 'points'
@@ -1423,7 +1423,7 @@ const NodeCurrencies: React.FC<{
 }> = ({ summary, currencies, sameConfig }) => {
     if (!sameConfig) {
         return (
-            <p className="text-[10px] leading-relaxed text-text-muted" data-currencies="other-config">
+            <p className="text-3xs leading-relaxed text-text-muted" data-currencies="other-config">
                 The clan node behind this category is not shown: {summary.name} computed with the game data
                 from {formatVersion(summary.configVersion || '')}, and the per-level values of the clan tree
                 changed between that version and this one.
@@ -1445,13 +1445,13 @@ const NodeCurrencies: React.FC<{
             data-currencies-multiplier={c.multiplier.toFixed(4)}
             data-currencies-cost={c.costOfNextLevel}
         >
-            <div className="text-[9px] font-bold uppercase tracking-wider text-text-muted">
+            <div className="text-4xs font-bold uppercase tracking-wider text-text-muted">
                 Their “{nodeName}” clan node · level {c.level}
                 {c.maxLevel > 0 && ` of ${c.maxLevel}`}
             </div>
 
             {/* ROW ONE — the multiplier. A "×", never a "+", and never next to a points figure. */}
-            <div className="flex items-baseline gap-2 text-[10px]" data-currency="multiplier">
+            <div className="flex items-baseline gap-2 text-3xs" data-currency="multiplier">
                 <span className="min-w-0 break-words text-text-secondary">
                     Multiplies every point in this category
                 </span>
@@ -1460,14 +1460,14 @@ const NodeCurrencies: React.FC<{
                     × {c.multiplier.toFixed(2)}
                 </span>
             </div>
-            <p className="text-[9px] leading-relaxed text-text-muted">
+            <p className="text-4xs leading-relaxed text-text-muted">
                 {c.level === 0
                     ? `They hold no levels in this node, so nothing is multiplied. Each level is worth ${pct(c.nextValueStep)} more on every point this category scores, on every day it pays.`
                     : `Each level is ${pct(c.nextValueStep > 0 ? c.nextValueStep : 0)} and it applies every time they score here, on every day this category pays — it is a multiplier, not points they are holding.`}
             </p>
 
             {/* ROW TWO — the price. A different unit, its own line, and the word "costs". */}
-            <div className="flex items-baseline gap-2 border-t border-border/60 pt-1 text-[10px]" data-currency="cost">
+            <div className="flex items-baseline gap-2 border-t border-border/60 pt-1 text-3xs" data-currency="cost">
                 <span className="min-w-0 break-words text-text-secondary">
                     {capped ? 'That node is finished — no level left to buy' : 'One more level costs, once'}
                 </span>
@@ -1479,7 +1479,7 @@ const NodeCurrencies: React.FC<{
                 )}
             </div>
             {!capped && (
-                <p className="text-[9px] leading-relaxed text-text-muted">
+                <p className="text-4xs leading-relaxed text-text-muted">
                     Clan tech points — the clan tree&apos;s own currency, paid once
                     {c.potionsPerPoint !== null && (
                         <> and bought at {c.potionsPerPoint} guild potion{c.potionsPerPoint === 1 ? '' : 's'} each,
@@ -1554,13 +1554,13 @@ const WarBreakdown: React.FC<{
 
     return (
     <div className="space-y-2">
-        <h4 className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-accent-primary">
+        <h4 className="flex items-center gap-1.5 text-2xs font-bold uppercase tracking-wider text-accent-primary">
             <Swords className="w-3.5 h-3.5" /> War points still obtainable
         </h4>
 
         {/* The one sentence a planner needs before reading any of the numbers below: is this the
             answer, a floor, or a floor with a known top — and how many categories are blind. */}
-        <p className="flex items-start gap-1.5 text-[10px] leading-relaxed text-text-secondary">
+        <p className="flex items-start gap-1.5 text-3xs leading-relaxed text-text-secondary">
             <ConfidenceIcon confidence={summary.confidence} className="mt-0.5" />
             <span>
                 {summary.allBlind ? (
@@ -1636,7 +1636,7 @@ const WarBreakdown: React.FC<{
                         isOpen && 'bg-white/5',
                     )}
                 >
-                    <span className="text-[11px] text-text-secondary w-24 shrink-0 flex items-center gap-1">
+                    <span className="text-2xs text-text-secondary w-24 shrink-0 flex items-center gap-1">
                         {clickable && (
                             <ChevronDown
                                 className={cn(
@@ -1650,13 +1650,13 @@ const WarBreakdown: React.FC<{
                     </span>
                     <span className="flex gap-0.5 flex-wrap min-w-0">
                         {entry.days.length === 0 ? (
-                            <span className="text-[9px] text-text-muted uppercase">no war day</span>
+                            <span className="text-4xs text-text-muted uppercase">no war day</span>
                         ) : (
                             entry.days.map(day => (
                                 <span
                                     key={day}
                                     className={cn(
-                                        'px-1 rounded text-[9px] font-bold border',
+                                        'px-1 rounded text-4xs font-bold border',
                                         day === todayIndex
                                             ? 'border-accent-primary/60 bg-accent-primary/10 text-accent-primary'
                                             : 'border-border bg-bg-input text-text-muted',
@@ -1677,11 +1677,11 @@ const WarBreakdown: React.FC<{
                         title={confidenceTitle(entry.confidence, entry.reason, entry.ceiling)}
                     >
                         {entry.notProjected ? (
-                            <span className="text-[11px] font-mono text-text-muted">n/a</span>
+                            <span className="text-2xs font-mono text-text-muted">n/a</span>
                         ) : (
                             <span
                                 className={cn(
-                                    'text-[11px] font-mono tabular-nums',
+                                    'text-2xs font-mono tabular-nums',
                                     entry.points > 0 ? CONFIDENCE_META[entry.confidence].text : 'text-text-muted',
                                 )}
                             >
@@ -1690,7 +1690,7 @@ const WarBreakdown: React.FC<{
                             </span>
                         )}
                         {entry.ceiling > 0 && (
-                            <span className="ml-1 text-[10px] font-mono text-text-muted tabular-nums">
+                            <span className="ml-1 text-3xs font-mono text-text-muted tabular-nums">
                                 ≤ {formatCompactNumber(entry.points + entry.ceiling)}
                             </span>
                         )}
@@ -1708,12 +1708,12 @@ const WarBreakdown: React.FC<{
                 data-breakdown-reconciled={openEntry.reconciled ? 'yes' : 'no'}
             >
                 <div className="flex items-baseline gap-2">
-                    <span className="text-[11px] font-bold text-accent-primary">
+                    <span className="text-2xs font-bold text-accent-primary">
                         {WAR_CATEGORY_LABELS[openEntry.category]}
                     </span>
                     <span className="flex-1" />
                     {!openPublished.notProjected && (
-                        <span className={cn('font-mono text-[11px] tabular-nums', CONFIDENCE_META[openPublished.confidence].text)}>
+                        <span className={cn('font-mono text-2xs tabular-nums', CONFIDENCE_META[openPublished.confidence].text)}>
                             {CONFIDENCE_META[openPublished.confidence].prefix}
                             {exact(openPublished.points)}
                         </span>
@@ -1734,7 +1734,7 @@ const WarBreakdown: React.FC<{
                 />
                 {/* The one sentence that keeps the two rows above from ever being added together. */}
                 {openCurrencies && (
-                    <p className="text-[9px] leading-relaxed text-text-muted">
+                    <p className="text-4xs leading-relaxed text-text-muted">
                         Two different currencies: the <span className="text-emerald-300">×</span> is a
                         multiplier that fires every time they score here, the{' '}
                         <span className="text-sky-300">pts</span> is a one-off price in the clan tree&apos;s
@@ -1745,7 +1745,7 @@ const WarBreakdown: React.FC<{
                 {/* The publisher's own sentence, last and clearly theirs — the same rule
                     `confidenceTitle` follows for the tooltips. */}
                 {openPublished.reason && (
-                    <p className="min-w-0 break-words border-t border-border/50 pt-1 text-[10px] leading-relaxed text-text-muted">
+                    <p className="min-w-0 break-words border-t border-border/50 pt-1 text-3xs leading-relaxed text-text-muted">
                         {summary.name} published: “{openPublished.reason}”
                     </p>
                 )}
@@ -1753,7 +1753,7 @@ const WarBreakdown: React.FC<{
         )}
 
         {breakdown && breakdown.reconciledCount < summary.war.length && (
-            <p className="text-[10px] leading-relaxed text-text-muted" data-breakdown-count={breakdown.reconciledCount}>
+            <p className="text-3xs leading-relaxed text-text-muted" data-breakdown-count={breakdown.reconciledCount}>
                 {breakdown.reconciledCount} of the {summary.war.length} categories can be broken down here.
                 A clan summary carries the eight totals, not the lines behind them, so the lines are worked
                 out again on this machine — and only shown where that reproduces {summary.name}&apos;s own
@@ -1762,7 +1762,7 @@ const WarBreakdown: React.FC<{
         )}
 
         {/* What the markers mean, once per card, so the icons above never need decoding twice. */}
-        <div className="flex items-center gap-3 flex-wrap text-[10px] text-text-muted">
+        <div className="flex items-center gap-3 flex-wrap text-3xs text-text-muted">
             {(['exact', 'lower-bound', 'unavailable', 'unknown'] as MemberConfidence[])
                 .filter(key => summary.counts[key] > 0)
                 .map(key => (
@@ -1794,7 +1794,7 @@ const WarBreakdown: React.FC<{
                                 : 'border-border bg-bg-input',
                         )}
                     >
-                        <div className="text-[9px] uppercase tracking-wide text-text-muted whitespace-nowrap overflow-hidden text-clip">
+                        <div className="text-4xs uppercase tracking-wide text-text-muted whitespace-nowrap overflow-hidden text-clip">
                             {shortWarDayName(day)}
                         </div>
                         <div
@@ -1818,7 +1818,7 @@ const WarBreakdown: React.FC<{
                         </div>
                         {boostedShown && (
                             <div
-                                className="font-mono text-[9px] tabular-nums text-emerald-300"
+                                className="font-mono text-4xs tabular-nums text-emerald-300"
                                 // An ARROW, not a "+". This read `+node 263K` and the plus sign was
                                 // a lie: 263K is not an addition to the white figure above, it is
                                 // what that figure BECOMES once the node multiplies it. The clan
@@ -1845,7 +1845,7 @@ const WarBreakdown: React.FC<{
         </div>
 
         {summary.unscheduled > 0 && (
-            <p className="text-[10px] text-text-muted">
+            <p className="text-3xs text-text-muted">
                 {exact(summary.unscheduled)} of these points sit in categories the game config gives no war
                 day, so they are counted in the total but in none of the six days.
             </p>
@@ -1883,12 +1883,12 @@ const MountsStoryBlock: React.FC<{ summary: MemberSummary; breakdown: MemberBrea
 
     return (
         <div className="space-y-1.5" data-mounts-story={m.known ? 'known' : 'unknown'}>
-            <h4 className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-accent-primary">
+            <h4 className="flex items-center gap-1.5 text-2xs font-bold uppercase tracking-wider text-accent-primary">
                 <Rabbit className="w-3.5 h-3.5" /> Mounts, in full
             </h4>
 
             {!m.known ? (
-                <p className="text-[11px] leading-relaxed text-text-secondary">
+                <p className="text-2xs leading-relaxed text-text-secondary">
                     <span className="font-bold text-amber-300">Not broken down.</span>{' '}
                     Working {summary.name}&apos;s mount figure out again here does not reproduce the
                     {published && !published.notProjected ? ` ${exact(published.points)} ` : ' figure '}
@@ -1896,27 +1896,27 @@ const MountsStoryBlock: React.FC<{ summary: MemberSummary; breakdown: MemberBrea
                     total above still stands.
                 </p>
             ) : m.mounts <= 0 ? (
-                <p className="text-[11px] leading-relaxed text-text-secondary">
+                <p className="text-2xs leading-relaxed text-text-secondary">
                     {summary.name} holds {exact(m.winders)} clock winder{m.winders === 1 ? '' : 's'}, and one
                     summon costs {exact(m.costPerSummon)} — so there is nothing here to summon, merge or
                     ascend for yet.
                 </p>
             ) : (
                 <>
-                    <p className="text-[11px] leading-relaxed text-text-secondary">
+                    <p className="text-2xs leading-relaxed text-text-secondary">
                         {exact(m.winders)} clock winders buy {exact(m.summons)} summon
                         {m.summons === 1 ? '' : 's'} at {exact(m.costPerSummon)} each, which is{' '}
                         <span className="font-bold text-text-primary">{exact(m.mounts)} mounts</span>.
                     </p>
                     <ul className="space-y-0.5">
-                        <li className="flex items-baseline gap-2 text-[11px]">
+                        <li className="flex items-baseline gap-2 text-2xs">
                             <span className="text-text-secondary">Summoning them scores</span>
                             <span className="flex-1 border-b border-dotted border-border/60" />
                             <span className="shrink-0 font-mono font-bold tabular-nums text-amber-300">
                                 {exact(m.summonPoints)}
                             </span>
                         </li>
-                        <li className="flex items-baseline gap-2 text-[11px]">
+                        <li className="flex items-baseline gap-2 text-2xs">
                             <span className="min-w-0 break-words text-text-muted">
                                 Merging every one of them would add
                             </span>
@@ -1926,14 +1926,14 @@ const MountsStoryBlock: React.FC<{ summary: MemberSummary; breakdown: MemberBrea
                             </span>
                         </li>
                     </ul>
-                    <p className="text-[10px] leading-relaxed text-text-muted">
+                    <p className="text-3xs leading-relaxed text-text-muted">
                         Only the {exact(m.summonPoints)} is counted. A merge needs two of the same mount, and
                         nothing in this app knows which mounts anyone owns — so the merge line is the most it
                         could ever be worth, not what it will be. The Mount calculator shows both added
                         together, which is why its total is about twice this one.
                     </p>
                     {m.strandedWinders > 0 && (
-                        <p className="text-[10px] leading-relaxed text-text-muted" data-mounts-stranded={m.strandedWinders}>
+                        <p className="text-3xs leading-relaxed text-text-muted" data-mounts-stranded={m.strandedWinders}>
                             {exact(m.strandedWinders)} winder{m.strandedWinders === 1 ? '' : 's'} cannot buy another
                             summon and score nothing at all.
                         </p>
@@ -1942,7 +1942,7 @@ const MountsStoryBlock: React.FC<{ summary: MemberSummary; breakdown: MemberBrea
             )}
 
             {/* The ascension question. Rendered as the absence it is, never as a hedge on a number. */}
-            <p className="flex items-start gap-1.5 text-[10px] leading-relaxed text-text-muted" data-mounts-ascension="unavailable">
+            <p className="flex items-start gap-1.5 text-3xs leading-relaxed text-text-muted" data-mounts-ascension="unavailable">
                 <Ban className="mt-0.5 w-3 h-3 shrink-0" aria-hidden="true" />
                 <span className="min-w-0">{m.ascension.reason}</span>
             </p>
@@ -1970,7 +1970,7 @@ const MountsStoryBlock: React.FC<{ summary: MemberSummary; breakdown: MemberBrea
  */
 const AnchoredTimesNote: React.FC = () => (
     <p
-        className="flex items-start gap-1.5 rounded-lg border border-border bg-bg-input/40 p-2 text-[10px] leading-relaxed text-text-secondary"
+        className="flex items-start gap-1.5 rounded-lg border border-border bg-bg-input/40 p-2 text-3xs leading-relaxed text-text-secondary"
         data-anchored-times="none"
     >
         <Clock className="mt-0.5 w-3.5 h-3.5 shrink-0 text-text-muted" aria-hidden="true" />
@@ -1986,7 +1986,7 @@ const TreeBreakdown: React.FC<{ summary: MemberSummary; treeIndex: TreeIndex | n
 
     return (
         <div className="space-y-2">
-            <h4 className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-accent-primary">
+            <h4 className="flex items-center gap-1.5 text-2xs font-bold uppercase tracking-wider text-accent-primary">
                 <GitBranch className="w-3.5 h-3.5" /> Tech trees
             </h4>
             {/* items-start: an expanded tree must not stretch its three neighbours to its height. */}
@@ -2003,7 +2003,7 @@ const TreeBreakdown: React.FC<{ summary: MemberSummary; treeIndex: TreeIndex | n
                                 className="w-full px-2 py-1.5 text-left hover:bg-white/5 transition"
                             >
                                 <div className="flex items-center gap-1.5">
-                                    <span className="text-[11px] font-bold text-text-primary whitespace-nowrap overflow-hidden text-clip">
+                                    <span className="text-2xs font-bold text-text-primary whitespace-nowrap overflow-hidden text-clip">
                                         {TREE_LABELS[tree.name]}
                                     </span>
                                     <span className="flex-1" />
@@ -2019,7 +2019,7 @@ const TreeBreakdown: React.FC<{ summary: MemberSummary; treeIndex: TreeIndex | n
                                         className={cn('w-3 h-3 text-text-muted transition-transform', isOpen && 'rotate-180')}
                                     />
                                 </div>
-                                <div className="text-[10px] text-text-muted">
+                                <div className="text-3xs text-text-muted">
                                     {tree.nodes === 0 ? (
                                         <span className="text-text-muted">empty</span>
                                     ) : (
@@ -2036,7 +2036,7 @@ const TreeBreakdown: React.FC<{ summary: MemberSummary; treeIndex: TreeIndex | n
                                         instead of hiding at the bottom of the scroll. */}
                                     <div className="px-2 py-1.5 max-h-48 overflow-y-auto custom-scrollbar">
                                     {tree.nodes === 0 ? (
-                                        <p className="text-[10px] text-text-muted">
+                                        <p className="text-3xs text-text-muted">
                                             No levelled node in this tree.
                                         </p>
                                     ) : (
@@ -2051,7 +2051,7 @@ const TreeBreakdown: React.FC<{ summary: MemberSummary; treeIndex: TreeIndex | n
                                                     // not dropped — and marked, not silently kept.
                                                     const impossible = !!def && level > def.max;
                                                     return (
-                                                        <li key={id} className="flex items-center gap-1.5 text-[10px]">
+                                                        <li key={id} className="flex items-center gap-1.5 text-3xs">
                                                             <span className="whitespace-nowrap overflow-hidden text-clip text-text-secondary">
                                                                 {def ? def.label : `node #${id}`}
                                                             </span>
@@ -2077,7 +2077,7 @@ const TreeBreakdown: React.FC<{ summary: MemberSummary; treeIndex: TreeIndex | n
                                     )}
                                     </div>
                                     {entry.nodes.length > tree.nodes && (
-                                        <p className="border-t border-border/50 px-2 py-1 text-[10px] text-text-muted">
+                                        <p className="border-t border-border/50 px-2 py-1 text-3xs text-text-muted">
                                             + {entry.nodes.length - tree.nodes} node
                                             {entry.nodes.length - tree.nodes === 1 ? '' : 's'} still at 0
                                         </p>
@@ -2114,11 +2114,11 @@ const ResourceBreakdown: React.FC<{ share: ClanShare }> = ({ share }) => {
 
     return (
         <div className="space-y-1.5">
-            <h4 className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-accent-primary">
+            <h4 className="flex items-center gap-1.5 text-2xs font-bold uppercase tracking-wider text-accent-primary">
                 <Coins className="w-3.5 h-3.5" /> Resources behind those points
             </h4>
             {items.length === 0 ? (
-                <p className="text-[11px] text-text-muted">
+                <p className="text-2xs text-text-muted">
                     No non-zero resource in this summary. This block records what was entered, and a
                     blank field publishes as 0 — which is why the markers above, and not these chips,
                     are what say whether a category could be computed.
@@ -2128,7 +2128,7 @@ const ResourceBreakdown: React.FC<{ share: ClanShare }> = ({ share }) => {
                     {items.map(item => (
                         <span
                             key={item.label}
-                            className="rounded border border-border bg-bg-input px-1.5 py-0.5 text-[10px] text-text-secondary"
+                            className="rounded border border-border bg-bg-input px-1.5 py-0.5 text-3xs text-text-secondary"
                         >
                             {item.label}{' '}
                             <span className="font-mono text-text-primary" title={exact(item.value)}>

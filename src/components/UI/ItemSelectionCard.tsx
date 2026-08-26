@@ -213,7 +213,7 @@ export function ItemSelectionCard({
         >
             {/* Equipped badge */}
             {isEquipped && (
-                <div className="absolute top-1 left-1/2 -translate-x-1/2 z-30 flex items-center gap-0.5 bg-green-500 text-white text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full shadow-sm border border-green-300/50">
+                <div className="absolute top-1 left-1/2 -translate-x-1/2 z-30 flex items-center gap-0.5 bg-green-500 text-white text-5xs font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full shadow-sm border border-green-300/50">
                     <Check className="w-2.5 h-2.5" strokeWidth={3} />
                     Equipped
                 </div>
@@ -232,7 +232,7 @@ export function ItemSelectionCard({
                                 <Minus className="w-2.5 h-2.5 text-white/70 hover:text-white" />
                             </button>
                             {onLevelSet ? (
-                                <div className="flex items-center text-[10px] md:text-[11px] font-bold text-white min-w-[3.5ch]">
+                                <div className="flex items-center text-3xs md:text-2xs font-bold text-white min-w-[3.5ch]">
                                     <span className="opacity-50 mr-0.5">Lv</span>
                                     <input
                                         type="number"
@@ -255,7 +255,7 @@ export function ItemSelectionCard({
                                     />
                                 </div>
                             ) : (
-                                <span className="text-[10px] md:text-[11px] font-bold text-white min-w-[3.5ch] text-center tabular-nums">Lv{displayLevel}</span>
+                                <span className="text-3xs md:text-2xs font-bold text-white min-w-[3.5ch] text-center tabular-nums">Lv{displayLevel}</span>
                             )}
                             <button
                                 onClick={(e) => onLevelChange(1, e)}
@@ -265,7 +265,7 @@ export function ItemSelectionCard({
                             </button>
                         </div>
                     ) : (
-                        <span className="bg-black/60 text-white text-[10px] md:text-[11px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm border border-white/10 shrink-0 w-fit">
+                        <span className="bg-black/60 text-white text-3xs md:text-2xs font-bold px-1.5 py-0.5 rounded backdrop-blur-sm border border-white/10 shrink-0 w-fit">
                             Lv{displayLevel}
                         </span>
                     )}
@@ -384,7 +384,7 @@ export function ItemSelectionCard({
             <div className="w-full px-1 min-h-[1.5em] flex items-center justify-center mt-1">
                 <span className={cn(
                     "font-bold text-center leading-tight select-none text-text-primary",
-                    isCompact ? (itemName.length > 20 ? "text-[8px]" : "text-[9px]") : (itemName.length > 20 ? "text-[9px]" : "text-[10px]")
+                    isCompact ? (itemName.length > 20 ? "text-5xs" : "text-4xs") : (itemName.length > 20 ? "text-4xs" : "text-3xs")
                 )}>
                     {itemName}
                 </span>
@@ -397,13 +397,13 @@ export function ItemSelectionCard({
                         {stats.damage > 0 && (
                             <div className="bg-red-400/10 rounded p-1 border border-red-400/20 flex flex-col items-center group/stats relative">
                                 <div className="flex items-center gap-1 text-red-400">
-                                    <span className={cn("font-bold uppercase", isCompact ? "text-[8px]" : "text-[10px]")}>{stats.damageLabel || "Damage"}</span>
+                                    <span className={cn("font-bold uppercase", isCompact ? "text-5xs" : "text-3xs")}>{stats.damageLabel || "Damage"}</span>
                                 </div>
-                                <div className={cn("font-mono font-bold text-red-400 leading-tight", isCompact ? "text-[10px]" : "text-xs")}>
+                                <div className={cn("font-mono font-bold text-red-400 leading-tight", isCompact ? "text-3xs" : "text-xs")}>
                                     {isCompact ? formatNumber(stats.damage) : Math.round(stats.damage).toLocaleString()}
                                 </div>
-                                {(stats.multi !== undefined || stats.damageMulti !== undefined || stats.bonus !== undefined) && (
-                                    <div className="text-[9px] font-mono font-bold text-text-muted/80 flex items-center justify-center flex-wrap gap-x-1 gap-y-0 mt-0.5 relative">
+                                {!isCompact && (stats.multi !== undefined || stats.damageMulti !== undefined || stats.bonus !== undefined) && (
+                                    <div className="text-4xs font-mono font-bold text-text-muted/80 flex items-center justify-center flex-wrap gap-x-1 gap-y-0 mt-0.5 relative">
                                         {(() => {
                                             const m = stats.damageMulti ?? stats.multi;
                                             if (m !== undefined) {
@@ -430,13 +430,13 @@ export function ItemSelectionCard({
                         {stats.health > 0 && (
                             <div className="bg-green-400/10 rounded p-1 border border-green-400/20 flex flex-col items-center group/h-stats relative">
                                 <div className="flex items-center gap-1 text-green-400">
-                                    <span className={cn("font-bold uppercase", isCompact ? "text-[8px]" : "text-[10px]")}>{stats.healthLabel || "Health"}</span>
+                                    <span className={cn("font-bold uppercase", isCompact ? "text-5xs" : "text-3xs")}>{stats.healthLabel || "Health"}</span>
                                 </div>
-                                <div className={cn("font-mono font-bold text-green-400 leading-tight", isCompact ? "text-[10px]" : "text-xs")}>
+                                <div className={cn("font-mono font-bold text-green-400 leading-tight", isCompact ? "text-3xs" : "text-xs")}>
                                     {isCompact ? formatNumber(stats.health) : Math.round(stats.health).toLocaleString()}
                                 </div>
-                                {(stats.multi !== undefined || stats.healthMulti !== undefined || stats.bonus !== undefined) && (
-                                    <div className="text-[9px] font-mono font-bold text-text-muted/80 flex items-center justify-center flex-wrap gap-x-1 gap-y-0 mt-0.5 relative">
+                                {!isCompact && (stats.multi !== undefined || stats.healthMulti !== undefined || stats.bonus !== undefined) && (
+                                    <div className="text-4xs font-mono font-bold text-text-muted/80 flex items-center justify-center flex-wrap gap-x-1 gap-y-0 mt-0.5 relative">
                                         {(() => {
                                             const m = stats.healthMulti ?? stats.multi;
                                             if (m !== undefined) {
@@ -465,20 +465,20 @@ export function ItemSelectionCard({
                 {customStats}
             </div>
 
-            {/* Passive Stats List */}
-            {item?.secondaryStats && item.secondaryStats.length > 0 && (
+            {/* Passive Stats List (detailed only: compact keeps just the headline numbers) */}
+            {!isCompact && item?.secondaryStats && item.secondaryStats.length > 0 && (
                 <div className="w-full grid grid-cols-1 gap-1 mt-1 pt-1 border-t border-border/20">
                     {item.secondaryStats.map((stat: { statId: string; value: number }, idx: number) => {
                         const formatted = formatSecondaryStat(stat.statId, stat.value);
                         const statPerf = getStatPerfection?.(stat.statId, stat.value) ?? null;
                         return (
-                            <div key={idx} className={cn("flex flex-col items-center gap-y-0 select-none", isCompact ? "text-[8px] leading-none" : "text-[10px] gap-y-0.5", formatted.color)}>
+                            <div key={idx} className={cn("flex flex-col items-center gap-y-0 select-none", isCompact ? "text-5xs leading-none" : "text-3xs gap-y-0.5", formatted.color)}>
                                 <span className={cn("opacity-80 whitespace-normal text-center", isCompact ? "scale-90" : "leading-[1.1]")}>{formatted.name}</span>
                                 <div className="font-bold shrink-0 flex items-center justify-center gap-1 whitespace-nowrap text-center">
                                     <span>{formatted.formattedValue}</span>
                                     {statPerf !== null && (
                                         <div className="flex items-center gap-0.5 group/perf">
-                                            <span className={cn("opacity-70", isCompact ? "text-[7px]" : "text-[8px]")}>({Math.round(statPerf)}%)</span>
+                                            <span className={cn("opacity-70", isCompact ? "text-[0.4375rem]" : "text-5xs")}>({Math.round(statPerf)}%)</span>
                                             <div
                                                 className={cn("rounded-full bg-gray-700/50 overflow-hidden", isCompact ? "w-0.5 h-2" : "w-0.5 h-2.5")}
                                                 title={`Perfection: ${statPerf.toFixed(1)}%`}
@@ -500,10 +500,10 @@ export function ItemSelectionCard({
                 </div>
             )}
 
-            {/* Perfection Bar */}
-            {perfection != null && (
+            {/* Perfection Bar (detailed only) */}
+            {!isCompact && perfection != null && (
                 <div className="w-full mt-1 flex flex-col gap-0.5 select-none" title={`Perfection: ${perfection.toFixed(1)}%`}>
-                    <div className={cn("flex justify-between items-center font-bold text-text-muted", isCompact ? "text-[7px]" : "text-[8px]")}>
+                    <div className={cn("flex justify-between items-center font-bold text-text-muted", isCompact ? "text-[0.4375rem]" : "text-5xs")}>
                         <span>Perfection</span>
                         <span className={cn(
                             perfection >= 100 ? 'text-yellow-400' :
@@ -580,7 +580,7 @@ export function EmptyRowCard({
             </div>
             <div className="min-w-0">
                 <div className="font-bold text-sm text-text-muted whitespace-nowrap overflow-hidden text-clip">{label}</div>
-                <div className="text-[10px] uppercase tracking-widest text-text-muted/60 mt-0.5">{hint}</div>
+                <div className="text-3xs uppercase tracking-widest text-text-muted/60 mt-0.5">{hint}</div>
             </div>
         </div>
     );
@@ -635,9 +635,9 @@ function RowCard({
     renderIcon, hideAgeStyles, rarity, displayLevel, maxLevel, starSrc, className, artClassName,
     isCompact,
 }: RowCardProps) {
-    // In comparison mode the card is roughly a third of its usual width. Nothing is hidden and
-    // nothing is cut with dots: the artwork and the type sizes come down, and the rows below are
-    // allowed to wrap so every number stays on screen.
+    // Compact is the density toggle: artwork and type come down AND the detail layers go away
+    // (multiplier formulas, substat rows, perfection, age/rarity chips). Hover tooltips keep the
+    // full breakdown reachable, and Detailed mode shows everything again.
     const artFrame = artClassName || (isCompact ? 'w-12 h-12 sm:w-14 sm:h-14' : CARD_ART_FRAME_CLASS);
     const { selectedVersion } = useGameDataContext();
 
@@ -682,18 +682,18 @@ function RowCard({
                 )}
                 title={`${label}: ${Math.round(value).toLocaleString()}`}
             >
-                <span className={cn("text-[9px] font-black uppercase tracking-wide shrink-0", isDmg ? "text-red-400" : "text-green-400")}>
+                <span className={cn("text-4xs font-black uppercase tracking-wide shrink-0", isDmg ? "text-red-400" : "text-green-400")}>
                     {label}
                 </span>
-                <span className={cn("font-mono font-bold text-[13px] leading-none", isDmg ? "text-red-400" : "text-green-400")}>
+                <span className={cn("font-mono font-bold text-[0.8125rem] leading-none", isDmg ? "text-red-400" : "text-green-400")}>
                     {formatNumber(value)}
                 </span>
-                {multi !== undefined ? (
-                    <span className="font-mono text-[9px] font-bold text-text-muted/90 ml-auto min-w-0">
+                {isCompact ? null : multi !== undefined ? (
+                    <span className="font-mono text-4xs font-bold text-text-muted/90 ml-auto min-w-0">
                         x{multi.toFixed(2)} <span className="text-green-400/80">({((multi - 1) * 100).toFixed(1)}%)</span>
                     </span>
                 ) : bonus !== undefined ? (
-                    <span className="font-mono text-[9px] font-bold text-green-400/80 ml-auto">+{Math.round(bonus * 100)}%</span>
+                    <span className="font-mono text-4xs font-bold text-green-400/80 ml-auto">+{Math.round(bonus * 100)}%</span>
                 ) : null}
                 {details && (
                     <div className={cn("hidden", isDmg ? "group-hover/dmg:block" : "group-hover/hp:block")}>
@@ -743,26 +743,26 @@ function RowCard({
                  palette (lib/utils: primitive == common, medieval == rare, and so on). */}
             <div className="flex items-start gap-1.5">
                 <div className="flex-1 min-w-0 min-h-[1.5em] flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-                    <span className={cn("font-bold leading-tight text-text-primary min-w-0 break-words", isCompact ? "text-[10px]" : "text-[10px] sm:text-[13px]")} title={itemName}>
+                    <span className={cn("font-bold leading-tight text-text-primary min-w-0 break-words", isCompact ? "text-3xs" : "text-3xs sm:text-[0.8125rem]")} title={itemName}>
                         {itemName}
                     </span>
                     {isEquipped && (
-                        <span className="inline-flex items-center gap-0.5 bg-green-500 text-white text-[8px] font-black uppercase tracking-wider px-1 rounded-full">
+                        <span className="inline-flex items-center gap-0.5 bg-green-500 text-white text-5xs font-black uppercase tracking-wider px-1 rounded-full">
                             <Check className="w-2.5 h-2.5" strokeWidth={3} />
                             Equipped
                         </span>
                     )}
-                    {showAge && (
-                        <span className="text-[8px] font-black uppercase tracking-wider" style={{ color: ageColor }} title="Age">
+                    {!isCompact && showAge && (
+                        <span className="text-5xs font-black uppercase tracking-wider" style={{ color: ageColor }} title="Age">
                             {AGES[ageIdx!] || 'Primitive'}
                         </span>
                     )}
-                    {rarityName && (
-                        <span className="text-[8px] font-black uppercase tracking-wider" style={{ color: rarityColor }} title="Rarity">
+                    {!isCompact && rarityName && (
+                        <span className="text-5xs font-black uppercase tracking-wider" style={{ color: rarityColor }} title="Rarity">
                             {rarityName}
                         </span>
                     )}
-                    {tags}
+                    {!isCompact && tags}
                 </div>
                 <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
                     {onSave && (
@@ -856,8 +856,8 @@ function RowCard({
                                     <Minus className="w-3.5 h-3.5 text-white/80" />
                                 </button>
                                 {onLevelSet ? (
-                                    <div className="flex items-center text-[12px] font-bold text-white tabular-nums">
-                                        <span className="opacity-50 text-[10px]">Lv</span>
+                                    <div className="flex items-center text-xs font-bold text-white tabular-nums">
+                                        <span className="opacity-50 text-3xs">Lv</span>
                                         <input
                                             type="number"
                                             value={displayLevel}
@@ -882,7 +882,7 @@ function RowCard({
                                         />
                                     </div>
                                 ) : (
-                                    <span className="px-1 text-[12px] font-bold text-white tabular-nums">Lv{displayLevel}</span>
+                                    <span className="px-1 text-xs font-bold text-white tabular-nums">Lv{displayLevel}</span>
                                 )}
                                 <button
                                     onClick={(e) => onLevelChange(1, e)}
@@ -893,7 +893,7 @@ function RowCard({
                                 </button>
                             </div>
                         ) : (
-                            <span className="bg-black/50 text-white text-[12px] font-bold px-2 py-1 rounded-lg border border-white/10 tabular-nums">
+                            <span className="bg-black/50 text-white text-xs font-bold px-2 py-1 rounded-lg border border-white/10 tabular-nums">
                                 Lv{displayLevel}
                             </span>
                         )}
@@ -915,7 +915,7 @@ function RowCard({
                                         className={cn("w-3 h-3 object-contain", i < asc ? "drop-shadow" : "opacity-25 grayscale")}
                                     />
                                 ))}
-                                <span className="text-[10px] font-bold text-amber-400 tabular-nums ml-0.5">{asc}</span>
+                                <span className="text-3xs font-bold text-amber-400 tabular-nums ml-0.5">{asc}</span>
                             </div>
                         )}
                     </div>
@@ -935,24 +935,21 @@ function RowCard({
             {/* ---- caller-supplied block (skill damage / timings) ---- */}
             {customStats}
 
-            {/* ---- substats, two columns ---- */}
-            {substats.length > 0 && (
+            {/* ---- substats, two columns (detailed only) ---- */}
+            {!isCompact && substats.length > 0 && (
                 <div className={cn(
-                    'grid gap-x-2 gap-y-0.5 pt-1.5 border-t border-border/25',
-                    // One column while the card is narrow: two 72px cells cannot hold
-                    // "+36.4% (91%)" without spilling past the card's own border.
-                    isCompact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'
+                    'grid gap-x-2 gap-y-0.5 pt-1.5 border-t border-border/25 grid-cols-1 sm:grid-cols-2'
                 )}>
                     {substats.map((stat, idx) => {
                         const formatted = formatSecondaryStat(stat.statId, stat.value);
                         const statPerf = getStatPerfection?.(stat.statId, stat.value) ?? null;
                         return (
-                            <div key={idx} className={cn("flex items-center gap-1 text-[9px] leading-tight select-none min-w-0", formatted.color)}>
+                            <div key={idx} className={cn("flex items-center gap-1 text-4xs leading-tight select-none min-w-0", formatted.color)}>
                                 <span className="min-w-0 opacity-80 break-words" title={formatted.name}>{formatted.name}</span>
                                 <span className="font-bold ml-auto">{formatted.formattedValue}</span>
                                 {statPerf !== null && (
                                     <>
-                                        <span className="opacity-70 text-[8px]">({Math.round(statPerf)}%)</span>
+                                        <span className="opacity-70 text-5xs">({Math.round(statPerf)}%)</span>
                                         <div
                                             className="rounded-full bg-gray-700/50 overflow-hidden w-0.5 h-2.5 shrink-0"
                                             title={`Perfection: ${statPerf.toFixed(1)}%`}
@@ -970,10 +967,10 @@ function RowCard({
                 </div>
             )}
 
-            {/* ---- perfection: label, bar and number on one line ---- */}
-            {perfection != null && (
+            {/* ---- perfection: label, bar and number on one line (detailed only) ---- */}
+            {!isCompact && perfection != null && (
                 <div className="flex items-center gap-1.5 select-none" title={`Perfection: ${perfection.toFixed(1)}%`}>
-                    <span className="text-[8px] font-bold uppercase tracking-wider text-text-muted shrink-0">Perfection</span>
+                    <span className="text-5xs font-bold uppercase tracking-wider text-text-muted shrink-0">Perfection</span>
                     <div className="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden">
                         <div
                             className={cn(
@@ -986,7 +983,7 @@ function RowCard({
                         />
                     </div>
                     <span className={cn(
-                        "text-[9px] font-bold tabular-nums shrink-0",
+                        "text-4xs font-bold tabular-nums shrink-0",
                         perfection >= 100 ? 'text-yellow-400' :
                             perfection >= 80 ? 'text-green-500' :
                                 perfection >= 50 ? 'text-blue-500' : 'text-gray-400'

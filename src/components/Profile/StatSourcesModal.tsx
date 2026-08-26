@@ -78,7 +78,7 @@ const ModalContent = memo(({ statKey, label, totalDisplay, stats, formatValue, m
     const renderCard = (c: StatContribution) => {
         const ref = c.ref!;
         const contribution = (
-            <div className="text-[11px] font-mono font-bold text-accent-primary text-center py-1">
+            <div className="text-2xs font-mono font-bold text-accent-primary text-center py-1">
                 +{formatValue(c.value)}
             </div>
         );
@@ -186,7 +186,7 @@ const ModalContent = memo(({ statKey, label, totalDisplay, stats, formatValue, m
         <div key={c.id} className="flex items-center justify-between gap-3 px-3 py-2 bg-bg-input/30 rounded-lg border border-border/30">
             <div className="min-w-0">
                 <div className="text-sm text-text-primary whitespace-nowrap overflow-hidden text-clip">{c.label}</div>
-                {c.detail && <div className="text-[11px] text-text-muted whitespace-nowrap overflow-hidden text-clip">{c.detail}</div>}
+                {c.detail && <div className="text-2xs text-text-muted whitespace-nowrap overflow-hidden text-clip">{c.detail}</div>}
             </div>
             <div className="font-mono font-bold text-sm text-accent-primary shrink-0">
                 +{formatValue(c.value)}

@@ -170,7 +170,7 @@ export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
                     >
                         <div className="flex flex-col items-center shrink-0">
                             <span className={cn(
-                                "text-[9px] font-bold uppercase tracking-wider transition-colors",
+                                "text-4xs font-bold uppercase tracking-wider transition-colors",
                                 excludeSubstats ? "text-purple-400" : "text-orange-400"
                             )}>Pwr</span>
                             <span className="text-xs font-bold text-text-primary leading-none">
@@ -206,7 +206,7 @@ export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
                                     ['HP', stats?.totalHealth, 'text-green-400'],
                                 ] as const).map(([label, value, tone]) => (
                                     <div key={label} className="flex items-baseline justify-between gap-3">
-                                        <dt className={cn("text-[10px] font-bold uppercase tracking-wider shrink-0", tone)}>
+                                        <dt className={cn("text-3xs font-bold uppercase tracking-wider shrink-0", tone)}>
                                             {label}
                                         </dt>
                                         <dd className="min-w-0 text-right">
@@ -216,7 +216,7 @@ export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
                                             {/* Only when it adds something. Below 1000 the compact form
                                                 IS the exact figure, and printing "80" under "80" is noise. */}
                                             {typeof value === 'number' && exact(value) !== formatCompactNumber(value) && (
-                                                <span className="block text-[10px] font-mono text-text-muted leading-tight break-all">
+                                                <span className="block text-3xs font-mono text-text-muted leading-tight break-all">
                                                     {exact(value)}
                                                 </span>
                                             )}
@@ -225,7 +225,7 @@ export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
                                 ))}
                             </dl>
                             {/* Which reading these numbers are, because the toggle changes what they mean. */}
-                            <p className="mt-2.5 pt-2.5 border-t border-border text-[10px] text-text-secondary leading-snug">
+                            <p className="mt-2.5 pt-2.5 border-t border-border text-3xs text-text-secondary leading-snug">
                                 {excludeSubstats
                                     ? 'New Stats. Item substats excluded from Power.'
                                     : 'Old Stats. Item substats included in Power.'}
@@ -243,7 +243,7 @@ export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
                         {/* Power */}
                         <div className="flex flex-col items-center shrink-0">
                             <span className={cn(
-                                "text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors",
+                                "text-4xs sm:text-3xs font-bold uppercase tracking-wider transition-colors",
                                 excludeSubstats ? "text-purple-400" : "text-orange-400"
                             )}>Pwr</span>
                             <span className="text-xs sm:text-sm font-bold text-text-primary leading-none">
@@ -256,7 +256,7 @@ export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
 
                         {/* Damage */}
                         <div className="flex flex-col items-center shrink-0">
-                            <span className="text-[9px] sm:text-[10px] text-red-400 font-bold uppercase tracking-wider">Dmg</span>
+                            <span className="text-4xs sm:text-3xs text-red-400 font-bold uppercase tracking-wider">Dmg</span>
                             <span className="text-xs sm:text-sm font-bold text-text-primary leading-none">
                                 {stats ? formatCompactNumber(stats.totalDamage) : '-'}
                             </span>
@@ -267,7 +267,7 @@ export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
 
                         {/* Health */}
                         <div className="flex flex-col items-center shrink-0">
-                            <span className="text-[9px] sm:text-[10px] text-green-400 font-bold uppercase tracking-wider">HP</span>
+                            <span className="text-4xs sm:text-3xs text-green-400 font-bold uppercase tracking-wider">HP</span>
                             <span className="text-xs sm:text-sm font-bold text-text-primary leading-none">
                                 {stats ? formatCompactNumber(stats.totalHealth) : '-'}
                             </span>

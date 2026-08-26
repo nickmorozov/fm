@@ -387,9 +387,9 @@ export const JoinClanDialog: React.FC<JoinClanDialogProps> = ({
                     )}
                 />
                 {showError ? (
-                    <p id={`${id}-error`} className="mt-1 text-[11px] text-accent-secondary">{options.error}</p>
+                    <p id={`${id}-error`} className="mt-1 text-2xs text-accent-secondary">{options.error}</p>
                 ) : options.hint ? (
-                    <p id={`${id}-hint`} className="mt-1 text-[11px] text-text-muted">{options.hint}</p>
+                    <p id={`${id}-hint`} className="mt-1 text-2xs text-text-muted">{options.hint}</p>
                 ) : null}
             </div>
         );
@@ -504,7 +504,7 @@ export const JoinClanDialog: React.FC<JoinClanDialogProps> = ({
                                 several of them would otherwise have no way of knowing. */}
                             <div className="flex items-start gap-2 rounded-lg border border-accent-primary/30 bg-accent-primary/10 px-3 py-2">
                                 <Users className="w-3.5 h-3.5 mt-0.5 shrink-0 text-accent-primary" />
-                                <p className="text-[11px] text-text-secondary leading-relaxed">
+                                <p className="text-2xs text-text-secondary leading-relaxed">
                                     Joining as <span className="font-bold text-white">{profileName}</span>. A clan
                                     belongs to one profile, not to your whole account — switch profile first if this is
                                     not the right one.
@@ -551,7 +551,7 @@ export const JoinClanDialog: React.FC<JoinClanDialogProps> = ({
                                             Too many attempts — try again in{' '}
                                             <span className="font-mono tabular-nums">{mmss(waitSeconds)}</span>
                                         </p>
-                                        <p className="text-[11px] text-text-secondary mt-0.5 leading-relaxed">
+                                        <p className="text-2xs text-text-secondary mt-0.5 leading-relaxed">
                                             The server allows twelve join attempts every ten minutes per account, and it
                                             stops checking the password while the limit is on — so even the right one
                                             would be refused. Waiting is the only thing that helps; retrying does not
@@ -569,7 +569,7 @@ export const JoinClanDialog: React.FC<JoinClanDialogProps> = ({
                                         <p className="text-xs font-bold text-white">
                                             That name, tag or password is not right
                                         </p>
-                                        <p className="text-[11px] text-text-secondary mt-0.5 leading-relaxed">
+                                        <p className="text-2xs text-text-secondary mt-0.5 leading-relaxed">
                                             The server answers the same way for all three, on purpose, so that nobody can
                                             use this box to find out which clans exist. Check all three with a clan
                                             leader — the tag has to match exactly.
@@ -587,7 +587,7 @@ export const JoinClanDialog: React.FC<JoinClanDialogProps> = ({
                             )}
 
                             {checking && (
-                                <p className="flex items-center gap-2 text-[11px] text-text-muted">
+                                <p className="flex items-center gap-2 text-2xs text-text-muted">
                                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                     Checking whether this profile is already in a clan
                                 </p>

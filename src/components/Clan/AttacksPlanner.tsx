@@ -308,7 +308,7 @@ const Stat: React.FC<{ label: string; value: React.ReactNode; tone?: 'neutral' |
         >
             {value}
         </div>
-        <div className="mt-1 text-[10px] font-bold uppercase tracking-wider text-text-secondary">{label}</div>
+        <div className="mt-1 text-3xs font-bold uppercase tracking-wider text-text-secondary">{label}</div>
     </div>
 );
 
@@ -866,20 +866,20 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                     <div className="flex flex-wrap items-center gap-2">
                         <h3 className="text-sm font-black uppercase tracking-wider text-white">War alerts</h3>
                         {notifyLoading ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] text-text-secondary">
+                            <span className="inline-flex items-center gap-1 text-2xs text-text-secondary">
                                 <Loader2 className="h-3 w-3 animate-spin" /> checking
                             </span>
                         ) : notify.state === 'ready' ? (
                             <span
                                 className={cn(
-                                    'rounded px-1.5 py-px text-[10px] font-black uppercase tracking-wider',
+                                    'rounded px-1.5 py-px text-3xs font-black uppercase tracking-wider',
                                     notify.enabled ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-text-secondary',
                                 )}
                             >
                                 {notify.enabled ? 'On for you' : 'Off for you'}
                             </span>
                         ) : (
-                            <span className="rounded bg-amber-500/20 px-1.5 py-px text-[10px] font-black uppercase tracking-wider text-amber-300">
+                            <span className="rounded bg-amber-500/20 px-1.5 py-px text-3xs font-black uppercase tracking-wider text-amber-300">
                                 Unavailable
                             </span>
                         )}
@@ -910,7 +910,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                     </p>
 
                     {notify.state === 'ready' && notify.audience && (
-                        <p className="mt-1.5 text-[11px] text-text-secondary">
+                        <p className="mt-1.5 text-2xs text-text-secondary">
                             {notify.audience.optedIn} of {notify.audience.accounts} account
                             {notify.audience.accounts === 1 ? '' : 's'} in this clan have war alerts on
                             {notify.audience.seats !== notify.audience.accounts && (
@@ -1049,7 +1049,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                 {weekStrip}
                 <span
                     className={cn(
-                        'rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wider',
+                        'rounded-lg px-2 py-1 text-3xs font-black uppercase tracking-wider',
                         published ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300',
                     )}
                     title={
@@ -1060,7 +1060,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                 >
                     {published ? 'Published' : 'Draft'}
                 </span>
-                <span className="text-[11px] text-text-secondary">
+                <span className="text-2xs text-text-secondary">
                     Battle day: Day {plan.battle_day + 1}
                     {war.battleDay !== null && war.battleDay !== plan.battle_day && (
                         <span className="text-amber-300"> (the config says Day {war.battleDay + 1})</span>
@@ -1118,7 +1118,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                                 <span className="text-text-secondary"> / {totals.capacity}</span>
                             </span>
                         </div>
-                        <p className="mt-0.5 text-[11px] text-text-secondary">
+                        <p className="mt-0.5 text-2xs text-text-secondary">
                             {capacityLabel}
                             {configTickets !== null && (
                                 <>
@@ -1209,7 +1209,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                     <div className="mb-3 flex flex-wrap items-center gap-2">
                         <Shield className="h-4 w-4 text-sky-400" />
                         <h3 className="text-sm font-black uppercase tracking-wider text-white">Your squad</h3>
-                        <span className="rounded bg-white/5 px-1.5 py-px font-mono text-[11px] text-text-secondary">
+                        <span className="rounded bg-white/5 px-1.5 py-px font-mono text-2xs text-text-secondary">
                             {board.allies.length}/{WAR_ROSTER_MAX_PER_SIDE}
                         </span>
                         {canEdit && (
@@ -1232,7 +1232,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                     </div>
 
                     {rosterFull && (
-                        <p className="mb-2 text-[11px] text-amber-300">
+                        <p className="mb-2 text-2xs text-amber-300">
                             This side is full at {WAR_ROSTER_MAX_PER_SIDE}, which is the most a guild can hold.
                         </p>
                     )}
@@ -1292,7 +1292,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                             {plan.opponent_name || 'The enemy'}
                         </h3>
                         {plan.opponent_tag && <span className="font-mono text-xs text-accent-primary">[{plan.opponent_tag}]</span>}
-                        <span className="rounded bg-white/5 px-1.5 py-px font-mono text-[11px] text-text-secondary">
+                        <span className="rounded bg-white/5 px-1.5 py-px font-mono text-2xs text-text-secondary">
                             {board.enemies.length}/{WAR_ROSTER_MAX_PER_SIDE}
                         </span>
                     </div>
@@ -1354,14 +1354,14 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                                                     }
                                                 />
                                                 {enemy.power_estimate !== null && enemy.power_estimate > 0 && (
-                                                    <div className="text-[10px] text-text-secondary">
+                                                    <div className="text-3xs text-text-secondary">
                                                         power {enemy.power_estimate.toLocaleString('en-US')}
                                                     </div>
                                                 )}
                                             </div>
                                             <span
                                                 className={cn(
-                                                    'shrink-0 whitespace-nowrap font-mono text-[11px] tabular-nums',
+                                                    'shrink-0 whitespace-nowrap font-mono text-2xs tabular-nums',
                                                     hits === 0 ? 'text-text-secondary' : 'text-red-300',
                                                 )}
                                                 title={hits === 0 ? 'Nobody has been sent at this one.' : `${hits} of your attacks land here.`}
@@ -1394,7 +1394,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                 <div className="flex flex-wrap items-center gap-2">
                     <ClipboardCopy className="h-4 w-4 text-accent-primary" />
                     <h3 className="text-sm font-black uppercase tracking-wider text-white">Send it to Discord</h3>
-                    <label className="ml-auto flex items-center gap-1.5 text-[11px] text-text-secondary">
+                    <label className="ml-auto flex items-center gap-1.5 text-2xs text-text-secondary">
                         <input
                             type="checkbox"
                             checked={exportFenced}
@@ -1411,7 +1411,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                         Build the message
                     </Button>
                 </div>
-                <p className="mt-1.5 text-[11px] text-text-secondary">
+                <p className="mt-1.5 text-2xs text-text-secondary">
                     One block per player, so everybody can find their own name. Players with no target are listed by name
                     at the end. Long plans are split into messages Discord will accept.
                 </p>
@@ -1421,7 +1421,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                         {exportParts.map((part, i) => (
                             <div key={i} className="rounded-xl border border-border bg-bg-input/60 p-2">
                                 <div className="mb-1.5 flex items-center gap-2">
-                                    <span className="font-mono text-[10px] uppercase tracking-wider text-text-secondary">
+                                    <span className="font-mono text-3xs uppercase tracking-wider text-text-secondary">
                                         {exportParts.length > 1 ? `Message ${i + 1} of ${exportParts.length}` : 'One message'} ·{' '}
                                         {part.length} characters
                                     </span>
@@ -1442,7 +1442,7 @@ export const AttacksPlanner: React.FC<AttacksPlannerProps> = ({ className }) => 
                                     value={part}
                                     rows={Math.min(16, part.split('\n').length + 1)}
                                     onFocus={e => e.currentTarget.select()}
-                                    className="w-full resize-y rounded-lg border border-border bg-bg-primary p-2 font-mono text-[11px] leading-relaxed text-text-primary outline-none focus:border-accent-primary/60"
+                                    className="w-full resize-y rounded-lg border border-border bg-bg-primary p-2 font-mono text-2xs leading-relaxed text-text-primary outline-none focus:border-accent-primary/60"
                                 />
                             </div>
                         ))}
@@ -1708,7 +1708,7 @@ const PublishDialog: React.FC<{
                 <span className="min-w-0 flex-1 text-sm text-text-primary">
                     Also send a push notification
                     {nothingChanged && (
-                        <span className="block text-[11px] text-amber-300">
+                        <span className="block text-2xs text-amber-300">
                             Nothing has changed since the last alert went out, so this would be a second buzz about the
                             same plan.
                         </span>
@@ -1760,7 +1760,7 @@ const PlanSettings: React.FC<{
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <label className="block">
-                    <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+                    <span className="mb-1 block text-3xs font-bold uppercase tracking-wider text-text-secondary">
                         Other guild
                     </span>
                     <input
@@ -1772,7 +1772,7 @@ const PlanSettings: React.FC<{
                     />
                 </label>
                 <label className="block">
-                    <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-text-secondary">Tag</span>
+                    <span className="mb-1 block text-3xs font-bold uppercase tracking-wider text-text-secondary">Tag</span>
                     <input
                         value={tag}
                         maxLength={WAR_OPPONENT_TAG_MAX_LENGTH}
@@ -1782,7 +1782,7 @@ const PlanSettings: React.FC<{
                     />
                 </label>
                 <label className="block">
-                    <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+                    <span className="mb-1 block text-3xs font-bold uppercase tracking-wider text-text-secondary">
                         Attacks per player
                     </span>
                     <input
@@ -1794,14 +1794,14 @@ const PlanSettings: React.FC<{
                         className="h-9 w-full rounded-lg border border-border bg-bg-input px-2.5 font-mono text-sm text-text-primary focus:border-accent-primary focus:outline-none"
                     />
                     {configTickets !== null && (
-                        <span className="mt-1 block text-[10px] text-text-secondary">
+                        <span className="mt-1 block text-3xs text-text-secondary">
                             The game config says {configTickets}. It is editable because free tokens can add more.
                         </span>
                     )}
                 </label>
             </div>
             <label className="mt-3 block">
-                <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+                <span className="mb-1 block text-3xs font-bold uppercase tracking-wider text-text-secondary">
                     Note for the clan (appears nowhere else yet)
                 </span>
                 <textarea
@@ -1829,7 +1829,7 @@ const PlanSettings: React.FC<{
                 >
                     Save settings
                 </Button>
-                <span className="text-[11px] text-text-secondary">
+                <span className="text-2xs text-text-secondary">
                     Emptying a box leaves the old value: the server treats a blank as &ldquo;unchanged&rdquo;, not as
                     &ldquo;delete&rdquo;.
                 </span>
@@ -1941,7 +1941,7 @@ const EnemyBatchForm: React.FC<{
         <div className="mb-3 rounded-xl border border-dashed border-border p-2.5">
             <div className="flex flex-wrap items-end gap-2">
                 <label className="block">
-                    <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+                    <span className="mb-1 block text-3xs font-bold uppercase tracking-wider text-text-secondary">
                         How many
                     </span>
                     <input
@@ -1954,7 +1954,7 @@ const EnemyBatchForm: React.FC<{
                     />
                 </label>
                 <label className="block">
-                    <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+                    <span className="mb-1 block text-3xs font-bold uppercase tracking-wider text-text-secondary">
                         Name them
                     </span>
                     <input
@@ -1975,7 +1975,7 @@ const EnemyBatchForm: React.FC<{
                     onAdd={onAddOne}
                 />
             </div>
-            <p className="mt-1.5 text-[10px] leading-relaxed text-text-secondary">
+            <p className="mt-1.5 text-3xs leading-relaxed text-text-secondary">
                 They arrive as &ldquo;{prefix.trim() || 'Enemy'} 1&rdquo;, &ldquo;{prefix.trim() || 'Enemy'} 2&rdquo; and so
                 on. <strong>Click a name to rename it</strong> as you read the other guild&apos;s roster, so the exported
                 sheet says who to hit. Room for {room} more. Each one is a separate request, so a big batch takes a

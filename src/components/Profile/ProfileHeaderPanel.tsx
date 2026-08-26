@@ -239,7 +239,7 @@ export function ProfileHeaderPanel() {
                         {sets.filter(s => s.isComplete).map(set => (
                             <div 
                                 key={set.setId}
-                                className="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.05)] animate-in fade-in zoom-in duration-500"
+                                className="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-full px-2.5 py-0.5 text-3xs font-black uppercase tracking-wider text-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.05)] animate-in fade-in zoom-in duration-500"
                                 title={`${set.setId.replace(/Set$/, '')} Set Complete!`}
                             >
                                 <Trophy className="w-3 h-3" />

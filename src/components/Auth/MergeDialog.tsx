@@ -150,13 +150,13 @@ export function MergeDialog({ rows, busy, firstLogin, onChoose, onApply, onClose
                             <div key={row.id} className="rounded-xl border border-border bg-bg-secondary/60 p-4">
                                 <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                                     <span className="font-bold text-text-primary whitespace-nowrap overflow-hidden text-clip max-w-full">{name}</span>
-                                    <span className="text-[10px] uppercase tracking-widest font-bold text-accent-primary/90 bg-accent-primary/15 rounded px-1.5 py-0.5">
+                                    <span className="text-3xs uppercase tracking-widest font-bold text-accent-primary/90 bg-accent-primary/15 rounded px-1.5 py-0.5">
                                         {kind.title}
                                     </span>
                                 </div>
                                 <p className="text-xs text-text-secondary mt-1.5">{kind.blurb}</p>
 
-                                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-[11px] text-text-muted">
+                                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-2xs text-text-muted">
                                     <div>
                                         This browser:{' '}
                                         <span className="text-text-secondary">

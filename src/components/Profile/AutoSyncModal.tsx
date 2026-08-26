@@ -98,7 +98,7 @@ function ConfidenceChip({ c }: { c: number }) {
     const [label, cls] = c >= 0.75 ? ['high', 'text-green-400 bg-green-500/10 border-green-500/30']
         : c >= 0.6 ? ['medium', 'text-amber-400 bg-amber-500/10 border-amber-500/30']
             : ['low', 'text-red-400 bg-red-500/10 border-red-500/30'];
-    return <span className={cn('px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border', cls)}>{label}</span>;
+    return <span className={cn('px-1.5 py-0.5 rounded text-4xs font-bold uppercase border', cls)}>{label}</span>;
 }
 
 export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset?: ForcedTemplate }) {
@@ -481,7 +481,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
             // CLIPPED rather than scrollable. Shrinking lets it wrap instead.
             <span className="flex items-center gap-1.5 flex-wrap min-w-0"
                 onClick={e => e.stopPropagation()} onPointerDown={e => e.stopPropagation()}>
-                {!compact && <span className="text-[9px] uppercase tracking-widest text-text-muted">Ascension</span>}
+                {!compact && <span className="text-4xs uppercase tracking-widest text-text-muted">Ascension</span>}
                 <span role="radiogroup" aria-label={`Ascension stars for ${row.label}`}
                     className={cn('flex items-center rounded-lg border overflow-hidden', edited ? 'border-amber-400' : 'border-border')}>
                     {[0, 1, 2, 3].map(n => (
@@ -492,7 +492,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                             onClick={e => { e.preventDefault(); e.stopPropagation(); changeAscension(row.id, n); }}
                             // AMBER IS RESERVED FOR "the user changed this": a scanned pick is a
                             // neutral fill, so scanned and overridden can never be confused.
-                            className={cn('px-1.5 py-1 text-[11px] leading-none font-bold border-r border-border last:border-r-0 transition-colors',
+                            className={cn('px-1.5 py-1 text-2xs leading-none font-bold border-r border-border last:border-r-0 transition-colors',
                                 value === n
                                     ? (edited ? 'bg-amber-400/30 text-amber-100' : 'bg-white/15 text-text-primary')
                                     : 'bg-bg-input text-text-muted hover:text-text-primary')}>
@@ -505,16 +505,16 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                     <button type="button" data-testid={`asc-revert-${row.id}`}
                         onClick={e => { e.preventDefault(); e.stopPropagation(); revertAscension(row.id); }}
                         title={`Edited by you. The scan ${scanWasNull ? 'could not read the stars' : `read ${starText(scanned)}`}. Click to put the scanned value back.`}
-                        className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20">
+                        className="px-1.5 py-0.5 rounded text-4xs font-bold uppercase border border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20">
                         edited · scan {scannedLabel} ↺
                     </button>
                 ) : unread ? (
-                    <span className="text-[9px] uppercase tracking-widest text-text-muted"
+                    <span className="text-4xs uppercase tracking-widest text-text-muted"
                         title="The scan did not read stars for this skill. Leave it and the profile keeps its current ascension, or pick a value to set one.">
                         not read
                     </span>
                 ) : (
-                    <span className="text-[9px] uppercase tracking-widest text-text-muted">scanned</span>
+                    <span className="text-4xs uppercase tracking-widest text-text-muted">scanned</span>
                 )}
             </span>
         );
@@ -529,7 +529,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
             {subs.map((s, i) => (
                 <div key={i} className="space-y-0.5">
                     <EvidenceCrop src={s.cropUrl} h={19} />
-                    <div className="flex items-center gap-1 text-[10px] text-text-secondary">
+                    <div className="flex items-center gap-1 text-3xs text-text-secondary">
                         <input type="number" step="0.1" value={s.value}
                             onChange={e => changeSubstat(row.id, i, { value: parseFloat(e.target.value) || 0 })}
                             onFocus={e => e.target.select()}
@@ -561,7 +561,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                         <div className="w-9 h-9 rounded-xl bg-accent-primary/20 flex items-center justify-center shrink-0"><ScanSearch className="w-5 h-5 text-accent-primary" /></div>
                         <div className="min-w-0">
                             <h3 className="font-black text-white tracking-tight">AutoSync</h3>
-                            <p className="text-[11px] text-text-muted whitespace-nowrap overflow-hidden text-clip">{preset ? PRESET_SUBTITLE[preset] : 'Read your gear, pets, mount & resources from screenshots'}</p>
+                            <p className="text-2xs text-text-muted whitespace-nowrap overflow-hidden text-clip">{preset ? PRESET_SUBTITLE[preset] : 'Read your gear, pets, mount & resources from screenshots'}</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-text-muted hover:text-white"><X className="w-5 h-5" /></button>
@@ -575,8 +575,8 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                 className="border-2 border-dashed border-accent-primary/40 rounded-2xl p-8 text-center cursor-pointer hover:bg-accent-primary/5 transition">
                                 <UploadCloud className="w-10 h-10 mx-auto text-accent-primary mb-3" />
                                 <p className="font-bold text-white">Drop screenshots here or tap to choose</p>
-                                <p className="text-[11px] text-text-muted mt-1">Item, pet, mount, skill & skin screens. Any language. Everything runs on your device.</p>
-                                <p className="text-[11px] text-amber-400/80 mt-1 font-bold">Use whole-screen captures. Don't crop them. The reader locates panels from the screen edges.</p>
+                                <p className="text-2xs text-text-muted mt-1">Item, pet, mount, skill & skin screens. Any language. Everything runs on your device.</p>
+                                <p className="text-2xs text-amber-400/80 mt-1 font-bold">Use whole-screen captures. Don't crop them. The reader locates panels from the screen edges.</p>
                                 <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={e => addFiles(e.target.files)} />
                             </div>
                             {!!files.length && (
@@ -599,7 +599,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
 
                     {stage === 'review' && (
                         <div className="space-y-4">
-                            <p className="text-[11px] text-text-muted">
+                            <p className="text-2xs text-text-muted">
                                 Confirm what each screenshot shows before reading.{' '}
                                 {preset
                                     ? <>This section presets everything to <span className="text-white font-bold">{PRESET_LABEL[preset]}</span>. Change any that differ, or skip them.</>
@@ -621,7 +621,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                                     {r.choice === null && <option value="" disabled>Detecting</option>}
                                                     {TEMPLATE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                                                 </select>
-                                                <div className="flex items-center gap-1.5 text-[10px] text-text-muted min-h-[16px]">
+                                                <div className="flex items-center gap-1.5 text-3xs text-text-muted min-h-[16px]">
                                                     {r.detected === null
                                                         ? <span className="flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> detecting</span>
                                                         : <>
@@ -643,12 +643,12 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                             <Loader2 className="w-10 h-10 mx-auto text-accent-primary animate-spin" />
                             <div>
                                 <p className="font-bold text-white">Reading screenshot {Math.min((progress?.fileIndex ?? 0) + 1, progress?.total || 1)} / {progress?.total || 1}</p>
-                                <p className="text-[11px] text-text-muted capitalize">{progress?.status || 'recognising'}</p>
+                                <p className="text-2xs text-text-muted capitalize">{progress?.status || 'recognising'}</p>
                             </div>
                             <div className="h-2 max-w-xs mx-auto rounded-full bg-bg-input overflow-hidden">
                                 <div className="h-full bg-accent-primary transition-all" style={{ width: `${Math.round(((progress?.fileIndex ?? 0) + (progress?.ocrProgress ?? 0)) / Math.max(1, progress?.total || 1) * 100)}%` }} />
                             </div>
-                            <p className="text-[10px] text-text-muted">First run downloads the OCR engine (~few MB), then it's cached.</p>
+                            <p className="text-3xs text-text-muted">First run downloads the OCR engine (~few MB), then it's cached.</p>
                         </div>
                     )}
 
@@ -661,7 +661,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                 </div>
                             ) : (
                                 <>
-                                    <div className="flex items-center justify-between text-[11px]">
+                                    <div className="flex items-center justify-between text-2xs">
                                         <span className="text-text-muted">{acceptedCount}/{rows.length} selected · check the picture matches before applying</span>
                                         <div className="flex gap-2">
                                             <button onClick={() => setAll(true)} className="px-2 py-1 rounded bg-bg-input text-text-secondary hover:text-text-primary hover:bg-white/10">All</button>
@@ -671,8 +671,8 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                     {Object.entries(grouped).map(([cat, list]) => (
                                         <section key={cat} className="rounded-xl border border-border/70 bg-bg-secondary/20 overflow-hidden">
                                             <div className="flex items-center gap-2 px-3 py-2 bg-bg-secondary/60 border-b border-border/60">
-                                                <h4 className="text-[10px] font-black uppercase tracking-widest text-accent-primary/90">{CATEGORY_LABEL[cat as ChangeRow['category']]}</h4>
-                                                <span className="px-1.5 py-0.5 rounded-full bg-bg-input text-[9px] font-bold text-text-muted">{list.length}</span>
+                                                <h4 className="text-3xs font-black uppercase tracking-widest text-accent-primary/90">{CATEGORY_LABEL[cat as ChangeRow['category']]}</h4>
+                                                <span className="px-1.5 py-0.5 rounded-full bg-bg-input text-4xs font-bold text-text-muted">{list.length}</span>
                                             </div>
                                             <div className="p-2 space-y-2">
                                             {list.map(r => (r.category === 'currency' || r.category === 'skill' || r.category === 'clanTree') ? (
@@ -719,20 +719,20 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                                             (black) through the portal and vanishes on the dark card. */}
                                                         <span title={r.label} className="font-bold text-sm text-white min-w-[6rem] break-words">{r.label}</span>
                                                         <ConfidenceChip c={r.confidence} />
-                                                        <span className="text-[9px] uppercase font-bold text-text-muted">{r.action}</span>
+                                                        <span className="text-4xs uppercase font-bold text-text-muted">{r.action}</span>
                                                         {presetRowIds.has(r.id) && (
-                                                            <span title="Will also be saved to your presets" className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border text-sky-300 bg-sky-500/10 border-sky-500/30 flex items-center gap-1">
+                                                            <span title="Will also be saved to your presets" className="px-1.5 py-0.5 rounded text-4xs font-bold uppercase border text-sky-300 bg-sky-500/10 border-sky-500/30 flex items-center gap-1">
                                                                 <Bookmark className="w-3 h-3" /> preset
                                                             </span>
                                                         )}
                                                         {r.category === 'item' && (
                                                             <div className="ml-auto flex items-center gap-1">
                                                                 <select value={r.detected?.age ?? 0} onChange={e => changeAge(r.id, parseInt(e.target.value))} title="Age"
-                                                                    className={cn('px-1 py-1 text-[11px]', SELECT_CLS)}>
+                                                                    className={cn('px-1 py-1 text-2xs', SELECT_CLS)}>
                                                                     {AGES.map((a, i) => <option key={i} value={i}>{a}</option>)}
                                                                 </select>
                                                                 <select value={r.slot} onChange={e => changeSlot(r.id, e.target.value)} title="Slot"
-                                                                    className={cn('px-1 py-1 text-[11px]', SELECT_CLS)}>
+                                                                    className={cn('px-1 py-1 text-2xs', SELECT_CLS)}>
                                                                     {ITEM_SLOTS.map(s => <option key={s} value={s}>{s}</option>)}
                                                                 </select>
                                                             </div>
@@ -740,7 +740,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                                         {r.category === 'skinEquip' && (
                                                             <div className="ml-auto">
                                                                 <select value={r.slot} onChange={e => changeSkinSlot(r.id, e.target.value)} title="Slot"
-                                                                    className={cn('px-1 py-1 text-[11px]', SELECT_CLS)}>
+                                                                    className={cn('px-1 py-1 text-2xs', SELECT_CLS)}>
                                                                     {SKIN_SLOTS.map(s => <option key={s} value={s}>{s}</option>)}
                                                                 </select>
                                                             </div>
@@ -748,7 +748,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                                         {r.patch.t === 'pet' && (
                                                             <div className="ml-auto flex items-center gap-1.5">
                                                                 {r.accepted && petSlotConflicts.has(r.patch.slotIndex) && (
-                                                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border text-amber-400 bg-amber-500/10 border-amber-500/30 flex items-center gap-1">
+                                                                    <span className="px-1.5 py-0.5 rounded text-4xs font-bold uppercase border text-amber-400 bg-amber-500/10 border-amber-500/30 flex items-center gap-1">
                                                                         <AlertTriangle className="w-3 h-3" /> slot clash
                                                                     </span>
                                                                 )}
@@ -758,7 +758,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                                                 <select value={r.patch.slotIndex} onChange={e => changePetSlot(r.id, parseInt(e.target.value))}
                                                                     title="Which active pet slot this pet goes into" aria-label={`Active pet slot for ${r.label}`}
                                                                     data-testid={`pet-slot-${r.id}`}
-                                                                    className={cn('px-1 py-1 text-[11px] max-w-[11rem] whitespace-nowrap overflow-hidden text-clip', SELECT_CLS, isEdited(r.id, 'petSlot') && EDITED_RING)}>
+                                                                    className={cn('px-1 py-1 text-2xs max-w-[11rem] whitespace-nowrap overflow-hidden text-clip', SELECT_CLS, isEdited(r.id, 'petSlot') && EDITED_RING)}>
                                                                     {PET_SLOTS.map(i => <option key={i} value={i}>{petSlotLabel(i)}</option>)}
                                                                 </select>
                                                             </div>
@@ -771,7 +771,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                                         cell is min-w-0 so long content wraps instead of overflowing its track. */}
                                                     <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-center gap-2">
                                                         <div className="text-center min-w-0">
-                                                            <div className="text-[9px] uppercase tracking-widest text-text-muted mb-1">Found in screenshot</div>
+                                                            <div className="text-4xs uppercase tracking-widest text-text-muted mb-1">Found in screenshot</div>
                                                             {r.cropUrl ? <img src={r.cropUrl} alt="" className="max-h-28 max-w-full mx-auto rounded-lg border border-border object-contain" /> : <div className="text-text-muted text-xs">—</div>}
                                                         </div>
                                                         <ArrowRight className="w-5 h-5 text-accent-primary shrink-0 mx-auto rotate-90 sm:rotate-0" />
@@ -779,13 +779,13 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                                             <ProposedIcon row={r} />
                                                             {r.category === 'skinEquip' ? (
                                                                 <div className="min-w-0 break-words">
-                                                                    <div className="text-[9px] uppercase tracking-widest text-text-muted">Will set on {r.slot}</div>
+                                                                    <div className="text-4xs uppercase tracking-widest text-text-muted">Will set on {r.slot}</div>
                                                                     <div className="text-xs font-bold text-white">{r.after}</div>
-                                                                    {r.before && <div className="text-[10px] text-text-muted">was: {r.before}</div>}
+                                                                    {r.before && <div className="text-3xs text-text-muted">was: {r.before}</div>}
                                                                 </div>
                                                             ) : (
                                                                 <div className="min-w-0">
-                                                                    <div className="text-[9px] uppercase tracking-widest text-text-muted">Will set</div>
+                                                                    <div className="text-4xs uppercase tracking-widest text-text-muted">Will set</div>
                                                                     <div className="flex items-center gap-1 text-sm font-bold text-white flex-wrap">
                                                                         Lv.
                                                                         <input type="number" value={r.detected?.level ?? ''} min={1}
@@ -810,7 +810,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                                                     </div>
                                                                     {r.detected?.mainCropUrl && (
                                                                         <div className="flex items-center gap-1 mt-1">
-                                                                            <span className="text-[9px] uppercase tracking-widest text-text-muted shrink-0">main</span>
+                                                                            <span className="text-4xs uppercase tracking-widest text-text-muted shrink-0">main</span>
                                                                             <EvidenceCrop src={r.detected.mainCropUrl} h={19} title="Main stat read from this part of the screenshot" />
                                                                         </div>
                                                                     )}
@@ -820,9 +820,9 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                                                         </div>
                                                     </div>
                                                     {r.category === 'skinEquip' && r.warnings.length > 0 && (
-                                                        <p className="text-[10px] text-amber-400/80 flex items-center gap-1 mt-1"><AlertTriangle className="w-3 h-3" /> {r.warnings[r.warnings.length - 1]}</p>
+                                                        <p className="text-3xs text-amber-400/80 flex items-center gap-1 mt-1"><AlertTriangle className="w-3 h-3" /> {r.warnings[r.warnings.length - 1]}</p>
                                                     )}
-                                                    {r.confidence < 0.6 && <p className="text-[10px] text-amber-400/80 flex items-center gap-1 mt-1"><AlertTriangle className="w-3 h-3" /> Low confidence. Check the picture{r.category === 'item' ? ' and slot' : ''} before accepting.</p>}
+                                                    {r.confidence < 0.6 && <p className="text-3xs text-amber-400/80 flex items-center gap-1 mt-1"><AlertTriangle className="w-3 h-3" /> Low confidence. Check the picture{r.category === 'item' ? ' and slot' : ''} before accepting.</p>}
                                                 </div>
                                             ))}
                                             </div>
@@ -837,9 +837,9 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                         <div className="py-12 text-center space-y-3">
                             <CheckCircle2 className="w-12 h-12 mx-auto text-green-400" />
                             <p className="font-bold text-white text-lg">Profile updated</p>
-                            <p className="text-[12px] text-text-muted">{acceptedCount} change{acceptedCount === 1 ? '' : 's'} applied.</p>
+                            <p className="text-xs text-text-muted">{acceptedCount} change{acceptedCount === 1 ? '' : 's'} applied.</p>
                             {presetsWritten > 0 && (
-                                <p className="text-[12px] text-sky-300 flex items-center justify-center gap-1.5">
+                                <p className="text-xs text-sky-300 flex items-center justify-center gap-1.5">
                                     <Bookmark className="w-3.5 h-3.5" /> {presetsWritten} preset{presetsWritten === 1 ? '' : 's'} saved. Find them in the “Saved” tab of the gear / pet / mount pickers.
                                 </p>
                             )}
@@ -860,7 +860,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                 {stage === 'diff' && rows.length > 0 && (
                     <div className="p-3 border-t border-border space-y-2">
                         {/* Auto-bookmark: opt-out, and always says exactly what it will add. */}
-                        <label className="flex items-start gap-2 text-[11px] text-text-secondary cursor-pointer">
+                        <label className="flex items-start gap-2 text-2xs text-text-secondary cursor-pointer">
                             <input type="checkbox" checked={savePresets} onChange={e => setSavePresets(e.target.checked)}
                                 className="w-3.5 h-3.5 mt-0.5 accent-accent-primary shrink-0" />
                             <span className="min-w-0">
@@ -873,7 +873,7 @@ export function AutoSyncModal({ onClose, preset }: { onClose: () => void; preset
                             </span>
                         </label>
                         {hasPetConflict && (
-                            <p className="text-[11px] text-amber-400 flex items-center gap-1.5">
+                            <p className="text-2xs text-amber-400 flex items-center gap-1.5">
                                 <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
                                 Two accepted pets target the same slot (only 3 active slots). Change a slot or untick one to apply.
                             </p>

@@ -281,7 +281,7 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                             <button
                                 onClick={resetTest}
                                 title="Reset Test Build to Equipped"
-                                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition-all border bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
+                                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-3xs sm:text-xs font-semibold transition-all border bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
                             >
                                 <RotateCcw className="w-3 h-3" />Reset
                             </button>
@@ -310,7 +310,7 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                                 hidden at every width. It is the panel-level forge ascension
                                 multiplier: the same fact the cards used to restate one per card. */}
                             {forgeAscensionMulti > 0 && (
-                                <div className="text-[9px] sm:text-[10px] font-mono font-bold text-amber-400 bg-amber-400/10 px-1 sm:px-1.5 py-0.5 rounded border border-amber-400/20">
+                                <div className="text-4xs sm:text-3xs font-mono font-bold text-amber-400 bg-amber-400/10 px-1 sm:px-1.5 py-0.5 rounded border border-amber-400/20">
                                     x{(forgeAscensionMulti).toFixed(1)}
                                 </div>
                             )}
@@ -347,7 +347,7 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                         </div>
                         <div className="text-xs sm:text-sm font-bold text-accent-primary select-none flex-1">
                             Use Skin Animation Speed
-                            <span className="ml-2 text-[10px] text-text-muted font-normal block sm:inline">(Legacy skins might have faster animations)</span>
+                            <span className="ml-2 text-3xs text-text-muted font-normal block sm:inline">(Legacy skins might have faster animations)</span>
                         </div>
                     </label>
                 )}

@@ -195,7 +195,7 @@ export default function Shop() {
                         <h1 className="text-3xl font-black bg-gradient-to-r from-accent-primary via-accent-secondary to-accent-primary bg-[length:200%_auto] animate-gradient-x bg-clip-text text-transparent uppercase tracking-tighter">
                             Game Shop
                         </h1>
-                        <p className="text-[11px] text-text-muted flex items-center gap-1.5 font-bold uppercase tracking-wider opacity-80">
+                        <p className="text-2xs text-text-muted flex items-center gap-1.5 font-bold uppercase tracking-wider opacity-80">
                             <Info size={12} />
                             Rewards, deals and visibility
                         </p>
@@ -231,11 +231,11 @@ export default function Shop() {
                     </div>
                     <div className="flex flex-wrap gap-3 relative z-10">
                         <div className="bg-bg-primary/50 backdrop-blur-md px-5 py-3 rounded-xl border border-white/5 shadow-xl">
-                            <div className="text-[10px] uppercase font-black text-accent-primary tracking-widest mb-1">Age Required</div>
+                            <div className="text-3xs uppercase font-black text-accent-primary tracking-widest mb-1">Age Required</div>
                             <div className="text-lg font-bold text-white">{AGES[shopUnlock.ageIdx!] || `Age ${shopUnlock.ageIdx! + 1}`}</div>
                         </div>
                         <div className="bg-bg-primary/50 backdrop-blur-md px-5 py-3 rounded-xl border border-white/5 shadow-xl">
-                            <div className="text-[10px] uppercase font-black text-accent-secondary tracking-widest mb-1">Stage Required</div>
+                            <div className="text-3xs uppercase font-black text-accent-secondary tracking-widest mb-1">Stage Required</div>
                             <div className="text-lg font-bold text-white">Stage {shopUnlock.ageIdx! + 1}-{(shopUnlock.battleIdx ?? 0) + 1}</div>
                         </div>
                     </div>
@@ -312,11 +312,11 @@ export default function Shop() {
                                                     <CardContent className="p-3.5 space-y-3">
                                                         <div className="flex justify-between items-start">
                                                             <div className="flex flex-col gap-1 items-start">
-                                                                <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-accent-primary/10 text-accent-primary">
+                                                                <span className="text-5xs font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-accent-primary/10 text-accent-primary">
                                                                     Size {size.SizeId}
                                                                 </span>
                                                                 <span className={cn(
-                                                                    "text-[9px] font-black px-1.5 py-0.5 rounded border leading-none",
+                                                                    "text-4xs font-black px-1.5 py-0.5 rounded border leading-none",
                                                                     price === 0
                                                                         ? "text-green-500 bg-green-500/10 border-green-500/20"
                                                                         : "text-accent-secondary bg-accent-secondary/10 border-accent-secondary/20 uppercase"
@@ -340,9 +340,9 @@ export default function Shop() {
                                                                         <div className="w-5 h-5 flex-shrink-0">
                                                                             <GameIcon name={getShopIcon(reward, undefined, autoMapping, selectedVersion)} className="w-full h-full opacity-80" />
                                                                         </div>
-                                                                        <span className="text-text-secondary font-semibold whitespace-nowrap overflow-hidden text-clip text-[10px] uppercase tracking-tighter">{reward.Type}</span>
+                                                                        <span className="text-text-secondary font-semibold whitespace-nowrap overflow-hidden text-clip text-3xs uppercase tracking-tighter">{reward.Type}</span>
                                                                     </div>
-                                                                    <span className="font-mono font-black text-white text-[10px]">
+                                                                    <span className="font-mono font-black text-white text-3xs">
                                                                         +{reward.Amount.toLocaleString()}
                                                                     </span>
                                                                 </div>
@@ -554,7 +554,7 @@ function ProductCard({ product, variant, unlockData, autoMapping, isWarActive, v
                     {(unlockInfo || (starterReward && starterReward.ItemId)) && (
                         <div className="flex items-center justify-center gap-1.5 mt-2">
                             <Lock className="w-3 h-3 text-text-muted" />
-                            <span className="text-[10px] font-bold text-text-muted uppercase">
+                            <span className="text-3xs font-bold text-text-muted uppercase">
                                 {starterReward && starterReward.ItemId
                                     ? `Required Age ${starterReward.ItemId.Age}`
                                     : unlockInfo && unlockInfo.ageIdx !== null
@@ -568,11 +568,11 @@ function ProductCard({ product, variant, unlockData, autoMapping, isWarActive, v
                     {/* Starter Offer Specifics */}
                     {starterReward && (
                         <div className="space-y-2 mt-3 p-3 rounded-xl bg-white/5 border border-white/5">
-                            <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                            <div className="flex justify-between items-center text-3xs font-bold uppercase tracking-widest text-text-muted">
                                 <span>Item Level</span>
                                 <span className="text-white">Lvl {starterReward.ItemLevel + 1}</span>
                             </div>
-                            <div className="flex justify-between items-center text-[11px] font-black uppercase text-accent-primary">
+                            <div className="flex justify-between items-center text-2xs font-black uppercase text-accent-primary">
                                 <span>{starterReward.SecondaryStatType}</span>
                                 <span>+{Math.round(starterReward.SecondaryStatValue * 100)}%</span>
                             </div>
@@ -583,7 +583,7 @@ function ProductCard({ product, variant, unlockData, autoMapping, isWarActive, v
                     {product.ProductId?.includes('StarterOffer') && (
                         <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-accent-primary/10 border border-accent-primary/20 mt-2">
                             <Clock className="w-3 h-3 text-accent-primary" />
-                            <span className="text-[9px] font-black text-accent-primary uppercase tracking-wider">48h Duration</span>
+                            <span className="text-4xs font-black text-accent-primary uppercase tracking-wider">48h Duration</span>
                         </div>
                     )}
 
@@ -591,11 +591,11 @@ function ProductCard({ product, variant, unlockData, autoMapping, isWarActive, v
                     {isInactiveToken && (
                         <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 mt-2">
                             <Lock className="w-3 h-3 text-red-500" />
-                            <span className="text-[9px] font-black text-red-500 uppercase tracking-wider">War Season Ended</span>
+                            <span className="text-4xs font-black text-red-500 uppercase tracking-wider">War Season Ended</span>
                         </div>
                     )}
 
-                    <p className="text-[9px] text-text-muted uppercase font-bold tracking-widest mt-2">{product.Type}</p>
+                    <p className="text-4xs text-text-muted uppercase font-bold tracking-widest mt-2">{product.Type}</p>
                 </div>
 
                 {(product.Price !== null && product.Price !== undefined) && (

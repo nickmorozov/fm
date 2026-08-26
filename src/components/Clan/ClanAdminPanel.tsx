@@ -342,7 +342,7 @@ function RoleChip({ role }: { role: ClanRole }) {
     return (
         <span
             className={cn(
-                'inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-black uppercase tracking-widest',
+                'inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-3xs font-black uppercase tracking-widest',
                 role === 'owner'
                     ? 'bg-amber-500/20 text-amber-300'
                     : role === 'admin'
@@ -1251,12 +1251,12 @@ function MemberRow({ member, viewerRole, isSelf, canManageRoles, canKickThem, bu
                     <span className="whitespace-nowrap overflow-hidden text-clip text-sm font-bold text-text-primary">{member.name}</span>
                     <RoleChip role={member.role} />
                     {isSelf && (
-                        <span className="rounded bg-accent-primary/15 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-accent-primary">
+                        <span className="rounded bg-accent-primary/15 px-1.5 py-0.5 text-3xs font-black uppercase tracking-widest text-accent-primary">
                             You
                         </span>
                     )}
                 </div>
-                <div className="mt-0.5 text-[11px] text-text-muted">
+                <div className="mt-0.5 text-2xs text-text-muted">
                     Power {member.power === null ? '—' : formatCompactNumber(member.power)} · joined{' '}
                     {new Date(member.joined_at).toLocaleDateString()}
                     {shares ? ' · sharing war data' : ' · no war data shared'}
@@ -1310,7 +1310,7 @@ function MemberRow({ member, viewerRole, isSelf, canManageRoles, canKickThem, bu
                 )}
                 {/* The owner's own row, seen by the owner: say why there is nothing here. */}
                 {isSelf && isOwnerRow && viewerRole === 'owner' && (
-                    <span className="text-[11px] text-text-muted">Owners cannot be removed</span>
+                    <span className="text-2xs text-text-muted">Owners cannot be removed</span>
                 )}
             </div>
         </li>

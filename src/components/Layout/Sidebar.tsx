@@ -252,7 +252,7 @@ export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin, isInfo
                     {isDropdownOpen && (
                         <div className="absolute top-full left-4 right-4 mt-1 bg-bg-primary border border-border rounded-xl shadow-2xl overflow-hidden z-50">
                             <div className="p-2 border-b border-border">
-                                <p className="text-[10px] text-text-muted uppercase font-bold px-2 mb-1.5">Profiles</p>
+                                <p className="text-3xs text-text-muted uppercase font-bold px-2 mb-1.5">Profiles</p>
                                 <div className="max-h-40 overflow-y-auto space-y-0.5">
                                     {profiles.map((p) => (
                                         <div
@@ -614,7 +614,7 @@ export function Sidebar({ isOpen, onClose, isPinned = false, onTogglePin, isInfo
                         )}
                     </AnimatePresence>
 
-                    <div className="text-[10px] text-text-muted text-center uppercase tracking-widest font-medium opacity-60">
+                    <div className="text-3xs text-text-muted text-center uppercase tracking-widest font-medium opacity-60">
                         v2.2.0 • by <a href="https://1vcian.me" target="_blank" rel="noopener noreferrer" className="hover:text-accent-primary transition-colors font-bold">1vcian</a>
                     </div>
                 </div>

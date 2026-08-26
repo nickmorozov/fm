@@ -475,16 +475,16 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                 <Bookmark className={cn("hidden md:block w-4 h-4", activeTab === 'saved' && "fill-accent-primary")} />
                                 <div className="flex-1 text-left">
                                     <span className="block">Saved Builds</span>
-                                    <span className="text-[10px] text-text-muted normal-case font-normal md:hidden">
+                                    <span className="text-3xs text-text-muted normal-case font-normal md:hidden">
                                         {profile.pets.savedBuilds?.length || 0} items
                                     </span>
                                 </div>
-                                <span className="hidden md:block ml-auto bg-black/20 px-1.5 rounded-full text-[10px]">
+                                <span className="hidden md:block ml-auto bg-black/20 px-1.5 rounded-full text-3xs">
                                     {profile.pets.savedBuilds?.length || 0}
                                 </span>
                             </button>
 
-                            <div className="hidden md:block px-4 py-2 text-[10px] font-bold text-text-muted/60 uppercase tracking-widest mt-2">
+                            <div className="hidden md:block px-4 py-2 text-3xs font-bold text-text-muted/60 uppercase tracking-widest mt-2">
                                 Pet Library
                             </div>
                             {RARITIES.map((rarity) => (
@@ -518,7 +518,7 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                     </div>
                                     <div className="flex-1 text-left">
                                         <span className="block">{rarity}</span>
-                                        <span className="text-[10px] text-text-muted font-normal md:hidden">
+                                        <span className="text-3xs text-text-muted font-normal md:hidden">
                                             Library Selection
                                         </span>
                                     </div>
@@ -581,7 +581,7 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                                 )}
                                             </div>
                                             <div className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-sm py-0.5 px-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <span className="text-[9px] text-white whitespace-nowrap overflow-hidden text-clip block text-center font-bold">
+                                                <span className="text-4xs text-white whitespace-nowrap overflow-hidden text-clip block text-center font-bold">
                                                     {pet.name || `Pet #${pet.id}`}
                                                 </span>
                                             </div>
@@ -604,7 +604,7 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                                 <select
                                                     value={savedSortField}
                                                     onChange={(e) => setSavedSortField(e.target.value as SortField)}
-                                                    className="bg-transparent text-[10px] font-black uppercase tracking-wider px-2 py-1 outline-none cursor-pointer text-text-primary"
+                                                    className="bg-transparent text-3xs font-black uppercase tracking-wider px-2 py-1 outline-none cursor-pointer text-text-primary"
                                                 >
                                                     {(['level', 'name', 'rarity', 'perfection'] as SortField[]).map(field => (
                                                         <option key={field} value={field} className="bg-bg-secondary text-text-primary">
@@ -626,7 +626,7 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                             variant="ghost"
                                             size="sm"
                                             onClick={() => setShowFilters(!showFilters)}
-                                            className={cn("h-8 gap-2 text-[10px] font-black uppercase tracking-wider ml-auto md:ml-0", showFilters && "text-accent-primary bg-accent-primary/10")}
+                                            className={cn("h-8 gap-2 text-3xs font-black uppercase tracking-wider ml-auto md:ml-0", showFilters && "text-accent-primary bg-accent-primary/10")}
                                         >
                                             <Settings className="w-3.5 h-3.5" />
                                             Filters {(filterRarities.length > 0 || minPerfection > 0 || filterStats.length > 0) && `(${(filterRarities.length > 0 ? 1 : 0) + (minPerfection > 0 ? 1 : 0) + (filterStats.length > 0 ? 1 : 0)})`}
@@ -636,14 +636,14 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                     {showFilters && (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-border/30 animate-in fade-in slide-in-from-top-1">
                                             <div className="space-y-2">
-                                                <label className="text-[9px] font-black text-text-muted uppercase tracking-widest">Rarity</label>
+                                                <label className="text-4xs font-black text-text-muted uppercase tracking-widest">Rarity</label>
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {RARITIES.map(rarity => (
                                                         <button
                                                             key={rarity}
                                                             onClick={() => setFilterRarities(prev => prev.includes(rarity) ? prev.filter(r => r !== rarity) : [...prev, rarity])}
                                                             className={cn(
-                                                                "px-2 py-0.5 rounded text-[9px] font-bold border transition-all",
+                                                                "px-2 py-0.5 rounded text-4xs font-bold border transition-all",
                                                                 filterRarities.includes(rarity)
                                                                     ? `bg-rarity-${rarity.toLowerCase()}/20 border-rarity-${rarity.toLowerCase()} text-rarity-${rarity.toLowerCase()}`
                                                                     : "bg-bg-input border-border text-text-muted hover:border-border/80"
@@ -655,7 +655,7 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
-                                                <label className="text-[9px] font-black text-text-muted uppercase tracking-widest">Min Perfection: {minPerfection}%</label>
+                                                <label className="text-4xs font-black text-text-muted uppercase tracking-widest">Min Perfection: {minPerfection}%</label>
                                                 <input
                                                     type="range"
                                                     min="0"
@@ -666,14 +666,14 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                                 />
                                             </div>
                                             <div className="space-y-2 md:col-span-2">
-                                                <label className="text-[9px] font-black text-text-muted uppercase tracking-widest">Required Stats (Multiselect)</label>
+                                                <label className="text-4xs font-black text-text-muted uppercase tracking-widest">Required Stats (Multiselect)</label>
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {STAT_TYPES.map(statId => (
                                                         <button
                                                             key={statId}
                                                             onClick={() => setFilterStats(prev => prev.includes(statId) ? prev.filter(s => s !== statId) : [...prev, statId])}
                                                             className={cn(
-                                                                "px-2 py-1 rounded-md text-[9px] font-bold border transition-all",
+                                                                "px-2 py-1 rounded-md text-4xs font-bold border transition-all",
                                                                 filterStats.includes(statId)
                                                                     ? "bg-accent-primary/20 border-accent-primary text-accent-primary"
                                                                     : "bg-bg-input border-border text-text-muted hover:border-border/80"
@@ -687,7 +687,7 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                             {(filterRarities.length > 0 || minPerfection > 0 || filterStats.length > 0) && (
                                                 <button
                                                     onClick={() => { setFilterRarities([]); setMinPerfection(0); setFilterStats([]); }}
-                                                    className="md:col-span-2 text-[9px] font-black text-red-400 hover:text-red-300 uppercase tracking-widest text-center py-1"
+                                                    className="md:col-span-2 text-4xs font-black text-red-400 hover:text-red-300 uppercase tracking-widest text-center py-1"
                                                 >
                                                     Clear All Filters
                                                 </button>
@@ -782,7 +782,7 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                 {/* Custom Name for Presets */}
                                 {activeTab === 'saved' && selectedSavedIndex !== null && (
                                     <div className="space-y-2 mb-2">
-                                        <label className="text-[10px] font-bold text-text-muted block uppercase tracking-widest">Preset Name</label>
+                                        <label className="text-3xs font-bold text-text-muted block uppercase tracking-widest">Preset Name</label>
                                         <div className="relative group">
                                             <input
                                                 value={profile.pets.savedBuilds[selectedSavedIndex]?.customName || ''}
@@ -825,14 +825,14 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                     <h2 className="text-xl font-bold text-text-primary leading-tight">
                                         {(Object.values(petsConfig?.mapping || {}) as any[]).find((p: any) => p.id === selectedPetId && p.rarity === selectedRarity)?.name || `Pet #${selectedPetId}`}
                                     </h2>
-                                    <div className={cn("text-[10px] font-bold uppercase tracking-widest mt-1", `text-rarity-${selectedRarity.toLowerCase()}`)}>
+                                    <div className={cn("text-3xs font-bold uppercase tracking-widest mt-1", `text-rarity-${selectedRarity.toLowerCase()}`)}>
                                         {selectedRarity} Pet
                                     </div>
                                 </div>
 
                                 {/* Base Stats Section */}
                                 <div className="space-y-3">
-                                    <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Base Attributes</h4>
+                                    <h4 className="text-3xs font-bold text-text-muted uppercase tracking-widest">Base Attributes</h4>
                                     <div className="grid grid-cols-1 gap-2">
                                         {petStats && (
                                             <div className="bg-black/20 rounded-xl p-3 border border-white/5 space-y-2">
@@ -869,8 +869,8 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                 {/* Secondary Stats Section */}
                                 <div className="space-y-3 flex-1">
                                     <div className="flex items-center justify-between">
-                                        <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Secondary Stats</h4>
-                                        <div className="bg-bg-input px-2 py-0.5 rounded text-[10px] border border-white/10 font-bold text-accent-primary">
+                                        <h4 className="text-3xs font-bold text-text-muted uppercase tracking-widest">Secondary Stats</h4>
+                                        <div className="bg-bg-input px-2 py-0.5 rounded text-3xs border border-white/10 font-bold text-accent-primary">
                                             {manualStats.length} / {maxSecondaryStats}
                                         </div>
                                     </div>
@@ -918,7 +918,7 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                         <Save className="w-5 h-5" />
                                         Equip Pet
                                     </Button>
-                                    <p className="text-[9px] text-center text-text-muted mt-2 px-4 leading-tight">
+                                    <p className="text-4xs text-center text-text-muted mt-2 px-4 leading-tight">
                                         Stats are applied immediately after equipping.
                                     </p>
                                 </div>
@@ -929,7 +929,7 @@ export function PetSelectorModal({ isOpen, onClose, onSelect, currentPet, contex
                                     <Info className="w-12 h-12" />
                                 </div>
                                 <p className="font-bold uppercase tracking-widest text-xs">Configuration</p>
-                                <p className="text-[10px] mt-2 leading-relaxed">Select a pet from the library to configure its level and secondary statistics.</p>
+                                <p className="text-3xs mt-2 leading-relaxed">Select a pet from the library to configure its level and secondary statistics.</p>
                             </div>
                         )}
                     </div>

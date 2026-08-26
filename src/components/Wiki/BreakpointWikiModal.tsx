@@ -72,7 +72,7 @@ export const BreakpointWikiModal = memo(({
 
                 {/* Footer */}
                 <div className="p-4 bg-bg-secondary/30 border-t border-border/30 text-center">
-                    <div className="text-[10px] uppercase text-text-muted font-bold tracking-widest">
+                    <div className="text-3xs uppercase text-text-muted font-bold tracking-widest">
                         Values calculated at {((currentSpeedMultiplier - 1) * 100).toFixed(1)}% Current Attack Speed
                     </div>
                 </div>

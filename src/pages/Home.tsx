@@ -64,20 +64,20 @@ export default function Home() {
                                 <div className="space-y-2">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
-                                            <div className="text-[10px] uppercase font-bold text-yellow-500/70 mb-1">Upgrade Cost</div>
+                                            <div className="text-3xs uppercase font-bold text-yellow-500/70 mb-1">Upgrade Cost</div>
                                             <div className="flex flex-col">
                                                 <div className="font-mono font-bold text-yellow-400">
                                                     {formatNumber(upgradeStats.cost)}
                                                 </div>
                                                 {upgradeStats.reduction > 0 && (
-                                                    <div className="text-[10px] text-text-muted line-through">
+                                                    <div className="text-3xs text-text-muted line-through">
                                                         {formatNumber(upgradeStats.baseCost)}
                                                     </div>
                                                 )}
                                             </div>
                                         </div>
                                         <div className="p-3 bg-accent-primary/10 rounded-lg border border-accent-primary/20">
-                                            <div className="text-[10px] uppercase font-bold text-accent-primary/70 mb-1">Cost Per Hammer</div>
+                                            <div className="text-3xs uppercase font-bold text-accent-primary/70 mb-1">Cost Per Hammer</div>
                                             <div className="font-mono font-bold text-accent-primary">
                                                 {formatNumber(upgradeStats.goldPerHammer)}
                                             </div>
@@ -85,13 +85,13 @@ export default function Home() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="p-3 bg-bg-secondary rounded-lg border border-border">
-                                            <div className="text-[10px] uppercase font-bold text-text-muted mb-1">Total EXP Needed</div>
+                                            <div className="text-3xs uppercase font-bold text-text-muted mb-1">Total EXP Needed</div>
                                             <div className="font-mono font-bold text-text-primary">
                                                 {formatNumber(upgradeStats.requiredExp)}
                                             </div>
                                         </div>
                                         <div className="p-3 bg-bg-secondary rounded-lg border border-border">
-                                            <div className="text-[10px] uppercase font-bold text-text-muted mb-1">Steps (Hammers)</div>
+                                            <div className="text-3xs uppercase font-bold text-text-muted mb-1">Steps (Hammers)</div>
                                             <div className="font-mono font-bold text-text-primary">
                                                 {formatNumber(upgradeStats.hammersToUpgrade)}
                                             </div>
@@ -99,7 +99,7 @@ export default function Home() {
                                     </div>
                                     <div className="grid grid-cols-1 gap-4">
                                         <div className="p-3 bg-bg-secondary rounded-lg border border-border flex justify-between items-center">
-                                            <div className="text-[10px] uppercase font-bold text-text-muted">Estimated Time (Auto)</div>
+                                            <div className="text-3xs uppercase font-bold text-text-muted">Estimated Time (Auto)</div>
                                             <div className="font-mono font-bold text-text-primary">
                                                 {(() => {
                                                     const seconds = upgradeStats.totalTimeSeconds;

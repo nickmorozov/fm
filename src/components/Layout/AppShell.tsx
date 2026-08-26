@@ -219,14 +219,14 @@ export default function AppShell() {
             setTimeout(() => {
                 toast(
                     <div className="flex flex-col gap-0.5 select-none">
-                        <div className="font-black text-[10px] uppercase tracking-widest text-[#FFDD00] flex items-center gap-1.5">
+                        <div className="font-black text-3xs uppercase tracking-widest text-[#FFDD00] flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#FFDD00] animate-pulse" />
                             Support the Forge
                         </div>
                         <div className="font-bold text-sm leading-tight text-white">
                             {randomMsg}
                         </div>
-                        <div className="text-[9px] mt-1 font-black uppercase text-white/40 flex items-center gap-1">
+                        <div className="text-4xs mt-1 font-black uppercase text-white/40 flex items-center gap-1">
                             Click to support the developer <span className="animate-bounce text-xs">☕❤️</span>
                         </div>
                     </div>,
@@ -248,14 +248,14 @@ export default function AppShell() {
             const randomMsg = messages[Math.floor(Math.random() * messages.length)];
             toast(
                 <div className="flex flex-col gap-0.5 select-none">
-                    <div className="font-black text-[10px] uppercase tracking-widest text-[#FFDD00] flex items-center gap-1.5">
+                    <div className="font-black text-3xs uppercase tracking-widest text-[#FFDD00] flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#FFDD00] animate-pulse" />
                         Support the Forge
                     </div>
                     <div className="font-bold text-sm leading-tight text-white">
                         {randomMsg}
                     </div>
-                    <div className="text-[9px] mt-1 font-black uppercase text-white/40 flex items-center gap-1">
+                    <div className="text-4xs mt-1 font-black uppercase text-white/40 flex items-center gap-1">
                         Click to support the developer <span className="animate-bounce text-xs">☕❤️</span>
                     </div>
                 </div>,

@@ -109,7 +109,7 @@ export default function Profile() {
                     </div>
                     <div className="text-left min-w-0">
                         <div className="text-xl font-black text-white flex items-center gap-2">
-                            AutoSync <span className="text-[9px] uppercase tracking-widest bg-accent-primary/30 text-accent-primary px-1.5 py-0.5 rounded">beta</span>
+                            AutoSync <span className="text-4xs uppercase tracking-widest bg-accent-primary/30 text-accent-primary px-1.5 py-0.5 rounded">beta</span>
                         </div>
                         <div className="text-sm text-text-secondary">Upload your in-game screenshots. It reads gear, pets, mount &amp; resources and lets you review every change.</div>
                     </div>
@@ -128,7 +128,7 @@ export default function Profile() {
                     </div>
                     <div className="text-left min-w-0">
                         <div className="text-lg font-black text-white flex items-center gap-2">
-                            Simplified PvP <span className="text-[9px] uppercase tracking-widest bg-red-500/30 text-red-300 px-1.5 py-0.5 rounded">beta</span>
+                            Simplified PvP <span className="text-4xs uppercase tracking-widest bg-red-500/30 text-red-300 px-1.5 py-0.5 rounded">beta</span>
                         </div>
                         <div className="text-sm text-text-secondary">Upload an opponent's profile screenshot and duel it against your build.</div>
                     </div>

@@ -745,7 +745,7 @@ export function PlannerAlarms({
                                 {planLabel && (
                                     <span
                                         data-alarm-plan-label
-                                        className="rounded border border-accent-primary/30 bg-accent-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-accent-primary"
+                                        className="rounded border border-accent-primary/30 bg-accent-primary/10 px-1.5 py-0.5 text-3xs font-bold uppercase text-accent-primary"
                                     >
                                         {planLabel}
                                     </span>
@@ -811,7 +811,7 @@ export function PlannerAlarms({
                             Every line below is `text-text-secondary` and never `text-text-muted`:
                             muted measures 3.94:1 on this card — the same note PushPanel carries, and
                             it is asserted by reverseForge/scratch/alarms2_shots.mjs. */}
-                        <p className="mt-1.5 text-[11px] leading-relaxed text-text-secondary" data-alarm-echo>
+                        <p className="mt-1.5 text-2xs leading-relaxed text-text-secondary" data-alarm-echo>
                             <span className="font-bold text-text-primary">{formatDurationExact(draftMs)}</span>
                             {' '}from now, finishing at{' '}
                             <span className="font-bold text-text-primary">{clockOf(nowMs + draftMs)}</span>.
@@ -827,7 +827,7 @@ export function PlannerAlarms({
                             this the two selects look applied the moment they are touched, and a player
                             who picked but never pressed Set would believe an anchor they do not have. */}
                         {record.anchorAtMs !== null && record.setAtMs !== null ? (
-                            <p className="mt-1 text-[11px] text-text-secondary" data-alarm-anchor-state={pendingChange ? 'pending' : 'set'}>
+                            <p className="mt-1 text-2xs text-text-secondary" data-alarm-anchor-state={pendingChange ? 'pending' : 'set'}>
                                 Anchored at {clockOf(record.setAtMs)}
                                 {anchorRemaining !== null && anchorRemaining > 0
                                     ? `, ${formatDurationShort(anchorRemaining)} still to go.`
@@ -837,7 +837,7 @@ export function PlannerAlarms({
                                 )}
                             </p>
                         ) : (
-                            <p className="mt-1 text-[11px] text-text-secondary" data-alarm-anchor-state="unset">
+                            <p className="mt-1 text-2xs text-text-secondary" data-alarm-anchor-state="unset">
                                 Not set yet. Read the countdown off the game, pick it above, then press{' '}
                                 <span className="font-bold text-text-primary">Set</span>. Nothing is queued until you do.
                             </p>
@@ -887,14 +887,14 @@ export function PlannerAlarms({
                                         {/* `basis-full` drops it to its own line instead of fighting the
                                             label for the right-hand edge of a narrow column. */}
                                         {alarm.observed && (
-                                            <span className="basis-full text-[10px] font-bold uppercase text-accent-primary/80">
+                                            <span className="basis-full text-3xs font-bold uppercase text-accent-primary/80">
                                                 from the time you set
                                             </span>
                                         )}
                                     </li>
                                 ))}
                                 {hidden > 0 && (
-                                    <li className="px-1 pt-1 text-[11px] text-text-secondary">
+                                    <li className="px-1 pt-1 text-2xs text-text-secondary">
                                         and {hidden} more, through {dayAndClockOf(derivation.alarms[derivation.alarms.length - 1].fireAtMs)}
                                     </li>
                                 )}
@@ -905,13 +905,13 @@ export function PlannerAlarms({
                     {/* ---- what a notification will actually say ------------------------- */}
                     {preview && (
                         <div className="mt-2 rounded-lg border border-accent-primary/25 bg-accent-primary/5 p-2" data-alarm-preview>
-                            <div className="text-[10px] font-bold uppercase text-accent-primary/80">The first one reads</div>
+                            <div className="text-3xs font-bold uppercase text-accent-primary/80">The first one reads</div>
                             <div className="mt-1 text-xs font-bold text-text-primary">{preview.notification.title}</div>
                             {/* What the device receives is the composed `body + hint`, because the
                                 sender appends `hint` whenever the plan is still fresh. Rendering
                                 `body` alone here would preview an empty second line. The bold title
                                 above is the half that survives when the plan HAS changed. */}
-                            <div className="text-[11px] text-text-secondary leading-relaxed">
+                            <div className="text-2xs text-text-secondary leading-relaxed">
                                 {[preview.notification.body, preview.notification.hint].filter(Boolean).join(' ')}
                             </div>
                         </div>
@@ -919,13 +919,13 @@ export function PlannerAlarms({
 
                     {/* ---- everything that is NOT armed, and why ------------------------- */}
                     {derivation.dropped.length > 0 && (
-                        <p className="mt-2 text-[11px] text-text-secondary leading-relaxed" data-alarm-dropped>
+                        <p className="mt-2 text-2xs text-text-secondary leading-relaxed" data-alarm-dropped>
                             {describeDropped(derivation.dropped)}
                         </p>
                     )}
 
                     {/* ---- the assumption, always ---------------------------------------- */}
-                    <p className="mt-2 flex items-start gap-2 text-[11px] text-text-secondary leading-relaxed">
+                    <p className="mt-2 flex items-start gap-2 text-2xs text-text-secondary leading-relaxed">
                         <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-text-muted" />
                         <span>
                             {assumption} Every notification says what it assumed. If a plan changes after an alarm was
@@ -936,7 +936,7 @@ export function PlannerAlarms({
 
                     {/* ---- state --------------------------------------------------------- */}
                     {record.enabled && syncState === 'armed' && armedCount !== null && (
-                        <p role="status" className="mt-2 flex items-start gap-2 text-[11px] text-text-secondary leading-relaxed">
+                        <p role="status" className="mt-2 flex items-start gap-2 text-2xs text-text-secondary leading-relaxed">
                             <Check className="w-3.5 h-3.5 shrink-0 mt-0.5 text-accent-primary" />
                             <span>
                                 {derivation.alarms.length === 1 ? '1 alarm' : `${derivation.alarms.length} alarms`} queued for
@@ -947,7 +947,7 @@ export function PlannerAlarms({
                         </p>
                     )}
                     {record.enabled && deviceReady === false && (
-                        <p className="mt-1 flex items-start gap-2 text-[11px] text-amber-400 leading-relaxed">
+                        <p className="mt-1 flex items-start gap-2 text-2xs text-amber-400 leading-relaxed">
                             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                             <span>
                                 This device is not subscribed, so nothing will buzz here. Turn notifications on in
@@ -956,7 +956,7 @@ export function PlannerAlarms({
                         </p>
                     )}
                     {syncMessage && (
-                        <p role="status" className="mt-2 flex items-start gap-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-[11px] text-red-200 leading-relaxed">
+                        <p role="status" className="mt-2 flex items-start gap-2 rounded-lg border border-red-500/40 bg-red-500/10 p-2 text-2xs text-red-200 leading-relaxed">
                             <X className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                             <span>{syncMessage}</span>
                         </p>
@@ -1059,7 +1059,7 @@ function SlotAnchorRow({
                         aria-pressed={state === 'busy' || state === 'expired'}
                         onClick={onOpen}
                         className={cn(
-                            'px-2 py-1 text-[11px] font-bold transition-colors',
+                            'px-2 py-1 text-2xs font-bold transition-colors',
                             state === 'busy' || state === 'expired'
                                 ? 'bg-accent-primary text-bg-primary'
                                 : 'bg-bg-input text-text-secondary hover:text-text-primary',
@@ -1073,7 +1073,7 @@ function SlotAnchorRow({
                         aria-pressed={state === 'idle'}
                         onClick={onIdle}
                         className={cn(
-                            'border-l border-border px-2 py-1 text-[11px] font-bold transition-colors',
+                            'border-l border-border px-2 py-1 text-2xs font-bold transition-colors',
                             state === 'idle'
                                 ? 'bg-accent-primary text-bg-primary'
                                 : 'bg-bg-input text-text-secondary hover:text-text-primary',
@@ -1108,7 +1108,7 @@ function SlotAnchorRow({
                 </div>
             )}
 
-            <p className="mt-1 text-[11px] leading-relaxed text-text-secondary" data-alarm-slot-line>
+            <p className="mt-1 text-2xs leading-relaxed text-text-secondary" data-alarm-slot-line>
                 {state === 'unset' && (
                     open
                         ? <>Read the countdown off the game, pick it above and press <span className="font-bold text-text-primary">Set</span>. If nothing is in it, press Empty.</>

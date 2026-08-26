@@ -117,12 +117,12 @@ export default function WarPrizesCalculator() {
                                 alt="Ascension"
                                 className="w-3 h-3 object-contain"
                             />
-                            <span className="text-[10px] text-amber-400 font-mono font-bold">x{ascensionStars}</span>
+                            <span className="text-3xs text-amber-400 font-mono font-bold">x{ascensionStars}</span>
                         </div>
                     )}
                 </div>
                 <div className="flex items-center gap-2 font-mono">
-                    {changed && <span className="text-[10px] text-text-muted line-through">{Math.round(base).toLocaleString()}</span>}
+                    {changed && <span className="text-3xs text-text-muted line-through">{Math.round(base).toLocaleString()}</span>}
                     <span className={cn('font-bold', changed ? 'text-purple-300' : 'text-white')}>{Math.round(boosted).toLocaleString()}</span>
                 </div>
             </div>
@@ -181,7 +181,7 @@ export default function WarPrizesCalculator() {
                                 ))}
                             </div>
                         ) : (
-                            <span className="text-[10px] text-purple-300/60 italic font-medium">No ascension stars active</span>
+                            <span className="text-3xs text-purple-300/60 italic font-medium">No ascension stars active</span>
                         )}
                     </div>
                 </div>
@@ -212,12 +212,12 @@ export default function WarPrizesCalculator() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-emerald-300">
                                 <Trophy size={18} /> War Won
-                                {winBonus > 0 && <span className="text-[11px] font-mono text-purple-300">+{(winBonus * 100).toFixed(1)}%</span>}
+                                {winBonus > 0 && <span className="text-2xs font-mono text-purple-300">+{(winBonus * 100).toFixed(1)}%</span>}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {wonRewards.map(r => <RewardRow key={r.Type} type={r.Type} base={r.Amount} boosted={r.boosted} />)}
-                            {tier.TierPointsOnWin != null && <div className="text-[11px] text-text-muted mt-3">+{tier.TierPointsOnWin} guild tier points</div>}
+                            {tier.TierPointsOnWin != null && <div className="text-2xs text-text-muted mt-3">+{tier.TierPointsOnWin} guild tier points</div>}
                         </CardContent>
                     </Card>
 
@@ -225,12 +225,12 @@ export default function WarPrizesCalculator() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-red-300">
                                 <Swords size={18} /> War Lost
-                                {loseBonus > 0 && <span className="text-[11px] font-mono text-purple-300">+{(loseBonus * 100).toFixed(1)}%</span>}
+                                {loseBonus > 0 && <span className="text-2xs font-mono text-purple-300">+{(loseBonus * 100).toFixed(1)}%</span>}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {lostRewards.map(r => <RewardRow key={r.Type} type={r.Type} base={r.Amount} boosted={r.boosted} />)}
-                            {tier.TierPointsOnLose != null && <div className="text-[11px] text-text-muted mt-3">+{tier.TierPointsOnLose} guild tier points</div>}
+                            {tier.TierPointsOnLose != null && <div className="text-2xs text-text-muted mt-3">+{tier.TierPointsOnLose} guild tier points</div>}
                         </CardContent>
                     </Card>
                 </div>

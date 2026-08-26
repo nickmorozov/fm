@@ -57,13 +57,13 @@ export default function SkillCalculator() {
 
                 <div className="flex justify-center items-center gap-2 pt-2">
                     {isWarPointDay(new Date(), 'skills', warDayConfig) && (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/20 text-accent-primary border border-accent-primary/30 text-[10px] font-black uppercase tracking-wider animate-pulse">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/20 text-accent-primary border border-accent-primary/30 text-3xs font-black uppercase tracking-wider animate-pulse">
                             <Trophy size={14} />
                             War Points Active: High Value Day
                         </div>
                     )}
                     {skillWarBoost > 0 && (
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-3xs font-black uppercase tracking-wider">
                             <Trophy size={14} />
                             Clan Boost: +{(skillWarBoost * 100).toFixed(0)}% War Points
                         </div>
@@ -97,7 +97,7 @@ export default function SkillCalculator() {
                         {/* Level & Progress */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-3 bg-bg-primary/30 p-4 rounded-xl border border-white/5">
-                                <label className="text-[10px] font-bold text-text-secondary uppercase">Current Level</label>
+                                <label className="text-3xs font-bold text-text-secondary uppercase">Current Level</label>
                                 <div className="flex items-center justify-between gap-2">
                                     <button
                                         onClick={() => setLevel(Math.max(1, level - 1))}
@@ -122,10 +122,10 @@ export default function SkillCalculator() {
                                         <Plus className="w-3 h-3 text-text-primary" />
                                     </button>
                                 </div>
-                                <div className="text-[10px] text-text-muted text-center font-mono opacity-50">Max: {maxPossibleLevel}</div>
+                                <div className="text-3xs text-text-muted text-center font-mono opacity-50">Max: {maxPossibleLevel}</div>
                             </div>
                             <div className="space-y-3 bg-bg-primary/30 p-4 rounded-xl border border-white/5">
-                                <label className="text-[10px] font-bold text-text-secondary uppercase">Current Progress</label>
+                                <label className="text-3xs font-bold text-text-secondary uppercase">Current Progress</label>
                                 <div className="flex items-center justify-between gap-2">
                                     <button
                                         onClick={() => setProgress(Math.max(0, progress - 1))}
@@ -155,7 +155,7 @@ export default function SkillCalculator() {
                                         <Plus className="w-3 h-3 text-text-primary" />
                                     </button>
                                 </div>
-                                <div className="text-[10px] text-text-muted text-center font-mono opacity-50">
+                                <div className="text-3xs text-text-muted text-center font-mono opacity-50">
                                     Next: {level >= maxPossibleLevel ? 'MAX' : (levels[Math.min(level - 1, levels.length - 1)]?.SummonsRequired?.toLocaleString() || '?')}
                                 </div>
                             </div>
@@ -181,7 +181,7 @@ export default function SkillCalculator() {
                                         min="0"
                                     />
                                 </div>
-                                <div className="text-[10px] text-text-muted px-1">
+                                <div className="text-3xs text-text-muted px-1">
                                     Estimated cost per summon: <span className="text-accent-primary font-bold">{finalCostPerSummon}</span> 🎟️
                                 </div>
                             </div>
@@ -193,7 +193,7 @@ export default function SkillCalculator() {
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] text-text-muted uppercase font-bold">Target Ascension</label>
+                                        <label className="text-3xs text-text-muted uppercase font-bold">Target Ascension</label>
                                         <select
                                             value={targetAscension}
                                             onChange={(e) => setTargetAscension(Number(e.target.value))}
@@ -205,7 +205,7 @@ export default function SkillCalculator() {
                                         </select>
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] text-text-muted uppercase font-bold">Target Level</label>
+                                        <label className="text-3xs text-text-muted uppercase font-bold">Target Level</label>
                                         <select
                                             value={targetLevel}
                                             onChange={(e) => setTargetLevel(Number(e.target.value))}
@@ -227,12 +227,12 @@ export default function SkillCalculator() {
                                     </div>
                                 </div>
                                 <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-                                    <div className="text-[10px] text-text-muted">
+                                    <div className="text-3xs text-text-muted">
                                         Required: <span className="text-white font-bold">{calculateNeededCurrency(targetLevel, targetAscension).toLocaleString()}</span> Tickets
                                     </div>
                                     <button
                                         onClick={() => setTicketCount(calculateNeededCurrency(targetLevel, targetAscension))}
-                                        className="text-[10px] bg-accent-primary/10 hover:bg-accent-primary/20 text-accent-primary px-3 py-1 rounded border border-accent-primary/30 transition-colors font-bold uppercase active:scale-95"
+                                        className="text-3xs bg-accent-primary/10 hover:bg-accent-primary/20 text-accent-primary px-3 py-1 rounded border border-accent-primary/30 transition-colors font-bold uppercase active:scale-95"
                                     >
                                         Set as Available
                                     </button>
@@ -256,7 +256,7 @@ export default function SkillCalculator() {
                                         <div className="w-11 h-6 bg-bg-input peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
                                     </label>
                                 </div>
-                                <p className="text-[10px] text-text-muted leading-relaxed">
+                                <p className="text-3xs text-text-muted leading-relaxed">
                                     When ON, reaching max level resets it to 1 of the next tier. When OFF, extra tickets progress only the max level.
                                 </p>
                             </div>
@@ -290,17 +290,17 @@ export default function SkillCalculator() {
                                 {results.simulateAscension && results.ascensionPoints > 0 && (
                                     <div className="grid grid-cols-2 gap-3 -mt-3 mb-2 animate-in fade-in slide-in-from-top-2 duration-300">
                                         <div className="bg-bg-tertiary/30 p-2 rounded-lg border border-white/5 text-center">
-                                            <div className="text-[9px] text-text-muted uppercase font-bold">Normal Phase</div>
+                                            <div className="text-4xs text-text-muted uppercase font-bold">Normal Phase</div>
                                             <div className="text-sm font-mono font-bold text-white">+{Math.floor(results.normalPoints).toLocaleString()}</div>
                                         </div>
                                         <div className="bg-amber-500/10 p-2 rounded-lg border border-amber-500/20 text-center">
-                                            <div className="text-[9px] text-amber-500 uppercase font-bold">Ascension Phase</div>
+                                            <div className="text-4xs text-amber-500 uppercase font-bold">Ascension Phase</div>
                                             <div className="text-sm font-mono font-bold text-amber-400">+{Math.floor(results.ascensionPoints).toLocaleString()}</div>
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="text-[10px] text-text-muted/60 px-2 -mt-4 mb-4 text-right">
+                                <div className="text-3xs text-text-muted/60 px-2 -mt-4 mb-4 text-right">
                                     * Points from Skill Level Ups are not included (drop dependent)
                                 </div>
 
@@ -311,7 +311,7 @@ export default function SkillCalculator() {
                                         </div>
                                         <div className="flex-1">
                                             <div className="text-xs font-bold text-amber-400 uppercase">Max Level Milestone</div>
-                                            <div className="text-[11px] text-text-secondary leading-relaxed">
+                                            <div className="text-2xs text-text-secondary leading-relaxed">
                                                 You reach <span className="text-white font-bold">Max Level</span> in <span className="text-amber-400 font-bold">{results.summonsToMax.toLocaleString()} summons</span> ({(results.summonsToMax * results.finalCost).toLocaleString()} tickets).
                                                 The remaining <span className="text-white font-bold">{((results.numSummons - results.summonsToMax) * results.finalCost).toLocaleString()}</span> tickets progress 
                                                 into <span className="text-amber-400 font-bold">{results.simulateAscension ? `Ascension ${results.endAscensionLevel}` : 'Max Level'}</span>.
@@ -323,37 +323,37 @@ export default function SkillCalculator() {
                                 {/* Summons Info Grid */}
                                 <div className="grid grid-cols-4 gap-3 pb-2 border-b border-white/5">
                                     <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">Summons</div>
+                                        <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">Summons</div>
                                         <div className="text-lg font-mono font-bold text-white">
                                             {Math.floor(results.numSummons).toLocaleString()}
                                         </div>
                                     </div>
                                     <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">Skills</div>
+                                        <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">Skills</div>
                                         <div className="text-lg font-mono font-bold text-accent-primary">
                                             {Math.floor(results.totalSkills).toLocaleString()}
                                         </div>
                                     </div>
                                     <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">End Level</div>
+                                        <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">End Level</div>
                                         <div className="text-lg font-mono font-bold text-accent-primary flex flex-col justify-center">
                                             <div className="flex items-center gap-1">
                                                 <span className="text-xs opacity-50 font-normal">Lv.{level} ➔</span>
                                                 Lv.{results.endLevel}
                                             </div>
                                             {results.endAscensionLevel > (profile.misc.skillAscensionLevel || 0) && (
-                                                <div className="text-[10px] text-amber-500 font-bold">
+                                                <div className="text-3xs text-amber-500 font-bold">
                                                     (Ascension {results.endAscensionLevel})
                                                 </div>
                                             )}
                                         </div>
                                     </div>
                                     <div className="bg-bg-tertiary/50 p-3 rounded-lg border border-white/5">
-                                        <div className="text-[10px] text-text-muted uppercase font-bold mb-0.5">Price</div>
+                                        <div className="text-3xs text-text-muted uppercase font-bold mb-0.5">Price</div>
                                         <div className="text-lg font-mono font-bold text-green-400 flex items-baseline gap-1">
                                             {results.finalCost}
                                             {results.costReduction > 0 && (
-                                                <span className="text-[10px] text-text-muted line-through font-normal decoration-white/30">
+                                                <span className="text-3xs text-text-muted line-through font-normal decoration-white/30">
                                                     {results.baseCost}
                                                 </span>
                                             )}
@@ -390,7 +390,7 @@ export default function SkillCalculator() {
                                                         <div className="flex flex-wrap gap-1 justify-end mt-1 max-w-[150px]">
                                                             {results.phases.map((phase, pIdx) => (
                                                                 <div key={pIdx} className={`px-1 rounded border ${phase.startAscension > 0 ? 'bg-amber-500/5 border-amber-500/10' : 'bg-white/5 border-white/5'}`}>
-                                                                    <div className="flex items-center gap-1 text-[8px] font-mono leading-tight">
+                                                                    <div className="flex items-center gap-1 text-5xs font-mono leading-tight">
                                                                         <span className={phase.startAscension > 0 ? 'text-amber-500/80 font-bold' : 'text-text-muted'}>
                                                                             {phase.startAscension === 0 ? 'N' : `A${phase.startAscension}`}:
                                                                         </span>
@@ -402,7 +402,7 @@ export default function SkillCalculator() {
                                                     )}
 
                                                     {(item.pointsPerUnit ?? 0) > 0 && (
-                                                        <div className="flex flex-col items-end text-[10px] text-text-muted font-mono leading-tight">
+                                                        <div className="flex flex-col items-end text-3xs text-text-muted font-mono leading-tight">
                                                             <span>{item.pointsPerUnit.toLocaleString()} pts/unit</span>
                                                             <span className="text-accent-secondary font-bold">
                                                                 {(item.totalPoints || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} pts
