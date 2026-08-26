@@ -157,6 +157,15 @@ export interface UserProfile {
         plannerMinWaitBetweenNodes?: number;
         techPlanMetadata?: { isAuto: boolean; config?: any };
         useSkinWindup?: boolean;
+        /** Desired end-state stats, saved from the stats panel. Comparison rows show
+            thumbs up/down as a change moves the build closer to or farther from these. */
+        statGoals?: {
+            power?: number;
+            totalDamage?: number;
+            meleeDamage?: number;
+            rangedDamage?: number;
+            totalHealth?: number;
+        };
     };
 }
 

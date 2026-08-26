@@ -4,7 +4,7 @@ import {
     Swords, Heart, Shield, Zap, Target, Gauge,
     TrendingUp, Clock, Coins, Star, Crosshair, TreeDeciduous, Sparkles,
     ArrowUp, ArrowDown, X, Check, ArrowRight, Hash, Minimize2, Layout, Download,
-    ArrowLeftRight, Info, Sword, Scale, RotateCcw, Layers
+    ArrowLeftRight, Info, Sword, Scale, RotateCcw, Layers, ThumbsUp, ThumbsDown
 } from 'lucide-react';
 import { Button } from '../UI/Button';
 import { AnimatedClock } from '../UI/AnimatedClock';
@@ -195,6 +195,9 @@ export interface ComparisonStatRowProps {
     variant?: 'default' | 'minimal';
     isCompact?: boolean;
     className?: string;
+    /** The profile's stored goal for this stat; when set, the row shows a thumbs up/down
+        depending on whether the test build moved closer to or farther from it. */
+    goalValue?: number;
 }
 
 export function ComparisonStatRow({
@@ -209,7 +212,8 @@ export function ComparisonStatRow({
     onOriginalDetailsClick,
     onTestDetailsClick,
     variant = 'default',
-    isCompact = true
+    isCompact = true,
+    goalValue
 }: ComparisonStatRowProps) {
     const isMinimal = variant === 'minimal';
 
@@ -237,6 +241,27 @@ export function ComparisonStatRow({
     };
     const deltaStyle = getDeltaStyle();
 
+    // Thumbs vs the stored goal: did this change move the build closer to it?
+    const goalThumb = (() => {
+        if (goalValue === undefined || isExactlySame) return null;
+        const before = Math.abs(goalValue - originalValue);
+        const after = Math.abs(goalValue - testValue);
+        if (after === before) return null;
+        const closer = after < before;
+        return {
+            closer,
+            title: `${closer ? 'Closer to' : 'Farther from'} your goal of ${finalFormat(goalValue)}`,
+        };
+    })();
+    const goalThumbNode = goalThumb && (
+        <span
+            title={goalThumb.title}
+            className={cn('flex items-center shrink-0', goalThumb.closer ? 'text-green-400' : 'text-red-400')}
+        >
+            {goalThumb.closer ? <ThumbsUp className="w-3 h-3" /> : <ThumbsDown className="w-3 h-3" />}
+        </span>
+    );
+
     if (isMinimal) {
         return (
             <div className="flex items-center gap-3 p-1.5 px-2 bg-bg-input/20 rounded-lg border border-border/20 hover:bg-bg-input/40 transition-colors">
@@ -257,6 +282,7 @@ export function ComparisonStatRow({
                             {deltaStyle.icon && React.cloneElement(deltaStyle.icon as React.ReactElement, { className: 'w-2.5 h-2.5' })}
                             <span>{delta.percent}</span>
                         </div>
+                        {goalThumbNode}
                     </div>
                 </div>
                 {(onOriginalDetailsClick || onTestDetailsClick) && (
@@ -282,6 +308,7 @@ export function ComparisonStatRow({
                     {icon}
                 </div>
                 <span className="text-sm font-medium text-text-primary">{label}</span>
+                {goalThumbNode}
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
                 {/* Equipped Column */}
@@ -451,7 +478,24 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
     const stats = useGlobalStats(excludeSubstats);
     const fullStats = useGlobalStats(false);
     const techModifiers = useTreeModifiers() as Record<string, number>;
-    const { profile, profiles, activeProfileId } = useProfile();
+    const { profile, profiles, activeProfileId, updateNestedProfile } = useProfile();
+
+    // Desired end-state stats. Saved per profile; the comparison rows above show thumbs
+    // up/down as a change moves the build closer to or farther from these numbers.
+    const statGoals = profile.misc.statGoals;
+    const saveStatGoals = () => {
+        if (!fullStats) return;
+        updateNestedProfile('misc', {
+            statGoals: {
+                power: fullStats.power,
+                totalDamage: fullStats.totalDamage,
+                meleeDamage: fullStats.meleeDamage,
+                rangedDamage: fullStats.rangedDamage,
+                totalHealth: fullStats.totalHealth,
+            },
+        });
+    };
+    const clearStatGoals = () => updateNestedProfile('misc', { statGoals: undefined });
 
     // --- Auto-optimize the Test build (drives the strip's AUTO buttons) --------
     const { optimizeLoadout, isReady: optimizerReady } = useProfileOptimizer();
@@ -1135,19 +1179,19 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                     {viewTab === 'general' ? (
                         <>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Gauge className="w-4 h-4 text-purple-400" />} label="Power" originalValue={originalStats?.power ?? 0} testValue={testStats?.power ?? 0} color="text-purple-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Gauge className="w-4 h-4 text-purple-400" />} label="Power" originalValue={originalStats?.power ?? 0} testValue={testStats?.power ?? 0} color="text-purple-400" goalValue={statGoals?.power} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-red-400" />} label="Damage" originalValue={originalStats?.totalDamage ?? 0} testValue={testStats?.totalDamage ?? 0} color="text-red-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-red-400" />} label="Damage" originalValue={originalStats?.totalDamage ?? 0} testValue={testStats?.totalDamage ?? 0} color="text-red-400" goalValue={statGoals?.totalDamage} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-amber-400" />} label="Melee DMG" originalValue={originalStats?.meleeDamage ?? 0} testValue={testStats?.meleeDamage ?? 0} color="text-amber-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Swords className="w-4 h-4 text-amber-400" />} label="Melee DMG" originalValue={originalStats?.meleeDamage ?? 0} testValue={testStats?.meleeDamage ?? 0} color="text-amber-400" goalValue={statGoals?.meleeDamage} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Crosshair className="w-4 h-4 text-sky-400" />} label="Ranged DMG" originalValue={originalStats?.rangedDamage ?? 0} testValue={testStats?.rangedDamage ?? 0} color="text-sky-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Crosshair className="w-4 h-4 text-sky-400" />} label="Ranged DMG" originalValue={originalStats?.rangedDamage ?? 0} testValue={testStats?.rangedDamage ?? 0} color="text-sky-400" goalValue={statGoals?.rangedDamage} />
                             </div>
                             <div className="shrink-0">
-                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-green-400" />} label="Health" originalValue={originalStats?.totalHealth ?? 0} testValue={testStats?.totalHealth ?? 0} color="text-green-400" />
+                                <ComparisonStatRow isCompact={isCompactStats} variant="minimal" icon={<Heart className="w-4 h-4 text-green-400" />} label="Health" originalValue={originalStats?.totalHealth ?? 0} testValue={testStats?.totalHealth ?? 0} color="text-green-400" goalValue={statGoals?.totalHealth} />
                             </div>
                         </>
                     ) : viewTab === 'metrics' ? (
@@ -1510,6 +1554,73 @@ export function StatsSummaryPanel({ variant = 'sidebar', onClose, hideActions = 
                             Extended
                         </button>
                     </div>
+                </div>
+
+                {/* Stat Goals: the desired end-state. Comparison rows show thumbs up/down as a
+                    change moves the build closer to or farther from these numbers. */}
+                <div className="mt-4 px-2 py-2 bg-bg-input/30 rounded-lg border border-border/20 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                        <div className="text-3xs text-text-muted font-bold uppercase tracking-widest opacity-60 flex items-center gap-1.5">
+                            <Target className="w-3 h-3" /> Stat Goals
+                        </div>
+                        <div className="flex gap-1">
+                            <button
+                                onClick={saveStatGoals}
+                                disabled={!fullStats}
+                                className="px-2 py-1 rounded text-4xs font-bold bg-accent-primary/15 text-accent-primary hover:bg-accent-primary/25 transition-all disabled:opacity-40"
+                                title="Save the equipped build's current stats as your goal"
+                            >
+                                {statGoals ? 'Update from equipped' : 'Set from equipped'}
+                            </button>
+                            {statGoals && (
+                                <button
+                                    onClick={clearStatGoals}
+                                    className="px-2 py-1 rounded text-4xs font-bold text-text-muted hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                >
+                                    Clear
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    {statGoals ? (
+                        <div className="space-y-1">
+                            {([
+                                { key: 'power', label: 'Power', color: 'text-purple-400' },
+                                { key: 'totalDamage', label: 'Damage', color: 'text-red-400' },
+                                { key: 'meleeDamage', label: 'Melee DMG', color: 'text-amber-400' },
+                                { key: 'rangedDamage', label: 'Ranged DMG', color: 'text-sky-400' },
+                                { key: 'totalHealth', label: 'Health', color: 'text-green-400' },
+                            ] as const).map(({ key, label, color }) => {
+                                const goal = statGoals[key];
+                                if (goal === undefined) return null;
+                                const current = (fullStats as any)?.[key] ?? 0;
+                                const pct = goal > 0 ? (current / goal) * 100 : 100;
+                                const reached = current >= goal;
+                                return (
+                                    <div key={key} className="flex items-center gap-2 text-3xs font-mono">
+                                        <span className={cn('font-bold uppercase tracking-wide w-20 shrink-0 font-sans', color)}>{label}</span>
+                                        <div className="flex-1 h-1 bg-gray-700/60 rounded-full overflow-hidden">
+                                            <div
+                                                className={cn('h-full rounded-full', reached ? 'bg-green-500' : 'bg-accent-primary')}
+                                                style={{ width: `${Math.min(100, pct)}%` }}
+                                            />
+                                        </div>
+                                        <span className="text-text-muted tabular-nums shrink-0">
+                                            {formatCompactNumber(current)} / {formatCompactNumber(goal)}
+                                        </span>
+                                        <span className={cn('tabular-nums font-bold w-12 text-right shrink-0', reached ? 'text-green-400' : 'text-text-muted')}>
+                                            {reached ? <Check className="w-3 h-3 inline" /> : `${pct.toFixed(0)}%`}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className="text-4xs text-text-muted leading-snug">
+                            Save your desired stats (e.g. after tuning a build in the optimizer). Comparison
+                            rows then show thumbs up/down as changes move you closer or farther.
+                        </p>
+                    )}
                 </div>
 
                 {!actualHideActions && isComparing && (
