@@ -6,6 +6,7 @@ import { cn } from '../lib/utils';
 import { Hammer, Zap, Info, X, RefreshCw, Star, Plus, Minus, Download, Upload } from 'lucide-react';
 import { getTechNodeName, getTechNodeDescription, getClanIconStyle } from '../utils/techUtils';
 import { useTreeMode } from '../context/TreeModeContext';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import { useGameDataContext } from '../context/GameDataContext';
 import { SpriteIcon } from '../components/UI/SpriteIcon';
 
@@ -16,6 +17,9 @@ const LAYER_GAP = 80;
 const COL_GAP = 40;
 
 type TreeName = 'Forge' | 'Power' | 'SkillsPetTech' | 'Clan';
+
+// The three player branches shown side-by-side on wide screens. Clan keeps its own tab.
+const HERO_TREES: TreeName[] = ['Forge', 'Power', 'SkillsPetTech'];
 
 export default function TechTree() {
     const { profile } = useProfile();
@@ -31,6 +35,12 @@ export default function TechTree() {
 
     const [activeTab, setActiveTab] = useState<TreeName>('Forge');
     const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null);
+    // Which tree the selected node belongs to: with three trees on screen at once, the id alone
+    // is ambiguous (ids repeat across trees).
+    const [selectedTree, setSelectedTree] = useState<TreeName>('Forge');
+
+    const isWide = useMediaQuery('(min-width: 1280px)');
+    const showColumns = isWide && activeTab !== 'Clan';
 
     // Local simulation state - Synced to profile on load, but independent during edit
     const [localRanks, setLocalRanks] = useState<Record<string, Record<number, number>>>({});
@@ -147,6 +157,48 @@ export default function TechTree() {
 
         return { nodes: all, nodeById: byId, layers: layerMap };
     }, [treesData, activeTab, guildPositionLibrary, guildUpgradeLibrary]);
+
+    // Per-tree layout for the wide-screen column view: nodes, positions and canvas dimensions for
+    // every player tree at once (the datasets are small), so three canvases render side by side.
+    const playerLayouts = useMemo(() => {
+        const result: Record<string, {
+            nodes: any[];
+            nodeById: Record<number, any>;
+            dimensions: { width: number; height: number };
+            positions: Record<number, { x: number; y: number }>;
+        }> = {};
+        HERO_TREES.forEach((treeName) => {
+            const tree = treesData[treeName];
+            const all = (tree?.nodes as any[]) || [];
+            const byId: Record<number, any> = {};
+            const layerMap: Record<number, any[]> = {};
+            all.forEach(n => {
+                byId[n.id] = n;
+                if (!layerMap[n.layer]) layerMap[n.layer] = [];
+                layerMap[n.layer].push(n);
+            });
+            const layerKeys = Object.keys(layerMap).map(Number).sort((a, b) => a - b);
+            const maxNodesInLayer = layerKeys.length ? Math.max(...layerKeys.map(k => layerMap[k].length)) : 1;
+            const dimensions = {
+                width: maxNodesInLayer * (NODE_WIDTH + COL_GAP) + 100,
+                height: layerKeys.length * (NODE_HEIGHT + LAYER_GAP) + 200,
+            };
+            const positions: Record<number, { x: number; y: number }> = {};
+            layerKeys.forEach((layer, layerIdx) => {
+                const nodesInLayer = layerMap[layer];
+                const totalWidth = nodesInLayer.length * (NODE_WIDTH + COL_GAP) - COL_GAP;
+                const startX = -totalWidth / 2;
+                nodesInLayer.forEach((node: any, nodeIdx: number) => {
+                    positions[node.id] = {
+                        x: startX + nodeIdx * (NODE_WIDTH + COL_GAP) + NODE_WIDTH / 2,
+                        y: layerIdx * (NODE_HEIGHT + LAYER_GAP) + 120,
+                    };
+                });
+            });
+            result[treeName] = { nodes: all, nodeById: byId, dimensions, positions };
+        });
+        return result;
+    }, [treesData]);
 
     // Preload local simulation based on global Tree Mode (Header selection)
     useEffect(() => {
@@ -295,16 +347,20 @@ export default function TechTree() {
         return () => clearTimeout(timeout);
     }, [activeTab, loading, treeDimensions]);
 
-    const handleLocalUpdate = (nodeId: number, delta: number) => {
-        const node = nodeById[nodeId];
+    const handleLocalUpdate = (nodeId: number, delta: number, tree: TreeName = activeTab) => {
+        // Player trees resolve through playerLayouts so the wide-screen columns can edit any tree;
+        // the Clan tree only ever edits from its own tab, where tree === activeTab === 'Clan'.
+        const byId = tree === 'Clan' ? nodeById : (playerLayouts[tree]?.nodeById || {});
+        const treeNodes = tree === 'Clan' ? nodes : (playerLayouts[tree]?.nodes || []);
+        const node = byId[nodeId];
         if (!node) return;
 
         setLocalRanks(prev => {
-            const newTreeRanks = { ...(prev[activeTab] || {}) };
+            const newTreeRanks = { ...(prev[tree] || {}) };
             const currentRank = newTreeRanks[nodeId] || 0;
 
             let max = 5;
-            if (activeTab === 'Clan') {
+            if (tree === 'Clan') {
                 max = node.maxLevel || 20;
             } else {
                 const effect = treeEffects?.[node.type];
@@ -313,13 +369,13 @@ export default function TechTree() {
             const newVal = Math.max(0, Math.min(max, currentRank + delta));
 
             // Auto-unlock requirements if increasing level
-            if (delta > 0 && newVal > 0 && activeTab !== 'Clan') {
+            if (delta > 0 && newVal > 0 && tree !== 'Clan') {
                 const processed = new Set<number>();
                 const unlockRecursive = (id: number) => {
                     if (processed.has(id)) return;
                     processed.add(id);
 
-                    const n = nodeById[id];
+                    const n = byId[id];
                     if (!n) return;
 
                     if (n.requirements) {
@@ -337,9 +393,9 @@ export default function TechTree() {
             newTreeRanks[nodeId] = newVal;
 
             // Validation 2: If downgraded to 0, prune all dependent nodes recursively (DFS)
-            if (newVal === 0 && activeTab !== 'Clan') {
+            if (newVal === 0 && tree !== 'Clan') {
                 const pruneDescendants = (parentId: number) => {
-                    nodes.forEach(n => {
+                    treeNodes.forEach(n => {
                         if (n.requirements?.includes(parentId) && newTreeRanks[n.id] > 0) {
                             newTreeRanks[n.id] = 0;
                             pruneDescendants(n.id);
@@ -349,7 +405,7 @@ export default function TechTree() {
                 pruneDescendants(nodeId);
             }
 
-            return { ...prev, [activeTab]: newTreeRanks };
+            return { ...prev, [tree]: newTreeRanks };
         });
     };
 
@@ -654,11 +710,15 @@ export default function TechTree() {
         return { globalTotal, globalRemaining, globalTotalCost, globalRemainingCost };
     }, [treeMapping, localRanks, upgradeLibrary, treeEffects, calculatedModifiers, selectedVersion, guildPositionLibrary, guildUpgradeLibrary, nodes]);
 
-    const selectedNode = selectedNodeId !== null ? (nodeById[selectedNodeId] as any) : null;
+    const selectedNode = selectedNodeId !== null
+        ? (((selectedTree === 'Clan' || selectedTree === activeTab)
+            ? nodeById[selectedNodeId]
+            : playerLayouts[selectedTree]?.nodeById[selectedNodeId]) as any) ?? null
+        : null;
     
     const selectedEffect = useMemo(() => {
         if (!selectedNode) return null;
-        if (activeTab === 'Clan') {
+        if (selectedTree === 'Clan') {
             const nodeDef = treeEffects?.[selectedNode.type];
             const upgradeDef = guildUpgradeLibrary?.[selectedNode.type];
             if (!nodeDef || !upgradeDef) return null;
@@ -677,7 +737,177 @@ export default function TechTree() {
             };
         }
         return selectedNode ? treeEffects?.[selectedNode.type] : null;
-    }, [selectedNode, activeTab, treeEffects, guildUpgradeLibrary]);
+    }, [selectedNode, selectedTree, treeEffects, guildUpgradeLibrary]);
+
+    // One player tree as a pannable canvas. `single` = the classic tabbed view (owns the
+    // page-level scroll ref); otherwise it's one of three wide-screen columns, self-centering.
+    const autoCenterCanvas = (el: HTMLDivElement | null) => {
+        if (el && !el.dataset.centered) {
+            el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
+            el.dataset.centered = '1';
+        }
+    };
+
+    const renderPlayerCanvas = (tree: TreeName, single: boolean) => {
+        const layout = playerLayouts[tree];
+        if (!layout) return null;
+        return (
+                            <div
+                                ref={single ? scrollContainerRef : autoCenterCanvas}
+                                className="flex-1 overflow-auto relative custom-scrollbar select-none touch-pan-x touch-pan-y"
+                            >
+                                <div
+                                    className="relative sm:[--tree-scale:1] [--tree-scale:0.8]"
+                                    style={{
+                                        width: `${layout.dimensions.width}px`,
+                                        height: `${layout.dimensions.height}px`,
+                                        transformOrigin: 'top center',
+                                        scale: 'var(--tree-scale, 1)'
+                                    }}
+                                >
+                                    {/* SVG Connections Layer */}
+                                    <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
+                                        <defs>
+                                            <linearGradient id={`lineGrad-${tree}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                                                <stop offset="0%" stopColor="rgba(168, 85, 247, 0.4)" />
+                                                <stop offset="100%" stopColor="rgba(168, 85, 247, 0.1)" />
+                                            </linearGradient>
+                                        </defs>
+                                        {layout.nodes.map(node => {
+                                            const toPos = layout.positions[node.id];
+                                            return (node.requirements || []).map((reqId: number) => {
+                                                const fromPos = layout.positions[reqId];
+                                                if (!fromPos || !toPos) return null;
+
+                                                const startX = fromPos.x + (layout.dimensions.width / 2);
+                                                const startY = fromPos.y + NODE_HEIGHT / 2;
+                                                const endX = toPos.x + (layout.dimensions.width / 2);
+                                                const endY = toPos.y - 10;
+                                                const cpY = startY + (endY - startY) / 2;
+
+                                                return (
+                                                    <path
+                                                        key={`${reqId}-${node.id}`}
+                                                        d={`M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`}
+                                                        stroke={`url(#lineGrad-${tree})`}
+                                                        strokeWidth="2"
+                                                        fill="none"
+                                                    />
+                                                );
+                                            });
+                                        })}
+                                    </svg>
+
+                                    {/* Nodes Layer */}
+                                    {layout.nodes.map(node => {
+                                        const pos = layout.positions[node.id];
+                                        const currentTreeRanks = localRanks[tree] || {};
+                                        const currentRank = currentTreeRanks[node.id] || 0;
+                                        const effect = treeEffects?.[node.type];
+                                        const maxLevel = effect?.MaxLevel || 1;
+                                        const spriteStyle = getSpriteStyle(node);
+                                        const isSelected = selectedTree === tree && selectedNodeId === node.id;
+                                        const isMaxed = currentRank >= maxLevel;
+                                        const isResearched = currentRank > 0 && !isMaxed;
+
+                                        const nodeStats = calculateNodeStats(node, currentRank);
+
+                                        return (
+                                            <button
+                                                key={node.id}
+                                                onClick={() => { setSelectedTree(tree); setSelectedNodeId(node.id); }}
+                                                className={cn(
+                                                    "absolute cursor-pointer transition-all duration-300 transform outline-none",
+                                                    isSelected ? "z-30 scale-110" : "z-10 hover:scale-105"
+                                                )}
+                                                style={{
+                                                    left: `${pos.x + (layout.dimensions.width / 2) - NODE_WIDTH / 2}px`,
+                                                    top: `${pos.y - NODE_HEIGHT / 2}px`,
+                                                    width: `${NODE_WIDTH}px`
+                                                }}
+                                            >
+                                                <Card className={cn(
+                                                    "p-3 h-full flex flex-col items-center text-center gap-2 border-2 transition-colors relative group",
+                                                    isSelected ? "border-accent-primary bg-accent-primary/10 shadow-[0_0_20px_rgba(168,85,247,0.3)]" :
+                                                        isMaxed ? "border-green-500/50 bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.1)]" :
+                                                            isResearched ? "border-accent-primary/40 bg-accent-primary/5" : "border-border/50 bg-bg-primary/50"
+                                                )}>
+                                                    <div className="w-16 h-16 rounded-xl bg-bg-input border border-border flex items-center justify-center relative overflow-hidden group">
+                                                        {spriteStyle ? (
+                                                            <div style={spriteStyle} />
+                                                        ) : (
+                                                            tree === 'Power' ? <Zap className="w-8 h-8 text-yellow-500" /> : <Hammer className="w-8 h-8 text-blue-500" />
+                                                        )}
+                                                        {isMaxed && (
+                                                            <div className="absolute inset-0 border-2 border-green-500/50 rounded-lg pointer-events-none" />
+                                                        )}
+                                                    </div>
+
+                                                    <div className="min-w-0 w-full mb-6">
+                                                        <div className="text-[10px] font-bold text-text-muted uppercase mb-0.5">Tier {node.tier + 1}</div>
+                                                        <h4 className="text-xs font-bold text-text-primary leading-tight line-clamp-2 min-h-[2.5em]">
+                                                            {getTechNodeName(node.type)}
+                                                        </h4>
+                                                    </div>
+
+                                                    {/* Node Controls */}
+                                                    <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between gap-2">
+                                                        <div
+                                                            className="w-6 h-6 rounded bg-bg-secondary hover:bg-white/10 flex items-center justify-center border border-border cursor-pointer active:scale-95"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleLocalUpdate(node.id, -1, tree);
+                                                            }}
+                                                        >
+                                                            <Minus className="w-3 h-3 text-white" />
+                                                        </div>
+
+                                                        <div className="flex flex-col items-center">
+                                                            <div className={cn("font-mono font-bold text-xs",
+                                                                isMaxed ? "text-green-500" :
+                                                                    isResearched ? "text-accent-primary" : "text-text-muted"
+                                                            )}>
+                                                                {currentRank}/{maxLevel}
+                                                            </div>
+                                                            {/* Time remaining for this specific node */}
+                                                            <div className="text-[8px] text-text-muted flex items-center gap-1">
+                                                                <div className="inline-block shrink-0" role="img" aria-label="Timer" style={{
+                                                                    width: '8px',
+                                                                    height: '8px',
+                                                                    backgroundImage: `url(${import.meta.env.BASE_URL}icons/game/Icons.png)`,
+                                                                    backgroundPosition: '-50px -30px',
+                                                                    backgroundSize: '80px 80px',
+                                                                    backgroundRepeat: 'no-repeat',
+                                                                    imageRendering: 'pixelated'
+                                                                }} />
+                                                                {formatTime(nodeStats.remainingTime)}
+                                                            </div>
+                                                        </div>
+
+                                                        <div
+                                                            className={cn(
+                                                                "w-6 h-6 rounded flex items-center justify-center border border-border cursor-pointer active:scale-95 transition-all",
+                                                                (node.requirements || []).some((reqId: number) => (currentTreeRanks[reqId] || 0) <= 0)
+                                                                    ? "bg-orange-500/20 text-orange-400 hover:bg-orange-500/30"
+                                                                    : "bg-bg-secondary hover:bg-white/10 text-white"
+                                                            )}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleLocalUpdate(node.id, 1, tree);
+                                                            }}
+                                                            title={(node.requirements || []).some((reqId: number) => (currentTreeRanks[reqId] || 0) <= 0) ? "Auto-unlock requirements" : ""}
+                                                        >
+                                                            <Plus className="w-3 h-3" />
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+        );
+    };
 
     return (
         <div className="h-[calc(100vh-120px)] flex flex-col animate-fade-in relative overflow-hidden">
@@ -869,7 +1099,7 @@ export default function TechTree() {
                                                     return (
                                                         <button
                                                             key={node.id}
-                                                            onClick={() => setSelectedNodeId(node.id)}
+                                                            onClick={() => { setSelectedTree('Clan'); setSelectedNodeId(node.id); }}
                                                             className={cn(
                                                                 "text-left cursor-pointer transition-all duration-300 transform outline-none",
                                                                 isSelected ? "scale-[1.02] z-20" : "hover:scale-[1.01]"
@@ -937,161 +1167,19 @@ export default function TechTree() {
                                     );
                                 })}
                             </div>
-                        ) : (
-                            <div
-                                ref={scrollContainerRef}
-                                className="flex-1 overflow-auto relative custom-scrollbar select-none touch-pan-x touch-pan-y"
-                            >
-                                <div
-                                    className="relative sm:[--tree-scale:1] [--tree-scale:0.8]"
-                                    style={{
-                                        width: `${treeDimensions.width}px`,
-                                        height: `${treeDimensions.height}px`,
-                                        transformOrigin: 'top center',
-                                        scale: 'var(--tree-scale, 1)'
-                                    }}
-                                >
-                                    {/* SVG Connections Layer */}
-                                    <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
-                                        <defs>
-                                            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                                <stop offset="0%" stopColor="rgba(168, 85, 247, 0.4)" />
-                                                <stop offset="100%" stopColor="rgba(168, 85, 247, 0.1)" />
-                                            </linearGradient>
-                                        </defs>
-                                        {nodes.map(node => {
-                                            const toPos = nodePositions[node.id];
-                                            return (node.requirements || []).map((reqId: number) => {
-                                                const fromPos = nodePositions[reqId];
-                                                if (!fromPos || !toPos) return null;
-
-                                                const startX = fromPos.x + (treeDimensions.width / 2);
-                                                const startY = fromPos.y + NODE_HEIGHT / 2;
-                                                const endX = toPos.x + (treeDimensions.width / 2);
-                                                const endY = toPos.y - 10;
-                                                const cpY = startY + (endY - startY) / 2;
-
-                                                return (
-                                                    <path
-                                                        key={`${reqId}-${node.id}`}
-                                                        d={`M ${startX} ${startY} C ${startX} ${cpY}, ${endX} ${cpY}, ${endX} ${endY}`}
-                                                        stroke="url(#lineGrad)"
-                                                        strokeWidth="2"
-                                                        fill="none"
-                                                    />
-                                                );
-                                            });
-                                        })}
-                                    </svg>
-
-                                    {/* Nodes Layer */}
-                                    {nodes.map(node => {
-                                        const pos = nodePositions[node.id];
-                                        const currentTreeRanks = localRanks[activeTab] || {};
-                                        const currentRank = currentTreeRanks[node.id] || 0;
-                                        const effect = treeEffects?.[node.type];
-                                        const maxLevel = effect?.MaxLevel || 1;
-                                        const spriteStyle = getSpriteStyle(node);
-                                        const isSelected = selectedNodeId === node.id;
-                                        const isMaxed = currentRank >= maxLevel;
-                                        const isResearched = currentRank > 0 && !isMaxed;
-
-                                        const nodeStats = calculateNodeStats(node, currentRank);
-
-                                        return (
-                                            <button
-                                                key={node.id}
-                                                onClick={() => setSelectedNodeId(node.id)}
-                                                className={cn(
-                                                    "absolute cursor-pointer transition-all duration-300 transform outline-none",
-                                                    isSelected ? "z-30 scale-110" : "z-10 hover:scale-105"
-                                                )}
-                                                style={{
-                                                    left: `${pos.x + (treeDimensions.width / 2) - NODE_WIDTH / 2}px`,
-                                                    top: `${pos.y - NODE_HEIGHT / 2}px`,
-                                                    width: `${NODE_WIDTH}px`
-                                                }}
-                                            >
-                                                <Card className={cn(
-                                                    "p-3 h-full flex flex-col items-center text-center gap-2 border-2 transition-colors relative group",
-                                                    isSelected ? "border-accent-primary bg-accent-primary/10 shadow-[0_0_20px_rgba(168,85,247,0.3)]" :
-                                                        isMaxed ? "border-green-500/50 bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.1)]" :
-                                                            isResearched ? "border-accent-primary/40 bg-accent-primary/5" : "border-border/50 bg-bg-primary/50"
-                                                )}>
-                                                    <div className="w-16 h-16 rounded-xl bg-bg-input border border-border flex items-center justify-center relative overflow-hidden group">
-                                                        {spriteStyle ? (
-                                                            <div style={spriteStyle} />
-                                                        ) : (
-                                                            activeTab === 'Power' ? <Zap className="w-8 h-8 text-yellow-500" /> : <Hammer className="w-8 h-8 text-blue-500" />
-                                                        )}
-                                                        {isMaxed && (
-                                                            <div className="absolute inset-0 border-2 border-green-500/50 rounded-lg pointer-events-none" />
-                                                        )}
-                                                    </div>
-
-                                                    <div className="min-w-0 w-full mb-6">
-                                                        <div className="text-[10px] font-bold text-text-muted uppercase mb-0.5">Tier {node.tier + 1}</div>
-                                                        <h4 className="text-xs font-bold text-text-primary leading-tight line-clamp-2 min-h-[2.5em]">
-                                                            {getTechNodeName(node.type)}
-                                                        </h4>
-                                                    </div>
-
-                                                    {/* Node Controls */}
-                                                    <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between gap-2">
-                                                        <div
-                                                            className="w-6 h-6 rounded bg-bg-secondary hover:bg-white/10 flex items-center justify-center border border-border cursor-pointer active:scale-95"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleLocalUpdate(node.id, -1);
-                                                            }}
-                                                        >
-                                                            <Minus className="w-3 h-3 text-white" />
-                                                        </div>
-
-                                                        <div className="flex flex-col items-center">
-                                                            <div className={cn("font-mono font-bold text-xs",
-                                                                isMaxed ? "text-green-500" :
-                                                                    isResearched ? "text-accent-primary" : "text-text-muted"
-                                                            )}>
-                                                                {currentRank}/{maxLevel}
-                                                            </div>
-                                                            {/* Time remaining for this specific node */}
-                                                            <div className="text-[8px] text-text-muted flex items-center gap-1">
-                                                                <div className="inline-block shrink-0" role="img" aria-label="Timer" style={{
-                                                                    width: '8px',
-                                                                    height: '8px',
-                                                                    backgroundImage: `url(${import.meta.env.BASE_URL}icons/game/Icons.png)`,
-                                                                    backgroundPosition: '-50px -30px',
-                                                                    backgroundSize: '80px 80px',
-                                                                    backgroundRepeat: 'no-repeat',
-                                                                    imageRendering: 'pixelated'
-                                                                }} />
-                                                                {formatTime(nodeStats.remainingTime)}
-                                                            </div>
-                                                        </div>
-
-                                                        <div
-                                                            className={cn(
-                                                                "w-6 h-6 rounded flex items-center justify-center border border-border cursor-pointer active:scale-95 transition-all",
-                                                                (node.requirements || []).some((reqId: number) => (currentTreeRanks[reqId] || 0) <= 0)
-                                                                    ? "bg-orange-500/20 text-orange-400 hover:bg-orange-500/30"
-                                                                    : "bg-bg-secondary hover:bg-white/10 text-white"
-                                                            )}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleLocalUpdate(node.id, 1);
-                                                            }}
-                                                            title={(node.requirements || []).some((reqId: number) => (currentTreeRanks[reqId] || 0) <= 0) ? "Auto-unlock requirements" : ""}
-                                                        >
-                                                            <Plus className="w-3 h-3" />
-                                                        </div>
-                                                    </div>
-                                                </Card>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
+                        ) : showColumns ? (
+                            <div className="flex-1 grid grid-cols-3 divide-x divide-border overflow-hidden">
+                                {HERO_TREES.map((treeName) => (
+                                    <div key={treeName} className="flex flex-col min-w-0">
+                                        <div className="shrink-0 px-3 py-1.5 border-b border-border/50 text-xs font-bold text-accent-primary uppercase tracking-wider text-center">
+                                            {treeName === 'SkillsPetTech' ? 'Skills & Pets' : treeName}
+                                        </div>
+                                        {renderPlayerCanvas(treeName, false)}
+                                    </div>
+                                ))}
                             </div>
+                        ) : (
+                            renderPlayerCanvas(activeTab, true)
                         )}
 
                         {/* Detail Panel (Slide-in) */}
@@ -1115,19 +1203,19 @@ export default function TechTree() {
                                                 return spriteStyle ? (
                                                     <div style={spriteStyle} />
                                                 ) : (
-                                                    activeTab === 'Power' ? <Zap className="w-8 h-8 text-yellow-500" /> : <Hammer className="w-8 h-8 text-blue-500" />
+                                                    selectedTree === 'Power' ? <Zap className="w-8 h-8 text-yellow-500" /> : <Hammer className="w-8 h-8 text-blue-500" />
                                                 );
                                             })()}
                                         </div>
                                         <div>
-                                            <div className="text-xs font-bold text-accent-primary uppercase">{activeTab} Tech</div>
+                                            <div className="text-xs font-bold text-accent-primary uppercase">{selectedTree} Tech</div>
                                             <h2 className="text-lg font-bold leading-tight">{getTechNodeName(selectedNode.type)}</h2>
                                         </div>
                                     </div>
 
                                     {/* Node Stats Summary */}
                                     {(() => {
-                                        const currentTreeRanks = localRanks[activeTab] || {};
+                                        const currentTreeRanks = localRanks[selectedTree] || {};
                                         const stats = calculateNodeStats(selectedNode, currentTreeRanks[selectedNode.id] || 0);
                                         return (
                                             <div className="grid grid-cols-2 gap-2 p-3 bg-accent-primary/5 rounded-xl border border-accent-primary/20">
@@ -1208,17 +1296,17 @@ export default function TechTree() {
                                             <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3 block">Simulate Rank</label>
                                             <div className="flex items-center gap-4 bg-bg-input rounded-2xl p-2 border border-border">
                                                 <button
-                                                    onClick={() => handleLocalUpdate(selectedNode.id, -1)}
+                                                    onClick={() => handleLocalUpdate(selectedNode.id, -1, selectedTree)}
                                                     className="w-10 h-10 rounded-xl bg-bg-secondary hover:bg-white/5 flex items-center justify-center font-bold text-xl transition-colors"
                                                 >-</button>
                                                 <div className="flex-1 text-center">
                                                     <div className="text-2xl font-mono font-bold text-accent-primary">
-                                                        {(localRanks[activeTab] || {})[selectedNode.id] || 0}
+                                                        {(localRanks[selectedTree] || {})[selectedNode.id] || 0}
                                                     </div>
                                                     <div className="text-[9px] text-text-muted uppercase font-bold tracking-tighter">Level Rank</div>
                                                 </div>
                                                 <button
-                                                    onClick={() => handleLocalUpdate(selectedNode.id, 1)}
+                                                    onClick={() => handleLocalUpdate(selectedNode.id, 1, selectedTree)}
                                                     className="w-10 h-10 rounded-xl bg-bg-secondary hover:bg-white/5 flex items-center justify-center font-bold text-xl transition-colors"
                                                 >+</button>
                                             </div>
@@ -1227,7 +1315,7 @@ export default function TechTree() {
                                         <div>
                                             <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-2 block">Bonus Analytics</label>
                                             {selectedEffect?.Stats?.map((stat: any, i: number) => {
-                                                const currentVal = (localRanks[activeTab] || {})[selectedNode.id] || 0;
+                                                const currentVal = (localRanks[selectedTree] || {})[selectedNode.id] || 0;
                                                 const maxLevel = selectedEffect.MaxLevel || 1;
 
                                                 return (
@@ -1348,7 +1436,7 @@ export default function TechTree() {
                                                     </div>
                                                     {upgradeLibrary[selectedNode.tier].Levels.map((lvl: any, idx: number) => {
                                                         const rank = lvl.Level + 1;
-                                                        const currentRank = (localRanks[activeTab] || {})[selectedNode.id] || 0;
+                                                        const currentRank = (localRanks[selectedTree] || {})[selectedNode.id] || 0;
                                                         const isUnlocked = currentRank >= rank;
                                                         const isNext = currentRank + 1 === rank;
 
