@@ -3,7 +3,7 @@ import { useProfile } from '../../context/ProfileContext';
 import { useGameData } from '../../hooks/useGameData';
 import { Card } from '../UI/Card';
 import { ConfirmModal } from '../UI/ConfirmModal';
-import { Search, Lock, Check, Download, Upload, Calendar, ArrowDownToLine, Loader2 } from 'lucide-react';
+import { Search, Lock, Check, Download, Upload, Calendar, ArrowDownToLine, Loader2, Columns, LayoutGrid } from 'lucide-react';
 import { useClan } from '../../context/ClanContext';
 import { cn } from '../../lib/utils';
 import { useGameDataContext } from '../../context/GameDataContext';
@@ -166,8 +166,10 @@ export function TechTreePanel() {
     const [pendingReset, setPendingReset] = useState<{ nodeId: number; treeName: TreeName; count: number } | null>(null);
 
     // On wide screens the three hero branches render as columns; Clan keeps its own tab.
+    // `wideSingle` is the user's opt-out back to the one-tree-at-a-time view.
     const isWide = useMediaQuery('(min-width: 1280px)');
-    const showHeroColumns = isWide && activeTab !== 'Clan';
+    const [wideSingle, setWideSingle] = useState(false);
+    const showHeroColumns = isWide && !wideSingle && activeTab !== 'Clan';
 
     const [showImportModal, setShowImportModal] = useState(false);
     const [importText, setImportText] = useState('');
@@ -771,10 +773,41 @@ export function TechTreePanel() {
                 </div>
             </h2>
 
-            {/* Tab Filters */}
+            {/* Tab Filters. In the wide column layout the three player tabs collapse into one
+                "All Trees" button (they are all on screen anyway); the toggle brings back the
+                single-tree view for anyone who prefers it. */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
-                    {treeCategories.map((treeKey) => {
+                    {isWide && !wideSingle && (
+                        <button
+                            onClick={() => setActiveTab('Forge')}
+                            className={cn(
+                                "px-4 py-2 rounded-lg font-bold text-sm transition-colors whitespace-nowrap flex items-center gap-2",
+                                activeTab !== 'Clan'
+                                    ? "bg-accent-primary text-white"
+                                    : "bg-bg-input text-text-secondary hover:bg-bg-input/80"
+                            )}
+                        >
+                            <span>All Trees</span>
+                            {(() => {
+                                let cur = 0, max = 0;
+                                HERO_TREES.forEach(t => {
+                                    const c = completionData[t];
+                                    if (c) { cur += c.current; max += c.max; }
+                                });
+                                if (max === 0) return null;
+                                return (
+                                    <span className={cn(
+                                        "text-xs px-1.5 py-0.5 rounded",
+                                        activeTab !== 'Clan' ? "bg-black/20 text-white/90" : "bg-black/10 text-text-muted"
+                                    )}>
+                                        {((cur / max) * 100).toFixed(2)}%
+                                    </span>
+                                );
+                            })()}
+                        </button>
+                    )}
+                    {(isWide && !wideSingle ? treeCategories.filter(t => t === 'Clan') : treeCategories).map((treeKey) => {
                         const completion = completionData[treeKey];
                         return (
                             <button
@@ -813,6 +846,15 @@ export function TechTreePanel() {
                         onFocus={(e) => e.target.select()}
                     />
                 </div>
+                {isWide && (
+                    <button
+                        onClick={() => setWideSingle(v => !v)}
+                        title={wideSingle ? 'Show all three trees side by side' : 'Show one tree at a time'}
+                        className="px-3 py-2 rounded-lg bg-bg-input border border-border text-text-secondary hover:text-text-primary transition-colors shrink-0 self-start sm:self-auto"
+                    >
+                        {wideSingle ? <LayoutGrid className="w-4 h-4" /> : <Columns className="w-4 h-4" />}
+                    </button>
+                )}
             </div>
 
             {/* Tree Structure - three hero columns on wide screens, tabbed single tree otherwise */}

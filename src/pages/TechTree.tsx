@@ -3,7 +3,7 @@ import { Card } from '../components/UI/Card';
 import { useProfile } from '../context/ProfileContext';
 import { useGameData } from '../hooks/useGameData';
 import { cn } from '../lib/utils';
-import { Hammer, Zap, Info, X, RefreshCw, Star, Plus, Minus, Download, Upload } from 'lucide-react';
+import { Hammer, Zap, Info, X, RefreshCw, Star, Plus, Minus, Download, Upload, Columns, LayoutGrid } from 'lucide-react';
 import { getTechNodeName, getTechNodeDescription, getClanIconStyle } from '../utils/techUtils';
 import { useTreeMode } from '../context/TreeModeContext';
 import { useMediaQuery } from '../hooks/useMediaQuery';
@@ -40,7 +40,8 @@ export default function TechTree() {
     const [selectedTree, setSelectedTree] = useState<TreeName>('Forge');
 
     const isWide = useMediaQuery('(min-width: 1280px)');
-    const showColumns = isWide && activeTab !== 'Clan';
+    const [wideSingle, setWideSingle] = useState(false);
+    const showColumns = isWide && !wideSingle && activeTab !== 'Clan';
 
     // Local simulation state - Synced to profile on load, but independent during edit
     const [localRanks, setLocalRanks] = useState<Record<string, Record<number, number>>>({});
@@ -982,7 +983,23 @@ export default function TechTree() {
                     </div>
  
                     <div className="flex gap-1 bg-bg-secondary/30 p-1 rounded-xl border border-border overflow-x-auto max-w-full no-scrollbar">
-                        {treeKeys.map((treeKey) => (
+                        {isWide && !wideSingle && (
+                            <button
+                                onClick={() => {
+                                    setActiveTab('Forge');
+                                    setSelectedNodeId(null);
+                                }}
+                                className={cn(
+                                    "px-3 py-1.5 rounded-lg font-bold text-xs transition-all whitespace-nowrap",
+                                    activeTab !== 'Clan'
+                                        ? "bg-accent-primary text-white shadow-lg"
+                                        : "text-text-muted hover:text-text-primary hover:bg-white/5"
+                                )}
+                            >
+                                All Trees
+                            </button>
+                        )}
+                        {(isWide && !wideSingle ? treeKeys.filter(t => t === 'Clan') : treeKeys).map((treeKey) => (
                             <button
                                 key={treeKey}
                                 onClick={() => {
@@ -1000,6 +1017,15 @@ export default function TechTree() {
                                 {treeKey}
                             </button>
                         ))}
+                        {isWide && (
+                            <button
+                                onClick={() => setWideSingle(v => !v)}
+                                title={wideSingle ? 'Show all three trees side by side' : 'Show one tree at a time'}
+                                className="px-2 py-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-white/5 transition-all"
+                            >
+                                {wideSingle ? <LayoutGrid className="w-3.5 h-3.5" /> : <Columns className="w-3.5 h-3.5" />}
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
