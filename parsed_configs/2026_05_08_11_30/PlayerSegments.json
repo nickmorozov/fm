@@ -1,0 +1,17 @@
+{
+  "AndroidNativeRateUs": {
+    "SegmentId": "AndroidNativeRateUs",
+    "Description": "For rating use the android native popup instead of redirecting to the store. This is here temporarliy because we need to be able to switch it on and off until android fixes it",
+    "DisplayName": "Android Native Popup (temporary)",
+    "PlayerCondition": {
+      "PropertyRequirements": [
+        {
+          "Id": {},
+          "Min": null,
+          "Max": null
+        }
+      ],
+      "$type": "PlayerSegmentBasicCondition"
+    }
+  }
+}
