@@ -328,7 +328,6 @@ export default function AppShell() {
                 isOpen={isSidebarVisible}
                 onClose={() => { if (!isSidebarPinned) setIsSidebarOpen(false); }}
                 isPinned={isSidebarPinned}
-                onTogglePin={() => setIsSidebarPinned(prev => !prev)}
                 isInfoCollapsed={isInfoCollapsed}
                 onToggleInfo={() => setIsInfoCollapsed(prev => !prev)}
             />
@@ -343,6 +342,8 @@ export default function AppShell() {
                 <Header
                     onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)}
                     onStatsToggle={() => setIsStatsOpen(!isStatsOpen)}
+                    isSidebarPinned={isSidebarPinned}
+                    onToggleSidebarPin={() => setIsSidebarPinned(prev => !prev)}
                 />
 
                 {/* Page Content */}
