@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { SecondaryStatInput } from '../UI/SecondaryStatInput';
-import { X, Sword, Heart, Plus, Trash2, Clock, Target, Unlock, Grid, Settings, Bookmark, Shield, Calendar, Pencil } from 'lucide-react';
+import { X, Sword, Heart, Plus, Trash2, Clock, Target, Unlock, Grid, Settings, Bookmark, Shield, Calendar, Pencil, Copy as CopyIcon } from 'lucide-react';
 import { useGameData } from '../../hooks/useGameData';
 import { useProfile } from '../../context/ProfileContext';
 import { useGameDataContext } from '../../context/GameDataContext';
@@ -46,6 +46,118 @@ const STAT_TYPES = [
     'DoubleDamageChance', 'DamageMulti', 'MeleeDamageMulti', 'RangedDamageMulti',
     'AttackSpeed', 'SkillDamageMulti', 'SkillCooldownMulti', 'HealthMulti'
 ];
+
+/**
+ * "Runeword" grouping of the passive stats: pick a subject first (Damage, Health, ...), then the
+ * flavor. Two quick clicks instead of scanning a 13-entry dropdown.
+ */
+const STAT_TAXONOMY: { subject: string; options: { label: string; id: string }[] }[] = [
+    {
+        subject: 'Damage', options: [
+            { label: 'All', id: 'DamageMulti' },
+            { label: 'Melee', id: 'MeleeDamageMulti' },
+            { label: 'Ranged', id: 'RangedDamageMulti' },
+            { label: 'Skill', id: 'SkillDamageMulti' },
+            { label: 'Double', id: 'DoubleDamageChance' },
+        ]
+    },
+    {
+        subject: 'Health', options: [
+            { label: 'Max', id: 'HealthMulti' },
+            { label: 'Regen', id: 'HealthRegen' },
+            { label: 'Steal', id: 'LifeSteal' },
+        ]
+    },
+    {
+        subject: 'Crit', options: [
+            { label: 'Chance', id: 'CriticalChance' },
+            { label: 'Multi', id: 'CriticalMulti' },
+        ]
+    },
+    {
+        subject: 'Speed', options: [
+            { label: 'Attack', id: 'AttackSpeed' },
+            { label: 'Skill CD', id: 'SkillCooldownMulti' },
+        ]
+    },
+    {
+        subject: 'Block', options: [
+            { label: 'Chance', id: 'BlockChance' },
+        ]
+    },
+];
+
+/** Two-step stat picker: subject row, then flavor row. `availableTypes` = this row's current stat
+ *  plus every type not taken by a sibling row. */
+function RunewordStatPicker({ value, availableTypes, onChange }: {
+    value: string;
+    availableTypes: string[];
+    onChange: (id: string) => void;
+}) {
+    const currentGroup = STAT_TAXONOMY.find(g => g.options.some(o => o.id === value));
+    const [subject, setSubject] = useState<string>(currentGroup?.subject || STAT_TAXONOMY[0].subject);
+
+    // Follow external value changes (e.g. loading a saved item)
+    useEffect(() => {
+        if (currentGroup && currentGroup.subject !== subject) setSubject(currentGroup.subject);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value]);
+
+    const activeGroup = STAT_TAXONOMY.find(g => g.subject === subject) || STAT_TAXONOMY[0];
+
+    return (
+        <div className="flex-1 min-w-0 space-y-1">
+            <div className="flex flex-wrap gap-1">
+                {STAT_TAXONOMY.map(group => {
+                    const hasAvailable = group.options.some(o => availableTypes.includes(o.id));
+                    const holdsValue = group.options.some(o => o.id === value);
+                    return (
+                        <button
+                            key={group.subject}
+                            disabled={!hasAvailable}
+                            onClick={() => setSubject(group.subject)}
+                            className={cn(
+                                "px-2 py-0.5 rounded-md text-[10px] font-bold border transition-all",
+                                subject === group.subject
+                                    ? holdsValue
+                                        ? "bg-accent-primary text-white border-accent-primary"
+                                        : "bg-accent-primary/20 border-accent-primary text-accent-primary"
+                                    : holdsValue
+                                        ? "bg-accent-primary/10 border-accent-primary/40 text-accent-primary"
+                                        : "bg-bg-input border-border text-text-muted hover:border-border/80",
+                                !hasAvailable && "opacity-40 cursor-not-allowed"
+                            )}
+                        >
+                            {group.subject}
+                        </button>
+                    );
+                })}
+            </div>
+            <div className="flex flex-wrap gap-1">
+                {activeGroup.options.map(opt => {
+                    const available = availableTypes.includes(opt.id);
+                    return (
+                        <button
+                            key={opt.id}
+                            disabled={!available}
+                            onClick={() => onChange(opt.id)}
+                            title={getStatName(opt.id)}
+                            className={cn(
+                                "px-2 py-0.5 rounded-md text-[10px] font-bold border transition-all",
+                                value === opt.id
+                                    ? "bg-accent-primary text-white border-accent-primary"
+                                    : "bg-bg-input border-border text-text-secondary hover:border-accent-primary/50",
+                                !available && "opacity-40 cursor-not-allowed"
+                            )}
+                        >
+                            {opt.label}
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
 
 const IMAGE_SLOT_MAP: Record<string, string> = {
     'Weapon': 'Weapon',
@@ -579,6 +691,21 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
         }
     };
 
+    const handleCloneSavedItem = (index: number, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const currentSaved = profile.savedItems?.[slot] || [];
+        const src = currentSaved[index];
+        if (!src) return;
+        const copy = JSON.parse(JSON.stringify(src));
+        if (copy.customName) copy.customName = `${copy.customName} (copy)`;
+        const newSaved = [...currentSaved.slice(0, index + 1), copy, ...currentSaved.slice(index + 1)];
+        updateNestedProfile('savedItems', { [slot]: newSaved });
+        // Keep the current selection pointing at the same item after the insert
+        if (ageIdx === -1 && selectedSavedItemIndex !== null && selectedSavedItemIndex > index) {
+            setSelectedSavedItemIndex(selectedSavedItemIndex + 1);
+        }
+    };
+
     const handleSave = () => {
         if (selectedItemData) {
             // Convert skinStatsList array back to Record for storage
@@ -982,19 +1109,15 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                             const range = getStatRange(stat.type);
                             return (
                                 <div key={i} className="flex flex-col gap-1">
-                                    <div className="flex gap-2 items-center">
-                                        <select
+                                    <div className="flex gap-2 items-start">
+                                        <RunewordStatPicker
                                             value={stat.type}
-                                            onChange={(e) => updateStat(i, 'type', e.target.value)}
-                                            className="flex-1 bg-bg-input border border-border rounded px-2 py-1 text-xs"
-                                        >
-                                            {STAT_TYPES.filter(t =>
-                                                // Allow if it's the current value of this row OR if it's not selected in any other row
+                                            availableTypes={STAT_TYPES.filter(t =>
+                                                // This row's current value OR not selected in any other row
                                                 t === stat.type || !manualStats.some(s => s.type === t)
-                                            ).map(t => (
-                                                <option key={t} value={t}>{getStatName(t)}</option>
-                                            ))}
-                                        </select>
+                                            )}
+                                            onChange={(id) => updateStat(i, 'type', id)}
+                                        />
                                         <SecondaryStatInput
                                             value={stat.value as number}
                                             onChange={(val) => updateStat(i, 'value', val)}
@@ -1282,8 +1405,10 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                         setLevel(saved.level);
                                         setManualStats(saved.secondaryStats?.map(s => ({ type: s.statId, value: s.value })) || []);
                                     } else {
+                                        // Keep the chosen passive stats: switching the item art
+                                        // shouldn't throw away a configured build. The slot-count
+                                        // effect trims the list if the new item allows fewer.
                                         setSelectedItemIdx(idx);
-                                        setManualStats([]); // Reset manual stats for new item from library
                                     }
                                     setMobileTab('config');
                                 }}
@@ -1302,13 +1427,22 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                 }
                             >
                                 {ageIdx === -1 && (
-                                    <button
-                                        onClick={(e) => handleDeleteSavedItem((item as any).savedIndex, e)}
-                                        className="absolute top-1 right-1 z-20 p-1.5 bg-red-500 hover:bg-red-600 rounded-md text-white shadow-sm transition-opacity"
-                                        title="Delete Preset"
-                                    >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
+                                    <div className="absolute top-1 right-1 z-20 flex gap-1">
+                                        <button
+                                            onClick={(e) => handleCloneSavedItem((item as any).savedIndex, e)}
+                                            className="p-1.5 bg-bg-input hover:bg-accent-primary hover:text-white rounded-md text-text-muted shadow-sm transition-colors"
+                                            title="Clone Preset"
+                                        >
+                                            <CopyIcon className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                            onClick={(e) => handleDeleteSavedItem((item as any).savedIndex, e)}
+                                            className="p-1.5 bg-red-500 hover:bg-red-600 rounded-md text-white shadow-sm transition-opacity"
+                                            title="Delete Preset"
+                                        >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
                                 )}
                                 <div
                                     className="w-12 h-12 rounded-lg flex items-center justify-center pointer-events-none"
@@ -1555,6 +1689,7 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                                         setSkinStatsList([]);
                                                     }
                                                 }}
+                                                onClone={(e) => handleCloneSavedItem((saved as any).savedIndex, e)}
                                                 onDelete={(e) => handleDeleteSavedItem((saved as any).savedIndex, e)}
                                             />
                                         );
@@ -1572,8 +1707,8 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                         <div
                                             key={listIdx}
                                             onClick={() => {
+                                                // Keep chosen passive stats across item switches.
                                                 setSelectedItemIdx(idx);
-                                                setManualStats([]);
                                             }}
                                             className={cn(
                                                 "relative rounded-xl border-2 transition-all p-1.5 flex flex-col items-center gap-1 group overflow-hidden cursor-pointer",
@@ -1801,21 +1936,40 @@ export function ItemSelectorModal({ isOpen, onClose, onSelect, slot, current, is
                                 <div className="flex flex-col gap-3">
                                     {manualStats.map((stat, i) => {
                                         const range = getStatRange(stat.type);
-                                        const statOptions = STAT_TYPES.filter(t =>
-                                            t === stat.type || !manualStats.some(s => s.type === t)
-                                        ).map(t => ({ id: t, name: getStatName(t) }));
-
                                         return (
-                                            <SecondaryStatCard
-                                                key={i}
-                                                statId={stat.type}
-                                                value={stat.value as number}
-                                                options={statOptions}
-                                                onStatIdChange={(newId) => updateStat(i, 'type', newId)}
-                                                onValueChange={(newVal) => updateStat(i, 'value', newVal)}
-                                                onRemove={() => removeStat(i)}
-                                                range={range}
-                                            />
+                                            <div key={i} className="bg-black/20 rounded-xl p-2.5 border border-white/5 space-y-2">
+                                                <div className="flex items-start gap-2">
+                                                    <RunewordStatPicker
+                                                        value={stat.type}
+                                                        availableTypes={STAT_TYPES.filter(t =>
+                                                            t === stat.type || !manualStats.some(s => s.type === t)
+                                                        )}
+                                                        onChange={(id) => updateStat(i, 'type', id)}
+                                                    />
+                                                    <button
+                                                        onClick={() => removeStat(i)}
+                                                        className="p-2 text-text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all shrink-0"
+                                                        title="Remove Stat"
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </div>
+                                                <div className="flex flex-col gap-1 px-1">
+                                                    <SecondaryStatInput
+                                                        value={stat.value as number}
+                                                        onChange={(newVal) => updateStat(i, 'value', newVal)}
+                                                        min={(range?.min || 0) * 100}
+                                                        max={(range?.max || 1) * 100}
+                                                        className="w-full text-sm py-1.5"
+                                                    />
+                                                    {range && (
+                                                        <div className="flex justify-between text-[8px] text-text-muted uppercase font-bold tracking-tighter">
+                                                            <span>Range</span>
+                                                            <span>{(range.min * 100).toFixed(1)}% - {(range.max * 100).toFixed(1)}%</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
                                         );
                                     })}
                                 </div>

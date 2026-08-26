@@ -54,6 +54,9 @@ interface ComparisonContextType {
     updateOriginalUseSkinWindup: (val: boolean) => void;
     updateTestUseSkinWindup: (val: boolean) => void;
     testDiffers: boolean;
+    /** Apply one test slot's change to the live profile without leaving compare mode. The accepted
+     *  item becomes part of the baseline; with `restart` every other pending test edit is reset. */
+    acceptTestItem: (slot: keyof UserProfile['items'], restart?: boolean) => void;
     keepOriginal: () => void;
     applyTestBuild: () => void;
     resetTest: () => void;
@@ -341,6 +344,25 @@ export const ComparisonProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setTestUseSkinWindup(originalUseSkinWindup);
     }, [originalItems, originalMount, originalPets, originalSkills, originalForgeAscension, originalMountAscension, originalPetAscension, originalSkillAscension, originalUseSkinWindup]);
 
+    const acceptTestItem = useCallback((slot: keyof UserProfile['items'], restart = false) => {
+        if (!testItems) return;
+        const accepted = testItems[slot] ? JSON.parse(JSON.stringify(testItems[slot])) : null;
+
+        // Into the live profile immediately
+        updateNestedProfile('items', { [slot]: accepted });
+
+        // The accepted item is the new baseline for this slot
+        const newOriginal = originalItems
+            ? { ...JSON.parse(JSON.stringify(originalItems)), [slot]: accepted ? JSON.parse(JSON.stringify(accepted)) : null }
+            : null;
+        setOriginalItems(newOriginal);
+
+        if (restart) {
+            // Fresh comparison: drop every other pending item edit too
+            setTestItems(newOriginal ? JSON.parse(JSON.stringify(newOriginal)) : null);
+        }
+    }, [testItems, originalItems, updateNestedProfile]);
+
     const loadProfileIntoTest = useCallback((sourceProfile: UserProfile) => {
         // Import build-relevant data from another profile into the test side
         // Does NOT import: techTree, skills.passives, collections, savedItems, misc utilities
@@ -406,6 +428,7 @@ export const ComparisonProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             updateOriginalUseSkinWindup,
             updateTestUseSkinWindup,
             testDiffers,
+            acceptTestItem,
             keepOriginal,
             applyTestBuild,
             resetTest,

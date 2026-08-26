@@ -26,6 +26,7 @@ import Colors from './pages/Colors';
 import Emblems from './pages/Emblems';
 import FAQ from './pages/FAQ';
 import Profile from './pages/Profile';
+import Inventory from './pages/Inventory';
 import ProgressPrediction from './pages/ProgressPrediction';
 import PvpArena from './pages/PvpArena';
 import SubstatsCalculator from './pages/Calculators/SubstatsCalculator';
@@ -64,6 +65,7 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<AppShell />}>
                                     <Route index element={<Profile />} />
+                                    <Route path="inventory" element={<Inventory />} />
                                     <Route path="progress-prediction" element={<ProgressPrediction />} />
                                     <Route path="home" element={<Home />} />
                                     <Route path="configs" element={<Configs />} />

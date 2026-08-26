@@ -3,7 +3,7 @@ import { useGameDataContext } from '../../context/GameDataContext';
 import { useComparison } from '../../context/ComparisonContext';
 import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
-import { GitCompare, RotateCcw } from 'lucide-react';
+import { GitCompare, RotateCcw, Check, CheckCheck } from 'lucide-react';
 import { ItemSlot, MountSlot, UserProfile } from '../../types/Profile';
 import { useState, useMemo } from 'react';
 import { ItemSelectorModal } from './ItemSelectorModal';
@@ -83,7 +83,7 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
         updateTestForgeAscension,
         updateOriginalUseSkinWindup,
         updateTestUseSkinWindup,
-        updateOriginalItem, updateTestItem, enterCompareMode, resetTest, testDiffers,
+        updateOriginalItem, updateTestItem, enterCompareMode, acceptTestItem, resetTest, testDiffers,
         isCompactStats } = useComparison();
     const { selectedVersion } = useGameDataContext();
     const [selectedSlot, setSelectedSlot] = useState<keyof UserProfile['items'] | null>(null);
@@ -375,22 +375,41 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
 
                         if (!equipped) {
                             return (
-                                <EmptyRowCard
-                                    className="min-w-0" artClassName={ITEM_ART}
-                                    key={slot.key}
-                                    label={slot.label}
-                                    hint="Empty Slot"
-                                    hasDiff={hasDiff}
-                                    onClick={() => setSelectedSlot(slot.key)}
-                                    icon={inventoryStyle ? <div style={inventoryStyle} /> : undefined}
-                                />
+                                <div key={slot.key} className="relative group/acc min-w-0">
+                                    <EmptyRowCard
+                                        className="min-w-0" artClassName={ITEM_ART}
+                                        label={slot.label}
+                                        hint="Empty Slot"
+                                        hasDiff={hasDiff}
+                                        onClick={() => setSelectedSlot(slot.key)}
+                                        icon={inventoryStyle ? <div style={inventoryStyle} /> : undefined}
+                                    />
+                                {variant === 'test' && hasDiff && (
+                                    <div className="absolute top-1 right-1 z-20 flex gap-1 opacity-0 group-hover/acc:opacity-100 transition-opacity">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); acceptTestItem(slot.key); }}
+                                            title="Accept this change (keep comparing the rest)"
+                                            className="p-1.5 rounded-md bg-green-600 hover:bg-green-500 text-white shadow-lg"
+                                        >
+                                            <Check className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); acceptTestItem(slot.key, true); }}
+                                            title="Accept this change and restart a fresh comparison"
+                                            className="p-1.5 rounded-md bg-emerald-800 hover:bg-emerald-700 text-white shadow-lg"
+                                        >
+                                            <CheckCheck className="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
+                                )}
+                                </div>
                             );
                         }
 
                         return (
+                            <div key={slot.key} className="relative group/acc min-w-0">
                             <ItemSelectionCard
                                 className="min-w-0" artClassName={ITEM_ART}
-                                key={slot.key}
                                 item={equipped}
                                 layout="row"
                                 variant={isCompactStats ? 'compact' : 'default'}
@@ -421,6 +440,25 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                                     setItemToSave({ slot: slot.key, item: equipped });
                                 }}
                             />
+                            {variant === 'test' && hasDiff && (
+                                <div className="absolute top-1 right-1 z-20 flex gap-1 opacity-0 group-hover/acc:opacity-100 transition-opacity">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); acceptTestItem(slot.key); }}
+                                        title="Accept this change (keep comparing the rest)"
+                                        className="p-1.5 rounded-md bg-green-600 hover:bg-green-500 text-white shadow-lg"
+                                    >
+                                        <Check className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); acceptTestItem(slot.key, true); }}
+                                        title="Accept this change and restart a fresh comparison"
+                                        className="p-1.5 rounded-md bg-emerald-800 hover:bg-emerald-700 text-white shadow-lg"
+                                    >
+                                        <CheckCheck className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
+                            )}
+                            </div>
                         );
                     })}
 

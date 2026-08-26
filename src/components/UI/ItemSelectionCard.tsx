@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Bookmark, Shield, Minus, Plus, Check } from 'lucide-react';
+import { X, Bookmark, Shield, Minus, Plus, Check, Copy } from 'lucide-react';
 import { ItemSlot, MountSlot, PetSlot } from '../../types/Profile';
 import { AscensionStars } from './AscensionStars';
 import { cn, getAgeBgStyle, getAgeBorderStyle, getRarityBgStyle, getRarityBorderStyle } from '../../lib/utils';
@@ -81,6 +81,7 @@ interface ItemSelectionCardProps {
     spriteMapping?: any;
     onClick?: () => void;
     onDelete?: (e: React.MouseEvent) => void;
+    onClone?: (e: React.MouseEvent) => void;
     onUnequip?: (e: React.MouseEvent) => void;
     onSave?: (e: React.MouseEvent) => void;
     onLevelChange?: (delta: number, e: React.MouseEvent) => void;
@@ -130,6 +131,7 @@ export function ItemSelectionCard({
     spriteMapping,
     onClick,
     onDelete,
+    onClone,
     onUnequip,
     onSave,
     onLevelChange,
@@ -174,6 +176,7 @@ export function ItemSelectionCard({
                 spriteMapping={spriteMapping}
                 onClick={onClick}
                 onDelete={onDelete}
+                onClone={onClone}
                 onUnequip={onUnequip}
                 onSave={onSave}
                 onLevelChange={onLevelChange}
@@ -310,6 +313,15 @@ export function ItemSelectionCard({
                             title="Unequip"
                         >
                             <X className="w-3 h-3 text-white" />
+                        </button>
+                    )}
+                    {onClone && (
+                        <button
+                            onClick={onClone}
+                            className="p-1 bg-bg-input hover:bg-accent-primary hover:text-white rounded-lg transition-colors text-text-muted shadow-sm border border-transparent hover:border-border"
+                            title="Clone Preset"
+                        >
+                            <Copy className="w-3 h-3" />
                         </button>
                     )}
                     {onDelete && (
@@ -600,6 +612,7 @@ interface RowCardProps {
     spriteMapping?: any;
     onClick?: () => void;
     onDelete?: (e: React.MouseEvent) => void;
+    onClone?: (e: React.MouseEvent) => void;
     onUnequip?: (e: React.MouseEvent) => void;
     onSave?: (e: React.MouseEvent) => void;
     onLevelChange?: (delta: number, e: React.MouseEvent) => void;
@@ -618,7 +631,7 @@ const MAX_ASCENSION = 3;
 function RowCard({
     item, slotKey, slotLabel, isSelected, hasDiff, isEquipped, ascensionLevel, isSaved,
     itemName, itemImage, stats, customStats, tags, perfection, getStatPerfection, spriteMapping,
-    onClick, onDelete, onUnequip, onSave, onLevelChange, onLevelSet, onAscensionChange,
+    onClick, onDelete, onClone, onUnequip, onSave, onLevelChange, onLevelSet, onAscensionChange,
     renderIcon, hideAgeStyles, rarity, displayLevel, maxLevel, starSrc, className, artClassName,
     isCompact,
 }: RowCardProps) {
