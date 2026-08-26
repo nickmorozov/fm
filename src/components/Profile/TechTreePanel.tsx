@@ -11,10 +11,21 @@ import { useGameDataContext } from '../../context/GameDataContext';
 import { getNormalizedTarget } from '../../utils/ascensionUtils';
 import { getTechNodeName, getClanIconStyle } from '../../utils/techUtils';
 import { SpriteIcon } from '../UI/SpriteIcon';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 const ICON_SIZE = 40;
 
 type TreeName = 'Forge' | 'Power' | 'SkillsPetTech' | 'Clan';
+
+// The three "hero" branches shown side-by-side on wide screens. Clan always lives in its own tab.
+const HERO_TREES: TreeName[] = ['Forge', 'Power', 'SkillsPetTech'];
+
+const TREE_LABELS: Record<TreeName, string> = {
+    Forge: 'Forge',
+    Power: 'Power',
+    SkillsPetTech: 'Skills & Pets',
+    Clan: 'Clan',
+};
 
 interface TechNode {
     id: number;
@@ -152,7 +163,11 @@ export function TechTreePanel() {
     const { selectedVersion } = useGameDataContext();
     const [activeTab, setActiveTab] = useState<TreeName>('Forge');
     const [searchTerm, setSearchTerm] = useState('');
-    const [pendingReset, setPendingReset] = useState<{ nodeId: number; count: number } | null>(null);
+    const [pendingReset, setPendingReset] = useState<{ nodeId: number; treeName: TreeName; count: number } | null>(null);
+
+    // On wide screens the three hero branches render as columns; Clan keeps its own tab.
+    const isWide = useMediaQuery('(min-width: 1280px)');
+    const showHeroColumns = isWide && activeTab !== 'Clan';
 
     const [showImportModal, setShowImportModal] = useState(false);
     const [importText, setImportText] = useState('');
@@ -331,41 +346,46 @@ export function TechTreePanel() {
 
 
 
+    const getTreeLevels = (treeName: TreeName): Record<number, number> => profile.techTree[treeName] || {};
+
     // Get current tree levels
     const currentTreeLevels = useMemo(() => {
         return profile.techTree[activeTab] || {};
     }, [profile.techTree, activeTab]);
 
-    // Get nodes for active tab grouped by layer
-    const nodesByLayer = useMemo(() => {
-        const tree = treesData[activeTab];
-        if (!tree?.nodes) return {};
+    // Pre-group every player tree's nodes by layer (search-filtered). Doing all trees up front
+    // lets the wide-screen column layout render three at once without re-deriving per tab.
+    const nodesByLayerByTree = useMemo(() => {
+        const result: Record<string, Record<number, TechNode[]>> = {};
+        const term = searchTerm.toLowerCase();
 
-        let nodes: TechNode[] = tree.nodes.map((n: any) => ({
-            ...n,
-            uniqueKey: `${activeTab}_${n.id}`
-        }));
+        HERO_TREES.forEach((treeName) => {
+            const tree = treesData[treeName];
+            const layers: Record<number, TechNode[]> = {};
+            if (tree?.nodes) {
+                let nodes: TechNode[] = tree.nodes.map((n: any) => ({
+                    ...n,
+                    uniqueKey: `${treeName}_${n.id}`,
+                }));
 
-        if (searchTerm) {
-            nodes = nodes.filter((n: TechNode) =>
-                n.type.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
+                if (term) {
+                    nodes = nodes.filter((n: TechNode) => n.type.toLowerCase().includes(term));
+                }
 
-        // Group by layer
-        const layers: Record<number, TechNode[]> = {};
-        nodes.forEach(node => {
-            if (!layers[node.layer]) layers[node.layer] = [];
-            layers[node.layer].push(node);
+                nodes.forEach((node) => {
+                    if (!layers[node.layer]) layers[node.layer] = [];
+                    layers[node.layer].push(node);
+                });
+
+                Object.values(layers).forEach((layerNodes) => layerNodes.sort((a, b) => a.id - b.id));
+            }
+            result[treeName] = layers;
         });
 
-        // Sort nodes within each layer by id
-        Object.values(layers).forEach(layerNodes => {
-            layerNodes.sort((a, b) => a.id - b.id);
-        });
+        return result;
+    }, [treesData, searchTerm]);
 
-        return layers;
-    }, [treesData, activeTab, searchTerm]);
+    const nodesByLayer = nodesByLayerByTree[activeTab] || {};
 
     // Get sorted layer keys
     const sortedLayers = useMemo(() => {
@@ -392,8 +412,9 @@ export function TechTreePanel() {
         };
     };
 
-    const getCascadeCount = (nodeId: number): number => {
-        const tree = treesData[activeTab];
+    const getCascadeCount = (nodeId: number, treeName: TreeName = activeTab): number => {
+        const tree = treesData[treeName];
+        const treeLevels = getTreeLevels(treeName);
         if (!tree?.nodes) return 1;
 
         let count = 1; // Start with the node itself
@@ -414,7 +435,7 @@ export function TechTreePanel() {
             const dependents = tree.nodes.filter((n: any) => n.requirements && n.requirements.includes(pid));
             dependents.forEach((dep: any) => {
                 // If it's active AND not already visited
-                if (currentTreeLevels[dep.id] > 0 && !visited.has(dep.id)) {
+                if (treeLevels[dep.id] > 0 && !visited.has(dep.id)) {
                     visited.add(dep.id);
                     count++;
                     countRecursive(dep.id);
@@ -426,8 +447,8 @@ export function TechTreePanel() {
         return count;
     };
 
-    const autoUnlockRequirements = (nodeId: number, levels: Record<number, number>) => {
-        const tree = treesData[activeTab];
+    const autoUnlockRequirements = (nodeId: number, levels: Record<number, number>, treeName: TreeName = activeTab) => {
+        const tree = treesData[treeName];
         if (!tree?.nodes) return levels;
 
         const updatedLevels = { ...levels };
@@ -454,12 +475,12 @@ export function TechTreePanel() {
         return updatedLevels;
     };
 
-    const executeLevelChange = (nodeId: number, level: number) => {
-        const newTreeLevels = { ...profile.techTree[activeTab], [nodeId]: level };
+    const executeLevelChange = (nodeId: number, level: number, treeName: TreeName = activeTab) => {
+        const newTreeLevels = { ...profile.techTree[treeName], [nodeId]: level };
 
         // Cascade Reset logic applied to the new levels object
         if (level === 0) {
-            const tree = treesData[activeTab];
+            const tree = treesData[treeName];
             if (tree && tree.nodes) {
                 const resetDependents = (parentId: number, levels: Record<number, number>) => {
                     const dependents = tree.nodes.filter((n: any) => n.requirements && n.requirements.includes(parentId));
@@ -477,42 +498,43 @@ export function TechTreePanel() {
         updateProfile({
             techTree: {
                 ...profile.techTree,
-                [activeTab]: newTreeLevels
+                [treeName]: newTreeLevels
             }
         });
     };
 
-    const handleLevelChange = (nodeId: number, level: number, max: number) => {
+    const handleLevelChange = (nodeId: number, level: number, max: number, treeName: TreeName = activeTab) => {
         const val = Math.max(0, Math.min(level, max));
 
         // If resetting to 0, check for cascade
         if (val === 0) {
-            const count = getCascadeCount(nodeId);
+            const count = getCascadeCount(nodeId, treeName);
             if (count > 1) {
-                setPendingReset({ nodeId, count });
+                setPendingReset({ nodeId, treeName, count });
                 return;
             }
         }
 
         // Auto unlock if trying to increase level on a locked node
-        const treeMap = treesData[activeTab];
+        const treeLevels = getTreeLevels(treeName);
+        const treeMap = treesData[treeName];
         const nodeDef = treeMap?.nodes?.find((n: any) => n.id === nodeId);
-        const unlocked = nodeDef ? isNodeUnlocked(nodeDef, currentTreeLevels) : true;
+        const unlocked = nodeDef ? isNodeUnlocked(nodeDef, treeLevels) : true;
 
         if (level > 0 && !unlocked) {
-            const unlockedLevels = autoUnlockRequirements(nodeId, currentTreeLevels);
+            const unlockedLevels = autoUnlockRequirements(nodeId, treeLevels, treeName);
             unlockedLevels[nodeId] = Math.max(unlockedLevels[nodeId] || 0, level);
-            
+
             updateProfile({
                 techTree: {
                     ...profile.techTree,
-                    [activeTab]: unlockedLevels
+                    [treeName]: unlockedLevels
                 }
             });
             return;
         }
 
-        executeLevelChange(nodeId, val);
+        executeLevelChange(nodeId, val, treeName);
     };
 
     const treeCategories = useMemo(() => {
@@ -584,6 +606,140 @@ export function TechTreePanel() {
     if (!treeMapping || !treeEffects || (selectedVersion >= '2026_07_14_16_51' && (!guildPositionLibrary || !guildUpgradeLibrary))) {
         return <Card className="p-6">Loading Tech Tree</Card>;
     }
+
+    // Layered node rows for one player tree. Shared between the single-tree (tab) view and the
+    // wide-screen column view, so every interaction routes through the tree it belongs to.
+    const renderTreeLayers = (treeName: TreeName) => {
+        const layers = nodesByLayerByTree[treeName] || {};
+        const layerKeys = Object.keys(layers).map(Number).sort((a, b) => a - b);
+        const treeLevels = getTreeLevels(treeName);
+
+        if (layerKeys.length === 0) {
+            return (
+                <div className="text-center py-8 text-text-muted">
+                    No nodes found for "{TREE_LABELS[treeName]}"
+                </div>
+            );
+        }
+
+        return layerKeys.map((layer) => {
+            const layerNodes = layers[layer] || [];
+
+            return (
+                <div key={layer} className="flex flex-col items-center">
+                    {layer > 0 && (
+                        <div className="h-4 flex items-center justify-center">
+                            <div className="w-px h-full bg-accent-primary/30" />
+                        </div>
+                    )}
+
+                    <div className="flex flex-nowrap gap-2 sm:gap-3 justify-center w-full overflow-x-auto px-1">
+                        {layerNodes.map((node) => {
+                            const effect = treeEffects?.[node.type];
+                            const maxLevel = effect?.MaxLevel || 5;
+                            const currentLevel = treeLevels[node.id] || 0;
+                            const unlocked = isNodeUnlocked(node, treeLevels);
+                            const completed = isNodeCompleted(node.id, treeLevels, maxLevel);
+                            const name = node.type.replace(/([A-Z])/g, ' $1').trim();
+                            const spriteStyle = getSpriteStyle(node);
+
+                            return (
+                                <div
+                                    key={node.uniqueKey}
+                                    className={cn(
+                                        "min-w-[140px] max-w-[180px] flex-1 p-2 sm:p-3 rounded-lg border transition-all",
+                                        !unlocked
+                                            ? "border-border/50 bg-bg-secondary/50 opacity-50"
+                                            : completed
+                                                ? "border-green-500/50 bg-green-500/10"
+                                                : currentLevel > 0
+                                                    ? "border-accent-primary/50 bg-accent-primary/5"
+                                                    : "border-border bg-bg-secondary"
+                                    )}
+                                >
+                                    <div className="flex gap-2 items-start">
+                                        <div className={cn(
+                                            "w-10 h-10 shrink-0 rounded-lg flex items-center justify-center overflow-hidden border relative",
+                                            !unlocked
+                                                ? "bg-black/40 border-white/5"
+                                                : completed
+                                                    ? "bg-green-500/20 border-green-500/30"
+                                                    : "bg-black/20 border-white/5"
+                                        )}>
+                                            {spriteStyle && (
+                                                <div style={spriteStyle} className={cn(!unlocked && "grayscale")} />
+                                            )}
+                                            {!unlocked && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                                    <Lock className="w-3 h-3 text-text-muted" />
+                                                </div>
+                                            )}
+                                            {completed && (
+                                                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
+                                                    <Check className="w-3 h-3 text-white" />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex-1 min-w-0">
+                                            <div className={cn(
+                                                "text-xs font-bold whitespace-nowrap overflow-hidden text-clip",
+                                                !unlocked && "text-text-muted"
+                                            )}>
+                                                {name}
+                                            </div>
+                                            <div className="text-[10px] text-text-muted">
+                                                T{node.tier + 1} • ID: {node.id}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between mt-2 bg-bg-input rounded p-1 border border-border/50">
+                                        <button
+                                            onClick={() => handleLevelChange(node.id, currentLevel - 1, maxLevel, treeName)}
+                                            disabled={!unlocked || currentLevel === 0}
+                                            className={cn(
+                                                "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
+                                                unlocked && currentLevel > 0
+                                                    ? "bg-bg-secondary hover:bg-white/10"
+                                                    : "text-text-muted cursor-not-allowed"
+                                            )}
+                                        >-</button>
+                                        <div className="text-center">
+                                            <span className={cn(
+                                                "font-mono font-bold text-sm",
+                                                completed ? "text-green-400" : currentLevel > 0 ? "text-accent-primary" : "text-text-muted"
+                                            )}>{currentLevel}</span>
+                                            <span className="text-text-muted text-xs">/{maxLevel}</span>
+                                        </div>
+                                        <button
+                                            onClick={() => handleLevelChange(node.id, currentLevel + 1, maxLevel, treeName)}
+                                            disabled={currentLevel >= maxLevel}
+                                            className={cn(
+                                                "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
+                                                currentLevel < maxLevel
+                                                    ? !unlocked
+                                                        ? "bg-orange-500/20 text-orange-400 hover:bg-orange-500/30"
+                                                        : "bg-bg-secondary hover:bg-white/10"
+                                                    : "text-text-muted cursor-not-allowed"
+                                            )}
+                                            title={!unlocked ? "Auto-unlock requirements" : ""}
+                                        >+</button>
+                                    </div>
+
+                                    {unlocked && currentLevel > 0 && (
+                                        <div className="text-[10px] mt-1 text-accent-secondary whitespace-nowrap overflow-hidden text-clip animate-fade-in">
+                                            {formatStatDescription(effect, currentLevel)}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        });
+    };
 
     return (
         <Card className="p-6">
@@ -659,7 +815,26 @@ export function TechTreePanel() {
                 </div>
             </div>
 
-            {/* Tree Structure - By Category for Clan, By Layer for Player */}
+            {/* Tree Structure - three hero columns on wide screens, tabbed single tree otherwise */}
+            {showHeroColumns ? (
+                <div className="grid grid-cols-3 gap-4">
+                    {HERO_TREES.map((treeName) => (
+                        <div key={treeName} className="min-w-0">
+                            <div className="flex items-center justify-between mb-2 px-1">
+                                <h3 className="text-sm font-bold text-accent-primary">{TREE_LABELS[treeName]}</h3>
+                                {completionData[treeName] && (
+                                    <span className="text-xs px-1.5 py-0.5 rounded bg-black/10 text-text-muted">
+                                        {completionData[treeName].percent.toFixed(2)}%
+                                    </span>
+                                )}
+                            </div>
+                            <div className="space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2">
+                                {renderTreeLayers(treeName)}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
             <div className="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                 {activeTab === 'Clan' ? (
                     Object.keys(guildPositionLibrary || {}).map((category, catIdx) => {
@@ -836,127 +1011,12 @@ const maxLevel = upgradeDef?.MaxLevel || 20;
                         );
                     })
                 ) : (
-                    sortedLayers.map((layer) => {
-                        const layerNodes = nodesByLayer[layer] || [];
-
-                        return (
-                            <div key={layer} className="flex flex-col items-center">
-                                {layer > 0 && (
-                                    <div className="h-4 flex items-center justify-center">
-                                        <div className="w-px h-full bg-accent-primary/30" />
-                                    </div>
-                                )}
-
-                                <div className="flex flex-nowrap gap-2 sm:gap-3 justify-center w-full overflow-x-auto px-1">
-                                    {layerNodes.map((node) => {
-                                        const effect = treeEffects?.[node.type];
-                                        const maxLevel = effect?.MaxLevel || 5;
-                                        const currentLevel = currentTreeLevels[node.id] || 0;
-                                        const unlocked = isNodeUnlocked(node, currentTreeLevels);
-                                        const completed = isNodeCompleted(node.id, currentTreeLevels, maxLevel);
-                                        const name = node.type.replace(/([A-Z])/g, ' $1').trim();
-                                        const spriteStyle = getSpriteStyle(node);
-
-                                        return (
-                                            <div
-                                                key={node.uniqueKey}
-                                                className={cn(
-                                                    "min-w-[140px] max-w-[180px] flex-1 p-2 sm:p-3 rounded-lg border transition-all",
-                                                    !unlocked
-                                                        ? "border-border/50 bg-bg-secondary/50 opacity-50"
-                                                        : completed
-                                                            ? "border-green-500/50 bg-green-500/10"
-                                                            : currentLevel > 0
-                                                                ? "border-accent-primary/50 bg-accent-primary/5"
-                                                                : "border-border bg-bg-secondary"
-                                                )}
-                                            >
-                                                <div className="flex gap-2 items-start">
-                                                    <div className={cn(
-                                                        "w-10 h-10 shrink-0 rounded-lg flex items-center justify-center overflow-hidden border relative",
-                                                        !unlocked
-                                                            ? "bg-black/40 border-white/5"
-                                                            : completed
-                                                                ? "bg-green-500/20 border-green-500/30"
-                                                                : "bg-black/20 border-white/5"
-                                                    )}>
-                                                        {spriteStyle && (
-                                                            <div style={spriteStyle} className={cn(!unlocked && "grayscale")} />
-                                                        )}
-                                                        {!unlocked && (
-                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                                                <Lock className="w-3 h-3 text-text-muted" />
-                                                            </div>
-                                                        )}
-                                                        {completed && (
-                                                            <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
-                                                                <Check className="w-3 h-3 text-white" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className={cn(
-                                                            "text-xs font-bold whitespace-nowrap overflow-hidden text-clip",
-                                                            !unlocked && "text-text-muted"
-                                                        )}>
-                                                            {name}
-                                                        </div>
-                                                        <div className="text-[10px] text-text-muted">
-                                                            T{node.tier + 1} • ID: {node.id}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-center justify-between mt-2 bg-bg-input rounded p-1 border border-border/50">
-                                                    <button
-                                                        onClick={() => handleLevelChange(node.id, currentLevel - 1, maxLevel)}
-                                                        disabled={!unlocked || currentLevel === 0}
-                                                        className={cn(
-                                                            "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
-                                                            unlocked && currentLevel > 0
-                                                                ? "bg-bg-secondary hover:bg-white/10"
-                                                                : "text-text-muted cursor-not-allowed"
-                                                        )}
-                                                    >-</button>
-                                                    <div className="text-center">
-                                                        <span className={cn(
-                                                            "font-mono font-bold text-sm",
-                                                            completed ? "text-green-400" : currentLevel > 0 ? "text-accent-primary" : "text-text-muted"
-                                                        )}>{currentLevel}</span>
-                                                        <span className="text-text-muted text-xs">/{maxLevel}</span>
-                                                    </div>
-                                                    <button
-                                                        onClick={() => handleLevelChange(node.id, currentLevel + 1, maxLevel)}
-                                                        disabled={currentLevel >= maxLevel}
-                                                        className={cn(
-                                                            "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
-                                                            currentLevel < maxLevel
-                                                                ? !unlocked
-                                                                    ? "bg-orange-500/20 text-orange-400 hover:bg-orange-500/30"
-                                                                    : "bg-bg-secondary hover:bg-white/10"
-                                                                : "text-text-muted cursor-not-allowed"
-                                                        )}
-                                                        title={!unlocked ? "Auto-unlock requirements" : ""}
-                                                    >+</button>
-                                                </div>
-
-                                                {unlocked && currentLevel > 0 && (
-                                                    <div className="text-[10px] mt-1 text-accent-secondary whitespace-nowrap overflow-hidden text-clip animate-fade-in">
-                                                        {formatStatDescription(effect, currentLevel)}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        );
-                    })
+                    renderTreeLayers(activeTab)
                 )}
             </div>
+            )}
 
-            {((activeTab === 'Clan' && Object.keys(guildPositionLibrary || {}).length === 0) || (activeTab !== 'Clan' && sortedLayers.length === 0)) && (
+            {!showHeroColumns && ((activeTab === 'Clan' && Object.keys(guildPositionLibrary || {}).length === 0) || (activeTab !== 'Clan' && sortedLayers.length === 0)) && (
                 <div className="text-center py-8 text-text-muted">
                     No nodes found for "{activeTab}"
                 </div>
@@ -971,7 +1031,7 @@ const maxLevel = upgradeDef?.MaxLevel || 20;
                 variant="danger"
                 onConfirm={() => {
                     if (pendingReset) {
-                        executeLevelChange(pendingReset.nodeId, 0);
+                        executeLevelChange(pendingReset.nodeId, 0, pendingReset.treeName);
                         setPendingReset(null);
                     }
                 }}
