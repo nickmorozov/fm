@@ -48,113 +48,114 @@ const STAT_TYPES = [
 ];
 
 /**
- * "Runeword" grouping of the passive stats: pick a subject first (Damage, Health, ...), then the
- * flavor. Two quick clicks instead of scanning a 13-entry dropdown.
+ * "Runeword" spelling of the passive stats: every stat is the set of words a player would say
+ * out loud. One or two words, and the pair always reads as the real stat ("Crit" + "Damage" is
+ * crit damage, "Double" + "Chance" is double damage chance) so no ambiguous combos exist.
  */
-const STAT_TAXONOMY: { subject: string; options: { label: string; id: string }[] }[] = [
-    {
-        subject: 'Damage', options: [
-            { label: 'All', id: 'DamageMulti' },
-            { label: 'Melee', id: 'MeleeDamageMulti' },
-            { label: 'Ranged', id: 'RangedDamageMulti' },
-            { label: 'Skill', id: 'SkillDamageMulti' },
-            { label: 'Double', id: 'DoubleDamageChance' },
-        ]
-    },
-    {
-        subject: 'Health', options: [
-            { label: 'Max', id: 'HealthMulti' },
-            { label: 'Regen', id: 'HealthRegen' },
-            { label: 'Steal', id: 'LifeSteal' },
-        ]
-    },
-    {
-        subject: 'Crit', options: [
-            { label: 'Chance', id: 'CriticalChance' },
-            { label: 'Multi', id: 'CriticalMulti' },
-        ]
-    },
-    {
-        subject: 'Speed', options: [
-            { label: 'Attack', id: 'AttackSpeed' },
-            { label: 'Skill CD', id: 'SkillCooldownMulti' },
-        ]
-    },
-    {
-        subject: 'Block', options: [
-            { label: 'Chance', id: 'BlockChance' },
-        ]
-    },
+const STAT_WORDS: { id: string; words: string[] }[] = [
+    { id: 'DamageMulti', words: ['Damage'] },
+    { id: 'MeleeDamageMulti', words: ['Melee', 'Damage'] },
+    { id: 'RangedDamageMulti', words: ['Ranged', 'Damage'] },
+    { id: 'SkillDamageMulti', words: ['Skill', 'Damage'] },
+    { id: 'DoubleDamageChance', words: ['Double', 'Chance'] },
+    { id: 'HealthMulti', words: ['Health'] },
+    { id: 'HealthRegen', words: ['Health', 'Regen'] },
+    { id: 'LifeSteal', words: ['Life Steal'] },
+    { id: 'CriticalChance', words: ['Crit', 'Chance'] },
+    { id: 'CriticalMulti', words: ['Crit', 'Damage'] },
+    { id: 'AttackSpeed', words: ['Attack', 'Speed'] },
+    { id: 'SkillCooldownMulti', words: ['Skill', 'Cooldown'] },
+    { id: 'BlockChance', words: ['Block', 'Chance'] },
 ];
 
-/** Two-step stat picker: subject row, then flavor row. `availableTypes` = this row's current stat
- *  plus every type not taken by a sibling row. */
+/** Layout only — the selection is one set of words, the two rows just keep it scannable. */
+const WORD_ROWS: string[][] = [
+    ['Damage', 'Health', 'Crit', 'Attack', 'Skill', 'Block', 'Double', 'Life Steal'],
+    ['Melee', 'Ranged', 'Chance', 'Speed', 'Regen', 'Cooldown'],
+];
+
+const sameSet = (a: string[], b: string[]) => a.length === b.length && a.every(w => b.includes(w));
+
+/**
+ * Word-toggle stat picker. Every word is always visible; a word grays out when adding it to the
+ * current selection cannot spell any available stat. The row commits the moment the selected
+ * words exactly spell a stat. Deselecting a word clears the rest of the selection too unless
+ * what remains is a complete stat on its own ("Damage" survives, "Double" does not).
+ * `availableTypes` = this row's current stat plus every type not taken by a sibling row.
+ */
 function RunewordStatPicker({ value, availableTypes, onChange }: {
     value: string;
     availableTypes: string[];
     onChange: (id: string) => void;
 }) {
-    const currentGroup = STAT_TAXONOMY.find(g => g.options.some(o => o.id === value));
-    const [subject, setSubject] = useState<string>(currentGroup?.subject || STAT_TAXONOMY[0].subject);
+    const wordsFor = (id: string) => STAT_WORDS.find(s => s.id === id)?.words ?? [];
+    const [selected, setSelected] = useState<string[]>(() => wordsFor(value));
 
     // Follow external value changes (e.g. loading a saved item)
     useEffect(() => {
-        if (currentGroup && currentGroup.subject !== subject) setSubject(currentGroup.subject);
+        const words = wordsFor(value);
+        setSelected(prev => (sameSet(prev, words) ? prev : words));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value]);
 
-    const activeGroup = STAT_TAXONOMY.find(g => g.subject === subject) || STAT_TAXONOMY[0];
+    const available = (id: string) => availableTypes.includes(id);
+
+    const canExtend = (set: string[]) =>
+        STAT_WORDS.some(s => available(s.id) && set.every(w => s.words.includes(w)));
+
+    const toggle = (word: string) => {
+        if (selected.includes(word)) {
+            // Deselect; the leftover survives only if it spells a stat by itself.
+            const rest = selected.filter(w => w !== word);
+            const restStat = STAT_WORDS.find(s => sameSet(s.words, rest));
+            if (restStat && available(restStat.id)) {
+                setSelected(rest);
+                onChange(restStat.id);
+            } else {
+                setSelected([]);
+            }
+            return;
+        }
+        const next = [...selected, word];
+        if (!canExtend(next)) return; // grayed words are unreachable anyway
+        setSelected(next);
+        const exact = STAT_WORDS.find(s => sameSet(s.words, next));
+        if (exact && available(exact.id)) onChange(exact.id);
+    };
 
     return (
         <div className="flex-1 min-w-0 space-y-1">
-            <div className="flex flex-wrap gap-1">
-                {STAT_TAXONOMY.map(group => {
-                    const hasAvailable = group.options.some(o => availableTypes.includes(o.id));
-                    const holdsValue = group.options.some(o => o.id === value);
-                    return (
-                        <button
-                            key={group.subject}
-                            disabled={!hasAvailable}
-                            onClick={() => setSubject(group.subject)}
-                            className={cn(
-                                "px-2 py-0.5 rounded-md text-3xs font-bold border transition-all",
-                                subject === group.subject
-                                    ? holdsValue
+            <div className="text-4xs font-bold uppercase tracking-wider text-text-muted truncate" title={getStatName(value)}>
+                {getStatName(value)}
+            </div>
+            {WORD_ROWS.map((row, rowIdx) => (
+                <div key={rowIdx} className="flex flex-wrap gap-1">
+                    {row.map(word => {
+                        const isSelected = selected.includes(word);
+                        // Clickable while the word can still spell an available stat together with
+                        // the current selection; gray and inert otherwise. Deselecting is always
+                        // allowed.
+                        const usable = isSelected || canExtend([...selected, word]);
+                        return (
+                            <button
+                                key={word}
+                                disabled={!usable}
+                                onClick={() => toggle(word)}
+                                className={cn(
+                                    "px-2 py-0.5 rounded-md text-3xs font-bold border transition-all",
+                                    isSelected
                                         ? "bg-accent-primary text-white border-accent-primary"
-                                        : "bg-accent-primary/20 border-accent-primary text-accent-primary"
-                                    : holdsValue
-                                        ? "bg-accent-primary/10 border-accent-primary/40 text-accent-primary"
-                                        : "bg-bg-input border-border text-text-muted hover:border-border/80",
-                                !hasAvailable && "opacity-40 cursor-not-allowed"
-                            )}
-                        >
-                            {group.subject}
-                        </button>
-                    );
-                })}
-            </div>
-            <div className="flex flex-wrap gap-1">
-                {activeGroup.options.map(opt => {
-                    const available = availableTypes.includes(opt.id);
-                    return (
-                        <button
-                            key={opt.id}
-                            disabled={!available}
-                            onClick={() => onChange(opt.id)}
-                            title={getStatName(opt.id)}
-                            className={cn(
-                                "px-2 py-0.5 rounded-md text-3xs font-bold border transition-all",
-                                value === opt.id
-                                    ? "bg-accent-primary text-white border-accent-primary"
-                                    : "bg-bg-input border-border text-text-secondary hover:border-accent-primary/50",
-                                !available && "opacity-40 cursor-not-allowed"
-                            )}
-                        >
-                            {opt.label}
-                        </button>
-                    );
-                })}
-            </div>
+                                        : usable
+                                            ? "bg-bg-input border-border text-text-secondary hover:border-accent-primary/50"
+                                            : "bg-bg-input border-border/50 text-text-muted/40 opacity-40 cursor-not-allowed"
+                                )}
+                            >
+                                {word}
+                            </button>
+                        );
+                    })}
+                </div>
+            ))}
         </div>
     );
 }
