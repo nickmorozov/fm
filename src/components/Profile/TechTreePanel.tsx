@@ -165,11 +165,16 @@ export function TechTreePanel() {
     const [searchTerm, setSearchTerm] = useState('');
     const [pendingReset, setPendingReset] = useState<{ nodeId: number; treeName: TreeName; count: number } | null>(null);
 
-    // On wide screens the three hero branches render as columns; Clan keeps its own tab.
-    // `wideSingle` is the user's opt-out back to the one-tree-at-a-time view.
+    // On wide screens the trees render as columns. `wideSingle` is the user's opt-out back to
+    // the one-tree-at-a-time view. Clan joins as a fourth column automatically once the screen
+    // fits it (>=1600px); below that it's opt-in via the Clan toggle.
     const isWide = useMediaQuery('(min-width: 1280px)');
+    const fitsClan = useMediaQuery('(min-width: 1600px)');
     const [wideSingle, setWideSingle] = useState(false);
-    const showHeroColumns = isWide && !wideSingle && activeTab !== 'Clan';
+    const [includeClanCol, setIncludeClanCol] = useState(false);
+    const showHeroColumns = isWide && !wideSingle;
+    const columnTrees: TreeName[] = (fitsClan || includeClanCol) ? [...HERO_TREES, 'Clan'] : HERO_TREES;
+    const clanVisible = showHeroColumns ? (fitsClan || includeClanCol) : activeTab === 'Clan';
 
     const [showImportModal, setShowImportModal] = useState(false);
     const [importText, setImportText] = useState('');
@@ -609,6 +614,189 @@ export function TechTreePanel() {
         return <Card className="p-6">Loading Tech Tree</Card>;
     }
 
+    // The Clan tree body: category grids of clan nodes. Shared between the Clan tab and the
+    // fourth wide-screen column (`compact` = one card per row inside a narrow column).
+    const renderClanBody = (compact: boolean) => {
+        const clanLevels = getTreeLevels('Clan');
+        return (
+            <>{
+                    Object.keys(guildPositionLibrary || {}).map((category, catIdx) => {
+                        const nodesList = guildPositionLibrary[category].Nodes || [];
+                        
+                        let filteredNodes = nodesList.map((nodeType: string, localId: number) => {
+                            let globalId = 0;
+                            for (const c of Object.keys(guildPositionLibrary)) {
+                                if (c === category) break;
+                                globalId += guildPositionLibrary[c].Nodes?.length || 0;
+                            }
+                            globalId += localId;
+                            
+                            return {
+                                globalId,
+                                type: nodeType,
+                                category
+                            };
+                        });
+
+                        if (searchTerm) {
+                            filteredNodes = filteredNodes.filter((n: any) =>
+                                n.type.toLowerCase().includes(searchTerm.toLowerCase())
+                            );
+                        }
+
+                        if (filteredNodes.length === 0) return null;
+
+                        return (
+                            <div key={category} className="space-y-2 border-b border-white/5 pb-4 last:border-0 last:pb-0">
+                                <h3 className="text-sm font-bold text-accent-primary capitalize">
+                                    {category.replace(/([A-Z])/g, ' $1').trim()} Category
+                                </h3>
+                                <div className={cn("grid gap-3", compact ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3")}>
+                                    {filteredNodes.map((nObj: any) => {
+                                        const globalId = nObj.globalId;
+                                        const nodeType = nObj.type;
+                                        const upgradeDef = guildUpgradeLibrary?.[nodeType];
+const maxLevel = upgradeDef?.MaxLevel || 20;
+                                        const currentLevel = clanLevels[globalId] || 0;
+                                        const completed = currentLevel >= maxLevel;
+                                        const name = getTechNodeName(nodeType);
+
+                                        const spriteStyle = getClanIconStyle(nodeType, clanIconsMap, selectedVersion, import.meta.env.BASE_URL, treeMapping) ||
+                                            (() => {
+                                                const col = globalId % 8;
+                                                const row = Math.floor(globalId / 8);
+                                                const versionPath = selectedVersion ? `${selectedVersion}/` : '';
+                                                return {
+                                                    backgroundImage: `url(${import.meta.env.BASE_URL}Texture2D/${versionPath}ClanTechTreeIcons.png)`,
+                                                    backgroundPositionX: `${col * (100 / 7)}%`,
+                                                    backgroundPositionY: `${row * (100 / 7)}%`,
+                                                    backgroundSize: '800% 800%',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    imageRendering: 'pixelated' as const
+                                                };
+                                            })();
+
+                                        const effectDef = treeEffects?.[nodeType];
+                                        // ValuePerLevel is already the effective value (x2 normalised at load, see useGameData)
+                                        const valPerLevel = upgradeDef?.ValuePerLevel || 0;
+                                        
+                                        const clanEffect = effectDef ? {
+                                            ...effectDef,
+                                            MaxLevel: maxLevel,
+                                            Stats: (effectDef.Stats || []).map((stat: any) => ({
+                                                ...stat,
+                                                Value: valPerLevel,
+                                                ValueIncrease: valPerLevel
+                                            }))
+                                        } : null;
+
+                                        return (
+                                            <div
+                                                key={globalId}
+                                                className={cn(
+                                                    "p-3 rounded-lg border transition-all bg-bg-secondary",
+                                                    completed
+                                                        ? "border-green-500/50 bg-green-500/10"
+                                                        : currentLevel > 0
+                                                            ? "border-accent-primary/50 bg-accent-primary/5"
+                                                            : "border-border bg-bg-secondary"
+                                                )}
+                                            >
+                                                <div className="flex gap-2 items-start">
+                                                    <div className={cn(
+                                                        "w-10 h-10 shrink-0 rounded-lg flex items-center justify-center overflow-hidden border relative bg-black/20 border-white/5",
+                                                        completed && "bg-green-500/20 border-green-500/30"
+                                                    )}>
+                                                        <div style={spriteStyle} />
+                                                        {completed && (
+                                                            <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
+                                                                <Check className="w-3 h-3 text-white" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-xs font-bold whitespace-nowrap overflow-hidden text-clip">
+                                                            {name}
+                                                        </div>
+                                                        <div className="text-[9px] text-text-muted flex items-center gap-1">
+                                                            <span>ID: {globalId} •</span>
+                                                            <SpriteIcon name="GuildPotions" size={11} />
+                                                            <span className="font-bold text-green-400">{(upgradeDef?.PointsPerLevel || 0).toLocaleString()}</span>
+                                                            <span>/lvl</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center justify-between gap-0.5 mt-2 bg-bg-input rounded p-1 border border-border/50">
+                                                    <button
+                                                        onClick={() => handleLevelChange(globalId, Math.max(0, currentLevel - 10), maxLevel, 'Clan')}
+                                                        disabled={currentLevel === 0}
+                                                        title="-10"
+                                                        className={cn(
+                                                            "w-7 h-6 rounded flex items-center justify-center font-bold text-[10px] transition-colors",
+                                                            currentLevel > 0
+                                                                ? "bg-bg-secondary hover:bg-white/10"
+                                                                : "text-text-muted cursor-not-allowed"
+                                                        )}
+                                                    >-10</button>
+                                                    <button
+                                                        onClick={() => handleLevelChange(globalId, currentLevel - 1, maxLevel, 'Clan')}
+                                                        disabled={currentLevel === 0}
+                                                        className={cn(
+                                                            "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
+                                                            currentLevel > 0
+                                                                ? "bg-bg-secondary hover:bg-white/10"
+                                                                : "text-text-muted cursor-not-allowed"
+                                                        )}
+                                                    >-</button>
+                                                    <div className="text-center">
+                                                        <span className={cn(
+                                                            "font-mono font-bold text-sm",
+                                                            completed ? "text-green-400" : currentLevel > 0 ? "text-accent-primary" : "text-text-muted"
+                                                        )}>{currentLevel}</span>
+                                                        <span className="text-text-muted text-xs">/{maxLevel}</span>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleLevelChange(globalId, currentLevel + 1, maxLevel, 'Clan')}
+                                                        disabled={currentLevel >= maxLevel}
+                                                        className={cn(
+                                                            "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
+                                                            currentLevel < maxLevel
+                                                                ? "bg-bg-secondary hover:bg-white/10"
+                                                                : "text-text-muted cursor-not-allowed"
+                                                        )}
+                                                    >+</button>
+                                                    <button
+                                                        onClick={() => handleLevelChange(globalId, Math.min(maxLevel, currentLevel + 10), maxLevel, 'Clan')}
+                                                        disabled={currentLevel >= maxLevel}
+                                                        title="+10"
+                                                        className={cn(
+                                                            "w-7 h-6 rounded flex items-center justify-center font-bold text-[10px] transition-colors",
+                                                            currentLevel < maxLevel
+                                                                ? "bg-bg-secondary hover:bg-white/10"
+                                                                : "text-text-muted cursor-not-allowed"
+                                                        )}
+                                                    >+10</button>
+                                                </div>
+
+                                                {currentLevel > 0 && clanEffect && (
+                                                    <div className="text-[10px] mt-1 text-accent-secondary whitespace-nowrap overflow-hidden text-clip">
+                                                        {formatStatDescription(clanEffect, currentLevel)}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })
+            }</>
+        );
+    };
+
     // Layered node rows for one player tree. Shared between the single-tree (tab) view and the
     // wide-screen column view, so every interaction routes through the tree it belongs to.
     const renderTreeLayers = (treeName: TreeName) => {
@@ -751,7 +939,7 @@ export function TechTreePanel() {
                     Tech Tree
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                    {activeTab === 'Clan' && (
+                    {clanVisible && (
                         <>
                             <button
                                 onClick={exportClanTech}
@@ -778,36 +966,29 @@ export function TechTreePanel() {
                 single-tree view for anyone who prefers it. */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
-                    {isWide && !wideSingle && (
+                    {showHeroColumns && !fitsClan && (
                         <button
-                            onClick={() => setActiveTab('Forge')}
+                            onClick={() => setIncludeClanCol(v => !v)}
+                            title={includeClanCol ? 'Hide the Clan column' : 'Show the Clan tree as a fourth column'}
                             className={cn(
                                 "px-4 py-2 rounded-lg font-bold text-sm transition-colors whitespace-nowrap flex items-center gap-2",
-                                activeTab !== 'Clan'
+                                includeClanCol
                                     ? "bg-accent-primary text-white"
                                     : "bg-bg-input text-text-secondary hover:bg-bg-input/80"
                             )}
                         >
-                            <span>All Trees</span>
-                            {(() => {
-                                let cur = 0, max = 0;
-                                HERO_TREES.forEach(t => {
-                                    const c = completionData[t];
-                                    if (c) { cur += c.current; max += c.max; }
-                                });
-                                if (max === 0) return null;
-                                return (
-                                    <span className={cn(
-                                        "text-xs px-1.5 py-0.5 rounded",
-                                        activeTab !== 'Clan' ? "bg-black/20 text-white/90" : "bg-black/10 text-text-muted"
-                                    )}>
-                                        {((cur / max) * 100).toFixed(2)}%
-                                    </span>
-                                );
-                            })()}
+                            <span>Clan</span>
+                            {completionData['Clan'] && (
+                                <span className={cn(
+                                    "text-xs px-1.5 py-0.5 rounded",
+                                    includeClanCol ? "bg-black/20 text-white/90" : "bg-black/10 text-text-muted"
+                                )}>
+                                    {completionData['Clan'].percent.toFixed(2)}%
+                                </span>
+                            )}
                         </button>
                     )}
-                    {(isWide && !wideSingle ? treeCategories.filter(t => t === 'Clan') : treeCategories).map((treeKey) => {
+                    {(showHeroColumns ? [] : treeCategories).map((treeKey) => {
                         const completion = completionData[treeKey];
                         return (
                             <button
@@ -859,8 +1040,8 @@ export function TechTreePanel() {
 
             {/* Tree Structure - three hero columns on wide screens, tabbed single tree otherwise */}
             {showHeroColumns ? (
-                <div className="grid grid-cols-3 gap-4">
-                    {HERO_TREES.map((treeName) => (
+                <div className={cn("grid gap-4", columnTrees.length === 4 ? "grid-cols-4" : "grid-cols-3")}>
+                    {columnTrees.map((treeName) => (
                         <div key={treeName} className="min-w-0">
                             <div className="flex items-center justify-between mb-2 px-1">
                                 <h3 className="text-sm font-bold text-accent-primary">{TREE_LABELS[treeName]}</h3>
@@ -871,7 +1052,7 @@ export function TechTreePanel() {
                                 )}
                             </div>
                             <div className="space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2">
-                                {renderTreeLayers(treeName)}
+                                {treeName === 'Clan' ? renderClanBody(true) : renderTreeLayers(treeName)}
                             </div>
                         </div>
                     ))}
@@ -879,179 +1060,7 @@ export function TechTreePanel() {
             ) : (
             <div className="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                 {activeTab === 'Clan' ? (
-                    Object.keys(guildPositionLibrary || {}).map((category, catIdx) => {
-                        const nodesList = guildPositionLibrary[category].Nodes || [];
-                        
-                        let filteredNodes = nodesList.map((nodeType: string, localId: number) => {
-                            let globalId = 0;
-                            for (const c of Object.keys(guildPositionLibrary)) {
-                                if (c === category) break;
-                                globalId += guildPositionLibrary[c].Nodes?.length || 0;
-                            }
-                            globalId += localId;
-                            
-                            return {
-                                globalId,
-                                type: nodeType,
-                                category
-                            };
-                        });
-
-                        if (searchTerm) {
-                            filteredNodes = filteredNodes.filter((n: any) =>
-                                n.type.toLowerCase().includes(searchTerm.toLowerCase())
-                            );
-                        }
-
-                        if (filteredNodes.length === 0) return null;
-
-                        return (
-                            <div key={category} className="space-y-2 border-b border-white/5 pb-4 last:border-0 last:pb-0">
-                                <h3 className="text-sm font-bold text-accent-primary capitalize">
-                                    {category.replace(/([A-Z])/g, ' $1').trim()} Category
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                    {filteredNodes.map((nObj: any) => {
-                                        const globalId = nObj.globalId;
-                                        const nodeType = nObj.type;
-                                        const upgradeDef = guildUpgradeLibrary?.[nodeType];
-const maxLevel = upgradeDef?.MaxLevel || 20;
-                                        const currentLevel = currentTreeLevels[globalId] || 0;
-                                        const completed = currentLevel >= maxLevel;
-                                        const name = getTechNodeName(nodeType);
-
-                                        const spriteStyle = getClanIconStyle(nodeType, clanIconsMap, selectedVersion, import.meta.env.BASE_URL, treeMapping) ||
-                                            (() => {
-                                                const col = globalId % 8;
-                                                const row = Math.floor(globalId / 8);
-                                                const versionPath = selectedVersion ? `${selectedVersion}/` : '';
-                                                return {
-                                                    backgroundImage: `url(${import.meta.env.BASE_URL}Texture2D/${versionPath}ClanTechTreeIcons.png)`,
-                                                    backgroundPositionX: `${col * (100 / 7)}%`,
-                                                    backgroundPositionY: `${row * (100 / 7)}%`,
-                                                    backgroundSize: '800% 800%',
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    imageRendering: 'pixelated' as const
-                                                };
-                                            })();
-
-                                        const effectDef = treeEffects?.[nodeType];
-                                        // ValuePerLevel is already the effective value (x2 normalised at load, see useGameData)
-                                        const valPerLevel = upgradeDef?.ValuePerLevel || 0;
-                                        
-                                        const clanEffect = effectDef ? {
-                                            ...effectDef,
-                                            MaxLevel: maxLevel,
-                                            Stats: (effectDef.Stats || []).map((stat: any) => ({
-                                                ...stat,
-                                                Value: valPerLevel,
-                                                ValueIncrease: valPerLevel
-                                            }))
-                                        } : null;
-
-                                        return (
-                                            <div
-                                                key={globalId}
-                                                className={cn(
-                                                    "p-3 rounded-lg border transition-all bg-bg-secondary",
-                                                    completed
-                                                        ? "border-green-500/50 bg-green-500/10"
-                                                        : currentLevel > 0
-                                                            ? "border-accent-primary/50 bg-accent-primary/5"
-                                                            : "border-border bg-bg-secondary"
-                                                )}
-                                            >
-                                                <div className="flex gap-2 items-start">
-                                                    <div className={cn(
-                                                        "w-10 h-10 shrink-0 rounded-lg flex items-center justify-center overflow-hidden border relative bg-black/20 border-white/5",
-                                                        completed && "bg-green-500/20 border-green-500/30"
-                                                    )}>
-                                                        <div style={spriteStyle} />
-                                                        {completed && (
-                                                            <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
-                                                                <Check className="w-3 h-3 text-white" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="text-xs font-bold whitespace-nowrap overflow-hidden text-clip">
-                                                            {name}
-                                                        </div>
-                                                        <div className="text-[9px] text-text-muted flex items-center gap-1">
-                                                            <span>ID: {globalId} •</span>
-                                                            <SpriteIcon name="GuildPotions" size={11} />
-                                                            <span className="font-bold text-green-400">{(upgradeDef?.PointsPerLevel || 0).toLocaleString()}</span>
-                                                            <span>/lvl</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-center justify-between gap-0.5 mt-2 bg-bg-input rounded p-1 border border-border/50">
-                                                    <button
-                                                        onClick={() => handleLevelChange(globalId, Math.max(0, currentLevel - 10), maxLevel)}
-                                                        disabled={currentLevel === 0}
-                                                        title="-10"
-                                                        className={cn(
-                                                            "w-7 h-6 rounded flex items-center justify-center font-bold text-[10px] transition-colors",
-                                                            currentLevel > 0
-                                                                ? "bg-bg-secondary hover:bg-white/10"
-                                                                : "text-text-muted cursor-not-allowed"
-                                                        )}
-                                                    >-10</button>
-                                                    <button
-                                                        onClick={() => handleLevelChange(globalId, currentLevel - 1, maxLevel)}
-                                                        disabled={currentLevel === 0}
-                                                        className={cn(
-                                                            "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
-                                                            currentLevel > 0
-                                                                ? "bg-bg-secondary hover:bg-white/10"
-                                                                : "text-text-muted cursor-not-allowed"
-                                                        )}
-                                                    >-</button>
-                                                    <div className="text-center">
-                                                        <span className={cn(
-                                                            "font-mono font-bold text-sm",
-                                                            completed ? "text-green-400" : currentLevel > 0 ? "text-accent-primary" : "text-text-muted"
-                                                        )}>{currentLevel}</span>
-                                                        <span className="text-text-muted text-xs">/{maxLevel}</span>
-                                                    </div>
-                                                    <button
-                                                        onClick={() => handleLevelChange(globalId, currentLevel + 1, maxLevel)}
-                                                        disabled={currentLevel >= maxLevel}
-                                                        className={cn(
-                                                            "w-6 h-6 rounded flex items-center justify-center font-bold text-xs transition-colors",
-                                                            currentLevel < maxLevel
-                                                                ? "bg-bg-secondary hover:bg-white/10"
-                                                                : "text-text-muted cursor-not-allowed"
-                                                        )}
-                                                    >+</button>
-                                                    <button
-                                                        onClick={() => handleLevelChange(globalId, Math.min(maxLevel, currentLevel + 10), maxLevel)}
-                                                        disabled={currentLevel >= maxLevel}
-                                                        title="+10"
-                                                        className={cn(
-                                                            "w-7 h-6 rounded flex items-center justify-center font-bold text-[10px] transition-colors",
-                                                            currentLevel < maxLevel
-                                                                ? "bg-bg-secondary hover:bg-white/10"
-                                                                : "text-text-muted cursor-not-allowed"
-                                                        )}
-                                                    >+10</button>
-                                                </div>
-
-                                                {currentLevel > 0 && clanEffect && (
-                                                    <div className="text-[10px] mt-1 text-accent-secondary whitespace-nowrap overflow-hidden text-clip">
-                                                        {formatStatDescription(clanEffect, currentLevel)}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        );
-                    })
+                    renderClanBody(false)
                 ) : (
                     renderTreeLayers(activeTab)
                 )}

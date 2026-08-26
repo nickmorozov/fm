@@ -40,8 +40,11 @@ export default function TechTree() {
     const [selectedTree, setSelectedTree] = useState<TreeName>('Forge');
 
     const isWide = useMediaQuery('(min-width: 1280px)');
+    const fitsClan = useMediaQuery('(min-width: 1600px)');
     const [wideSingle, setWideSingle] = useState(false);
-    const showColumns = isWide && !wideSingle && activeTab !== 'Clan';
+    const [includeClanCol, setIncludeClanCol] = useState(false);
+    const showColumns = isWide && !wideSingle;
+    const columnTrees: TreeName[] = (fitsClan || includeClanCol) ? [...HERO_TREES, 'Clan'] : HERO_TREES;
 
     // Local simulation state - Synced to profile on load, but independent during edit
     const [localRanks, setLocalRanks] = useState<Record<string, Record<number, number>>>({});
@@ -158,6 +161,30 @@ export default function TechTree() {
 
         return { nodes: all, nodeById: byId, layers: layerMap };
     }, [treesData, activeTab, guildPositionLibrary, guildUpgradeLibrary]);
+
+    // Clan nodes independent of the active tab, so the wide-screen Clan column can render while a
+    // player tab is active.
+    const clanNodes = useMemo(() => {
+        if (!guildPositionLibrary || !guildUpgradeLibrary) return [] as any[];
+        const all: any[] = [];
+        let globalId = 0;
+        Object.keys(guildPositionLibrary).forEach((category, catIdx) => {
+            const nodesList = guildPositionLibrary[category].Nodes || [];
+            nodesList.forEach((nodeType: string) => {
+                const upgradeDef = guildUpgradeLibrary[nodeType];
+                all.push({
+                    id: globalId,
+                    type: nodeType,
+                    tier: catIdx,
+                    category,
+                    requirements: [],
+                    maxLevel: upgradeDef?.MaxLevel || 20,
+                });
+                globalId++;
+            });
+        });
+        return all;
+    }, [guildPositionLibrary, guildUpgradeLibrary]);
 
     // Per-tree layout for the wide-screen column view: nodes, positions and canvas dimensions for
     // every player tree at once (the datasets are small), so three canvases render side by side.
@@ -286,7 +313,9 @@ export default function TechTree() {
     }, [layers, activeTab]);
 
     const getSpriteStyle = (node: any) => {
-        if (activeTab === 'Clan') {
+        // Clan nodes are identified by their category (player nodes have none): the sprite must
+        // resolve correctly even when a clan node renders while a player tab is active.
+        if (node?.category) {
             // Look up the clan icon by node TYPE from the manual ClanTechTreeIconsMap.
             // Falls back to category-order row-major indexing when no mapping entry exists.
             const mapped = getClanIconStyle(node.type, clanIconsMap, selectedVersion, import.meta.env.BASE_URL, treeMapping);
@@ -351,8 +380,10 @@ export default function TechTree() {
     const handleLocalUpdate = (nodeId: number, delta: number, tree: TreeName = activeTab) => {
         // Player trees resolve through playerLayouts so the wide-screen columns can edit any tree;
         // the Clan tree only ever edits from its own tab, where tree === activeTab === 'Clan'.
-        const byId = tree === 'Clan' ? nodeById : (playerLayouts[tree]?.nodeById || {});
-        const treeNodes = tree === 'Clan' ? nodes : (playerLayouts[tree]?.nodes || []);
+        const byId: Record<number, any> = tree === 'Clan'
+            ? Object.fromEntries(clanNodes.map(n => [n.id, n]))
+            : (playerLayouts[tree]?.nodeById || {});
+        const treeNodes = tree === 'Clan' ? clanNodes : (playerLayouts[tree]?.nodes || []);
         const node = byId[nodeId];
         if (!node) return;
 
@@ -712,9 +743,9 @@ export default function TechTree() {
     }, [treeMapping, localRanks, upgradeLibrary, treeEffects, calculatedModifiers, selectedVersion, guildPositionLibrary, guildUpgradeLibrary, nodes]);
 
     const selectedNode = selectedNodeId !== null
-        ? (((selectedTree === 'Clan' || selectedTree === activeTab)
-            ? nodeById[selectedNodeId]
-            : playerLayouts[selectedTree]?.nodeById[selectedNodeId]) as any) ?? null
+        ? (((selectedTree === 'Clan'
+            ? clanNodes.find(n => n.id === selectedNodeId)
+            : (selectedTree === activeTab ? nodeById[selectedNodeId] : playerLayouts[selectedTree]?.nodeById[selectedNodeId]))) as any) ?? null
         : null;
     
     const selectedEffect = useMemo(() => {
@@ -739,6 +770,107 @@ export default function TechTree() {
         }
         return selectedNode ? treeEffects?.[selectedNode.type] : null;
     }, [selectedNode, selectedTree, treeEffects, guildUpgradeLibrary]);
+
+    // The Clan tree as a scrollable category-grid pane. Shared between the Clan tab and the
+    // fourth wide-screen column (`compact` = one card per row inside a narrow column).
+    const renderClanPane = (compact: boolean) => (
+                            <div className="flex-1 overflow-auto p-4 sm:p-6 custom-scrollbar space-y-8 select-none">
+                                {Object.keys(guildPositionLibrary || {}).map((category, catIdx) => {
+                                    const categoryNodes = clanNodes.filter(n => n.category === category);
+                                    if (categoryNodes.length === 0) return null;
+
+                                    return (
+                                        <div key={category} className="space-y-4">
+                                            <h3 className="text-sm font-bold bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent capitalize border-b border-white/5 pb-2">
+                                                {category.replace(/([A-Z])/g, ' $1').trim()} Category
+                                            </h3>
+                                            <div className={cn("grid gap-4", compact ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3")}>
+                                                {categoryNodes.map(node => {
+                                                    const currentClanRanks = localRanks['Clan'] || {};
+                                                    const currentRank = currentClanRanks[node.id] || 0;
+                                                    const maxLevel = node.maxLevel;
+                                                    const isMaxed = currentRank >= maxLevel;
+                                                    const isResearched = currentRank > 0 && !isMaxed;
+                                                    const isSelected = selectedNodeId === node.id;
+
+                                                    const spriteStyle = getSpriteStyle(node);
+
+                                                    const upgradeDef = guildUpgradeLibrary?.[node.type];
+                                                    const pointsPerLevel = upgradeDef?.PointsPerLevel || 0;
+                                                    const cost = pointsPerLevel * Math.max(0, maxLevel - currentRank);
+
+                                                    return (
+                                                        <button
+                                                            key={node.id}
+                                                            onClick={() => { setSelectedTree('Clan'); setSelectedNodeId(node.id); }}
+                                                            className={cn(
+                                                                "text-left cursor-pointer transition-all duration-300 transform outline-none",
+                                                                isSelected ? "scale-[1.02] z-20" : "hover:scale-[1.01]"
+                                                            )}
+                                                        >
+                                                            <Card className={cn(
+                                                                "p-4 flex gap-4 border-2 transition-colors relative group h-28 items-center",
+                                                                isSelected ? "border-accent-primary bg-accent-primary/10 shadow-[0_0_20px_rgba(168,85,247,0.3)]" :
+                                                                    isMaxed ? "border-green-500/50 bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.1)]" :
+                                                                        isResearched ? "border-accent-primary/40 bg-accent-primary/5" : "border-border/50 bg-bg-primary/50"
+                                                            )}>
+                                                                <div className="w-12 h-12 rounded-xl bg-bg-input border border-border flex items-center justify-center relative overflow-hidden group shrink-0">
+                                                                    {spriteStyle && <div style={spriteStyle} />}
+                                                                    {isMaxed && (
+                                                                        <div className="absolute inset-0 border-2 border-green-500/50 rounded-lg pointer-events-none" />
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="min-w-0 flex-1 flex flex-col justify-between h-full py-1">
+                                                                    <div>
+                                                                        <h4 className="text-xs font-bold text-text-primary whitespace-nowrap overflow-hidden text-clip">
+                                                                            {getTechNodeName(node.type)}
+                                                                        </h4>
+                                                                        <p className="text-[9px] text-text-muted mt-0.5 font-bold uppercase tracking-tight">
+                                                                            Rank {currentRank}/{maxLevel}
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <div className="flex items-center justify-between gap-2 mt-2">
+                                                                        <div
+                                                                            className="w-6 h-6 rounded bg-bg-secondary hover:bg-white/10 flex items-center justify-center border border-border cursor-pointer active:scale-95 shrink-0"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                handleLocalUpdate(node.id, -1, 'Clan');
+                                                                            }}
+                                                                        >
+                                                                            <Minus className="w-3.5 h-3.5 text-white" />
+                                                                        </div>
+
+                                                                        <div className="text-[9px] font-mono text-text-muted flex items-center gap-1 font-bold">
+                                                                            <SpriteIcon name="GuildPotions" size={12} />
+                                                                            <span className="text-green-400">{pointsPerLevel.toLocaleString()}</span>
+                                                                            <span className="opacity-60">/lvl</span>
+                                                                            {cost > 0 && <span className="opacity-60">·</span>}
+                                                                            {cost > 0 && <span>tot {cost.toLocaleString()}</span>}
+                                                                        </div>
+
+                                                                        <div
+                                                                            className="w-6 h-6 rounded bg-bg-secondary hover:bg-white/10 flex items-center justify-center border border-border cursor-pointer active:scale-95 shrink-0"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                handleLocalUpdate(node.id, 1, 'Clan');
+                                                                            }}
+                                                                        >
+                                                                            <Plus className="w-3.5 h-3.5 text-white" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </Card>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+    );
 
     // One player tree as a pannable canvas. `single` = the classic tabbed view (owns the
     // page-level scroll ref); otherwise it's one of three wide-screen columns, self-centering.
@@ -983,23 +1115,21 @@ export default function TechTree() {
                     </div>
  
                     <div className="flex gap-1 bg-bg-secondary/30 p-1 rounded-xl border border-border overflow-x-auto max-w-full no-scrollbar">
-                        {isWide && !wideSingle && (
+                        {showColumns && !fitsClan && (
                             <button
-                                onClick={() => {
-                                    setActiveTab('Forge');
-                                    setSelectedNodeId(null);
-                                }}
+                                onClick={() => setIncludeClanCol(v => !v)}
+                                title={includeClanCol ? 'Hide the Clan column' : 'Show the Clan tree as a fourth column'}
                                 className={cn(
                                     "px-3 py-1.5 rounded-lg font-bold text-xs transition-all whitespace-nowrap",
-                                    activeTab !== 'Clan'
+                                    includeClanCol
                                         ? "bg-accent-primary text-white shadow-lg"
                                         : "text-text-muted hover:text-text-primary hover:bg-white/5"
                                 )}
                             >
-                                All Trees
+                                Clan
                             </button>
                         )}
-                        {(isWide && !wideSingle ? treeKeys.filter(t => t === 'Clan') : treeKeys).map((treeKey) => (
+                        {(showColumns ? [] : treeKeys).map((treeKey) => (
                             <button
                                 key={treeKey}
                                 onClick={() => {
@@ -1097,110 +1227,15 @@ export default function TechTree() {
                 ) : (
                     <div className="flex-1 flex overflow-hidden relative border border-border rounded-2xl bg-bg-secondary/10 backdrop-blur-sm">
                         {activeTab === 'Clan' ? (
-                            <div className="flex-1 overflow-auto p-4 sm:p-6 custom-scrollbar space-y-8 select-none">
-                                {Object.keys(guildPositionLibrary || {}).map((category, catIdx) => {
-                                    const categoryNodes = nodes.filter(n => n.category === category);
-                                    if (categoryNodes.length === 0) return null;
-
-                                    return (
-                                        <div key={category} className="space-y-4">
-                                            <h3 className="text-sm font-bold bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent capitalize border-b border-white/5 pb-2">
-                                                {category.replace(/([A-Z])/g, ' $1').trim()} Category
-                                            </h3>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                                                {categoryNodes.map(node => {
-                                                    const currentClanRanks = localRanks['Clan'] || {};
-                                                    const currentRank = currentClanRanks[node.id] || 0;
-                                                    const maxLevel = node.maxLevel;
-                                                    const isMaxed = currentRank >= maxLevel;
-                                                    const isResearched = currentRank > 0 && !isMaxed;
-                                                    const isSelected = selectedNodeId === node.id;
-
-                                                    const spriteStyle = getSpriteStyle(node);
-
-                                                    const upgradeDef = guildUpgradeLibrary?.[node.type];
-                                                    const pointsPerLevel = upgradeDef?.PointsPerLevel || 0;
-                                                    const cost = pointsPerLevel * Math.max(0, maxLevel - currentRank);
-
-                                                    return (
-                                                        <button
-                                                            key={node.id}
-                                                            onClick={() => { setSelectedTree('Clan'); setSelectedNodeId(node.id); }}
-                                                            className={cn(
-                                                                "text-left cursor-pointer transition-all duration-300 transform outline-none",
-                                                                isSelected ? "scale-[1.02] z-20" : "hover:scale-[1.01]"
-                                                            )}
-                                                        >
-                                                            <Card className={cn(
-                                                                "p-4 flex gap-4 border-2 transition-colors relative group h-28 items-center",
-                                                                isSelected ? "border-accent-primary bg-accent-primary/10 shadow-[0_0_20px_rgba(168,85,247,0.3)]" :
-                                                                    isMaxed ? "border-green-500/50 bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.1)]" :
-                                                                        isResearched ? "border-accent-primary/40 bg-accent-primary/5" : "border-border/50 bg-bg-primary/50"
-                                                            )}>
-                                                                <div className="w-12 h-12 rounded-xl bg-bg-input border border-border flex items-center justify-center relative overflow-hidden group shrink-0">
-                                                                    {spriteStyle && <div style={spriteStyle} />}
-                                                                    {isMaxed && (
-                                                                        <div className="absolute inset-0 border-2 border-green-500/50 rounded-lg pointer-events-none" />
-                                                                    )}
-                                                                </div>
-
-                                                                <div className="min-w-0 flex-1 flex flex-col justify-between h-full py-1">
-                                                                    <div>
-                                                                        <h4 className="text-xs font-bold text-text-primary whitespace-nowrap overflow-hidden text-clip">
-                                                                            {getTechNodeName(node.type)}
-                                                                        </h4>
-                                                                        <p className="text-[9px] text-text-muted mt-0.5 font-bold uppercase tracking-tight">
-                                                                            Rank {currentRank}/{maxLevel}
-                                                                        </p>
-                                                                    </div>
-
-                                                                    <div className="flex items-center justify-between gap-2 mt-2">
-                                                                        <div
-                                                                            className="w-6 h-6 rounded bg-bg-secondary hover:bg-white/10 flex items-center justify-center border border-border cursor-pointer active:scale-95 shrink-0"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                handleLocalUpdate(node.id, -1);
-                                                                            }}
-                                                                        >
-                                                                            <Minus className="w-3.5 h-3.5 text-white" />
-                                                                        </div>
-
-                                                                        <div className="text-[9px] font-mono text-text-muted flex items-center gap-1 font-bold">
-                                                                            <SpriteIcon name="GuildPotions" size={12} />
-                                                                            <span className="text-green-400">{pointsPerLevel.toLocaleString()}</span>
-                                                                            <span className="opacity-60">/lvl</span>
-                                                                            {cost > 0 && <span className="opacity-60">·</span>}
-                                                                            {cost > 0 && <span>tot {cost.toLocaleString()}</span>}
-                                                                        </div>
-
-                                                                        <div
-                                                                            className="w-6 h-6 rounded bg-bg-secondary hover:bg-white/10 flex items-center justify-center border border-border cursor-pointer active:scale-95 shrink-0"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                handleLocalUpdate(node.id, 1);
-                                                                            }}
-                                                                        >
-                                                                            <Plus className="w-3.5 h-3.5 text-white" />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </Card>
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                            renderClanPane(false)
                         ) : showColumns ? (
-                            <div className="flex-1 grid grid-cols-3 divide-x divide-border overflow-hidden">
-                                {HERO_TREES.map((treeName) => (
+                            <div className={cn("flex-1 grid divide-x divide-border overflow-hidden", columnTrees.length === 4 ? "grid-cols-4" : "grid-cols-3")}>
+                                {columnTrees.map((treeName) => (
                                     <div key={treeName} className="flex flex-col min-w-0">
                                         <div className="shrink-0 px-3 py-1.5 border-b border-border/50 text-xs font-bold text-accent-primary uppercase tracking-wider text-center">
                                             {treeName === 'SkillsPetTech' ? 'Skills & Pets' : treeName}
                                         </div>
-                                        {renderPlayerCanvas(treeName, false)}
+                                        {treeName === 'Clan' ? renderClanPane(true) : renderPlayerCanvas(treeName, false)}
                                     </div>
                                 ))}
                             </div>
