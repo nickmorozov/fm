@@ -293,6 +293,15 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                                 <SectionSyncButton preset="skin" label="Skins" />
                             </div>
                         )}
+                        {isComparing && variant === 'test' && testDiffers && (
+                            <button
+                                onClick={resetTest}
+                                title="Reset Test Build to Equipped"
+                                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition-all border bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
+                            >
+                                <RotateCcw className="w-3 h-3" />Reset
+                            </button>
+                        )}
                         <div className="flex items-center gap-2 bg-bg-input/50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-border/50">
                             <AscensionStars
                                 value={globalAscensionLevel}
