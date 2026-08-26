@@ -32,27 +32,88 @@
     --rarity-mythic: var(--color-interstellar-rgb);
 }
 
+/* ---- Theme tokens ----------------------------------------------------------------------------
+   Every semantic color in tailwind.config.js resolves through these variables (space-separated
+   RGB, so Tailwind's slash-opacity classes keep working). The switcher (ThemeSwitcher.tsx) sets
+   data-theme on <html>; index.html applies the saved choice before first paint to avoid a flash.
+   Border/hover tokens are pre-blended opaque equivalents of the old white/amber alpha overlays,
+   tuned per background so `border-border` (no slash) keeps its subtle look. */
+:root,
+[data-theme="forge"] {
+    --th-bg-primary: 13 13 18;
+    --th-bg-secondary: 19 19 26;
+    --th-bg-card: 20 20 30;
+    --th-bg-card-hover: 30 30 45;
+    --th-bg-input: 10 10 15;
+    --th-text-primary: 245 245 245;
+    --th-text-secondary: 161 161 170;
+    --th-text-muted: 113 113 122;
+    --th-border: 38 38 43;
+    --th-border-hover: 104 71 15;
+    --th-accent-primary: 245 158 11;
+    --th-accent-secondary: 239 68 68;
+    --th-accent-tertiary: 139 92 246;
+    --th-accent-glow: rgba(245, 158, 11, 0.25);
+}
+
+/* Softer dark gray, brighter text: higher contrast than Forge without going light. */
+[data-theme="graphite"] {
+    --th-bg-primary: 30 33 38;
+    --th-bg-secondary: 38 42 48;
+    --th-bg-card: 46 51 58;
+    --th-bg-card-hover: 56 62 70;
+    --th-bg-input: 24 27 31;
+    --th-text-primary: 236 238 241;
+    --th-text-secondary: 182 189 198;
+    --th-text-muted: 142 150 161;
+    --th-border: 56 61 68;
+    --th-border-hover: 116 83 27;
+    --th-accent-primary: 245 158 11;
+    --th-accent-secondary: 239 68 68;
+    --th-accent-tertiary: 139 92 246;
+    --th-accent-glow: rgba(245, 158, 11, 0.25);
+}
+
+/* Solarized Dark: base03/base02 backgrounds, base2/base1 text, solarized red + violet accents. */
+[data-theme="solarized"] {
+    --th-bg-primary: 0 43 54;
+    --th-bg-secondary: 7 54 66;
+    --th-bg-card: 11 61 74;
+    --th-bg-card-hover: 18 72 86;
+    --th-bg-input: 0 33 43;
+    --th-text-primary: 238 232 213;
+    --th-text-secondary: 147 161 161;
+    --th-text-muted: 110 128 135;
+    --th-border: 20 60 70;
+    --th-border-hover: 98 89 37;
+    --th-accent-primary: 245 158 11;
+    --th-accent-secondary: 220 50 47;
+    --th-accent-tertiary: 108 113 196;
+    --th-accent-glow: rgba(245, 158, 11, 0.25);
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
     :root {
-        /* Colors */
-        --bg-primary: 15 15 20;
-        --bg-secondary: 25 25 35;
-        --bg-card: 30 30 40;
-        --bg-input: 10 10 15;
+        /* Legacy aliases — kept for the handful of raw-CSS consumers (scrollbars etc.);
+           they now follow the active theme via the tokens defined above. */
+        --bg-primary: var(--th-bg-primary);
+        --bg-secondary: var(--th-bg-secondary);
+        --bg-card: var(--th-bg-card);
+        --bg-input: var(--th-bg-input);
 
-        --text-primary: 255 255 255;
-        --text-secondary: 180 180 200;
-        --text-muted: 100 100 120;
+        --text-primary: var(--th-text-primary);
+        --text-secondary: var(--th-text-secondary);
+        --text-muted: var(--th-text-muted);
 
         --accent-primary-rgb: var(--color-divine-rgb);
         --accent-secondary-rgb: var(--color-space-rgb);
         --accent-tertiary-rgb: 59, 130, 246;
 
-        --border: 50 50 70;
+        --border: var(--th-border);
     }
 }
 

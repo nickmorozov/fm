@@ -9,6 +9,7 @@ import { ClanHeaderChip, useClanHeaderChip } from '../Clan/ClanTabShell';
 import { ProfileIcon } from '../Profile/ProfileHeaderPanel';
 import { cn } from '../../lib/utils';
 import { AnimatedClock } from '../UI/AnimatedClock';
+import { ThemeSwitcher } from '../UI/ThemeSwitcher';
 import { useGlobalStats } from '../../hooks/useGlobalStats';
 import { formatCompactNumber } from '../../utils/statsCalculator';
 import { useComparison } from '../../context/ComparisonContext';
@@ -303,6 +304,8 @@ export function Header({ onMenuToggle, onStatsToggle }: HeaderProps) {
                         <span className="hidden sm:inline">{justCopied ? 'Copied!' : 'Share'}</span>
                     </Button>
                 )}
+
+                <ThemeSwitcher />
 
                 {/* Stats Drawer Toggle */}
                 <Button

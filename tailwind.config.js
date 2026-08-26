@@ -14,27 +14,29 @@ export default {
   theme: {
     extend: {
       colors: {
+        // All semantic colors resolve through CSS variables (see the theme blocks in
+        // src/index.css) so the runtime theme switcher can restyle the whole app.
         bg: {
-          primary: '#0d0d12',
-          secondary: '#13131a',
-          card: 'rgba(20, 20, 30, 0.9)',
-          'card-hover': 'rgba(30, 30, 45, 0.95)',
-          input: 'rgba(10, 10, 15, 0.8)',
+          primary: 'rgb(var(--th-bg-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--th-bg-secondary) / <alpha-value>)',
+          card: 'rgb(var(--th-bg-card) / <alpha-value>)',
+          'card-hover': 'rgb(var(--th-bg-card-hover) / <alpha-value>)',
+          input: 'rgb(var(--th-bg-input) / <alpha-value>)',
         },
         accent: {
-          primary: '#f59e0b',    // Amber-500
-          secondary: '#ef4444',  // Red-500
-          tertiary: '#8b5cf6',   // Violet-500
-          glow: 'rgba(245, 158, 11, 0.25)',
+          primary: 'rgb(var(--th-accent-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--th-accent-secondary) / <alpha-value>)',
+          tertiary: 'rgb(var(--th-accent-tertiary) / <alpha-value>)',
+          glow: 'var(--th-accent-glow)',
         },
         text: {
-          primary: '#f5f5f5',
-          secondary: '#a1a1aa',
-          muted: '#71717a',
+          primary: 'rgb(var(--th-text-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--th-text-secondary) / <alpha-value>)',
+          muted: 'rgb(var(--th-text-muted) / <alpha-value>)',
         },
         border: {
-          DEFAULT: 'rgba(255, 255, 255, 0.08)',
-          hover: 'rgba(245, 158, 11, 0.4)',
+          DEFAULT: 'rgb(var(--th-border) / <alpha-value>)',
+          hover: 'rgb(var(--th-border-hover) / <alpha-value>)',
         },
         rarity: {
           common: 'var(--age-primitive)',

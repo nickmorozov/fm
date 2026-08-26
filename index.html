@@ -36,6 +36,15 @@
     <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
 
     <title>ForgeMaster Helper</title>
+
+    <!-- Apply the saved color theme before first paint (see ThemeSwitcher.tsx / index.css).
+         Inline and synchronous on purpose: doing this from React flashes the default theme. -->
+    <script>
+        try {
+            var t = JSON.parse(localStorage.getItem('fm_theme') || 'null');
+            if (t === 'graphite' || t === 'solarized') document.documentElement.dataset.theme = t;
+        } catch (e) { /* default theme */ }
+    </script>
 </head>
 
 <body>
