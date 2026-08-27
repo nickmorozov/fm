@@ -18,6 +18,7 @@
 // (digit_proto.fit semantics). Level reads keep the charset 'Lv.0123456789'. Bound-checking is
 // the caller's job; the modal keeps every number editable as the safety net.
 
+import { safeFetch } from '../safeFetch';
 interface GlyphVariant {
     zm: Float32Array;    // zero-meaned pixels (for NCC: dot(gz, zm) / (|gz| * nrm))
     nrm: number;         // L2 norm of zm
@@ -174,7 +175,7 @@ function makeVariant(pix: Float32Array, W: number, H: number): GlyphVariant {
 
 export function loadGlyphBank(): Promise<GlyphBank> {
     if (!bankP) {
-        bankP = fetch(`${import.meta.env.BASE_URL}autosync/digitBank_v2.json`).then(r => r.json()).then((j: any) => {
+        bankP = safeFetch(`${import.meta.env.BASE_URL}autosync/digitBank_v2.json`).then(r => r.json()).then((j: any) => {
             const gw = j.gw as number, gh = j.gh as number;
             const dec = (b64: string): Float32Array => {
                 const bin = atob(b64); const n = bin.length; const out = new Float32Array(n);

@@ -6,6 +6,7 @@ import { HelpCircle, RefreshCw, ArrowRight, TrendingUp, TrendingDown, Sigma } fr
 import { SpriteIcon } from '../components/UI/SpriteIcon';
 import { Button } from '../components/UI/Button';
 import { AGES, RARITIES } from '../utils/constants';
+import { safeFetch } from '../utils/safeFetch';
 
 type TabType = 'forge' | 'eggs' | 'mounts' | 'skills';
 
@@ -31,7 +32,7 @@ export default function BaseDrops() {
     useEffect(() => {
         async function fetchVersions() {
             try {
-                const res = await fetch(`${import.meta.env.BASE_URL}parsed_configs/versions.json`);
+                const res = await safeFetch(`${import.meta.env.BASE_URL}parsed_configs/versions.json`);
                 if (res.ok) {
                     const v = await res.json();
                     v.sort((a: string, b: string) => b.localeCompare(a));
@@ -65,7 +66,7 @@ export default function BaseDrops() {
                 await Promise.all(Object.entries(RELEVANT_FILES).map(async ([_, fileName]) => {
                     if (results[fileName]) return;
                     try {
-                        const res = await fetch(`${import.meta.env.BASE_URL}parsed_configs/${v}/${fileName}`);
+                        const res = await safeFetch(`${import.meta.env.BASE_URL}parsed_configs/${v}/${fileName}`);
                         if (res.ok) {
                             results[fileName] = await res.json();
                         }

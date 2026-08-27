@@ -55,6 +55,7 @@ import {
 } from './numberReader';
 import { ocr, PSM } from './ocrEngine';
 import type { DetectedClanTree, DetectedClanNode } from './readerTypes';
+import { safeFetch } from '../safeFetch';
 
 // ------------------------------------------------------------------ proto PARAMS (576x1280)
 const CANON_W = 576;
@@ -112,7 +113,7 @@ interface ClanLibs {
 let libsP: Promise<ClanLibs> | null = null;
 
 async function fetchJson(url: string): Promise<any> {
-    const r = await fetch(url);
+    const r = await safeFetch(url);
     if (!r.ok) throw new Error(`fetch ${url} -> ${r.status}`);
     return r.json();
 }

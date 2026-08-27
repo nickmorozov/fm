@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useGameDataContext } from '../context/GameDataContext';
+import { safeFetch } from '../utils/safeFetch';
 
 // Cache to store loaded data and prevent redundant fetches
 const dataCache: Record<string, any> = {};
@@ -83,7 +84,7 @@ function normalizeGuildUpgradeLibrary(json: any, fixed: boolean): any {
  * actually render.
  */
 async function fetchJsonConfig(url: string, fileName: string): Promise<any> {
-    const response = await fetch(url);
+    const response = await safeFetch(url);
     if (!response.ok) {
         throw new Error(`Failed to load ${fileName}`);
     }
