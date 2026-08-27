@@ -57,6 +57,7 @@ interface ComparisonContextType {
     /** Apply one test slot's change to the live profile without leaving compare mode. The accepted
      *  item becomes part of the baseline; with `restart` every other pending test edit is reset. */
     acceptTestItem: (slot: keyof UserProfile['items'], restart?: boolean) => void;
+    resetTestItem: (slot: keyof UserProfile['items']) => void;
     keepOriginal: () => void;
     applyTestBuild: () => void;
     resetTest: () => void;
@@ -363,6 +364,13 @@ export const ComparisonProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }
     }, [testItems, originalItems, updateNestedProfile]);
 
+    /** Revert one slot's test item back to the equipped baseline, leaving the rest untouched. */
+    const resetTestItem = useCallback((slot: keyof UserProfile['items']) => {
+        if (!originalItems) return;
+        const baseline = originalItems[slot] ? JSON.parse(JSON.stringify(originalItems[slot])) : null;
+        setTestItems(prev => (prev ? { ...prev, [slot]: baseline } : prev));
+    }, [originalItems]);
+
     const loadProfileIntoTest = useCallback((sourceProfile: UserProfile) => {
         // Import build-relevant data from another profile into the test side
         // Does NOT import: techTree, skills.passives, collections, savedItems, misc utilities
@@ -429,6 +437,7 @@ export const ComparisonProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             updateTestUseSkinWindup,
             testDiffers,
             acceptTestItem,
+            resetTestItem,
             keepOriginal,
             applyTestBuild,
             resetTest,

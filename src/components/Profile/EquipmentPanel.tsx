@@ -83,7 +83,7 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
         updateTestForgeAscension,
         updateOriginalUseSkinWindup,
         updateTestUseSkinWindup,
-        updateOriginalItem, updateTestItem, enterCompareMode, acceptTestItem, resetTest, testDiffers,
+        updateOriginalItem, updateTestItem, enterCompareMode, acceptTestItem, resetTestItem, resetTest, testDiffers,
         isCompactStats } = useComparison();
     const { selectedVersion } = useGameDataContext();
     const [selectedSlot, setSelectedSlot] = useState<keyof UserProfile['items'] | null>(null);
@@ -387,6 +387,13 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                                 {variant === 'test' && hasDiff && (
                                     <div className="absolute top-1 right-1 z-20 flex gap-1 opacity-0 group-hover/acc:opacity-100 transition-opacity">
                                         <button
+                                            onClick={(e) => { e.stopPropagation(); resetTestItem(slot.key); }}
+                                            title="Reset this slot back to equipped"
+                                            className="p-1.5 rounded-md bg-bg-input hover:bg-bg-card-hover text-text-secondary hover:text-text-primary border border-border shadow-lg"
+                                        >
+                                            <RotateCcw className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
                                             onClick={(e) => { e.stopPropagation(); acceptTestItem(slot.key); }}
                                             title="Accept this change (keep comparing the rest)"
                                             className="p-1.5 rounded-md bg-green-600 hover:bg-green-500 text-white shadow-lg"
@@ -442,6 +449,13 @@ export function EquipmentPanel({ variant = 'default', title, showCompareButton =
                             />
                             {variant === 'test' && hasDiff && (
                                 <div className="absolute top-1 right-1 z-20 flex gap-1 opacity-0 group-hover/acc:opacity-100 transition-opacity">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); resetTestItem(slot.key); }}
+                                        title="Reset this slot back to equipped"
+                                        className="p-1.5 rounded-md bg-bg-input hover:bg-bg-card-hover text-text-secondary hover:text-text-primary border border-border shadow-lg"
+                                    >
+                                        <RotateCcw className="w-3.5 h-3.5" />
+                                    </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); acceptTestItem(slot.key); }}
                                         title="Accept this change (keep comparing the rest)"

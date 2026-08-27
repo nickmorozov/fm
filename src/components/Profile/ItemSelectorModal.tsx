@@ -60,7 +60,7 @@ const STAT_WORDS: { id: string; words: string[] }[] = [
     { id: 'DoubleDamageChance', words: ['Double', 'Chance'] },
     { id: 'HealthMulti', words: ['Health'] },
     { id: 'HealthRegen', words: ['Health', 'Regen'] },
-    { id: 'LifeSteal', words: ['Life Steal'] },
+    { id: 'LifeSteal', words: ['Lifesteal'] },
     { id: 'CriticalChance', words: ['Crit', 'Chance'] },
     { id: 'CriticalMulti', words: ['Crit', 'Damage'] },
     { id: 'AttackSpeed', words: ['Attack', 'Speed'] },
@@ -70,7 +70,7 @@ const STAT_WORDS: { id: string; words: string[] }[] = [
 
 /** Layout only — the selection is one set of words, the two rows just keep it scannable. */
 const WORD_ROWS: string[][] = [
-    ['Damage', 'Health', 'Crit', 'Attack', 'Skill', 'Block', 'Double', 'Life Steal'],
+    ['Damage', 'Health', 'Crit', 'Attack', 'Skill', 'Block', 'Double', 'Lifesteal'],
     ['Melee', 'Ranged', 'Chance', 'Speed', 'Regen', 'Cooldown'],
 ];
 
