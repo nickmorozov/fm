@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { safeFetch } from '../utils/safeFetch';
 
 interface GameDataContextType {
     versions: string[];
@@ -32,7 +33,7 @@ export function GameDataProvider({ children }: { children: ReactNode }) {
             console.log(`[GameDataContext] Fetching versions from: ${versionsUrl}`);
             
             try {
-                const res = await fetch(versionsUrl);
+                const res = await safeFetch(versionsUrl);
                 if (res.ok) {
                     try {
                         const v = await res.json();

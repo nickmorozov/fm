@@ -4,6 +4,7 @@
 // embeddings all load lazily (only when AutoSync runs).
 
 import type * as Ort from 'onnxruntime-web';
+import { safeFetch } from '../safeFetch';
 
 // onnxruntime-web is DYNAMICALLY imported so it (and its wasm) stay out of the initial bundle
 // — only AutoSync pulls it in. The wasm runtime itself is fetched from the CDN.
@@ -67,7 +68,7 @@ let refsP: Promise<RefData> | null = null;
 
 export function loadItemRefs(): Promise<RefData> {
     if (!refsP) {
-        refsP = fetch(`${import.meta.env.BASE_URL}parsed_configs/ItemIconEmbeddings.json`)
+        refsP = safeFetch(`${import.meta.env.BASE_URL}parsed_configs/ItemIconEmbeddings.json`)
             .then(r => r.json())
             .then(j => {
                 const bin = atob(j.emb_i8_b64);

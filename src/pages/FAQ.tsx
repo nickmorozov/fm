@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card } from '../components/UI/Card';
 import { HelpCircle, Heart, Zap, Coffee, Globe, ExternalLink, MessageCircle, Star, Quote, Users, Github, PlusCircle, MinusCircle } from 'lucide-react';
 import contributorsStats from '../data/contributors_stats.json';
+import { safeFetch } from '../utils/safeFetch';
 
 export default function FAQ() {
     const [supporters, setSupporters] = useState<any[]>([]);
@@ -10,7 +11,7 @@ export default function FAQ() {
     const [loadingContributors, setLoadingContributors] = useState(true);
 
     useEffect(() => {
-        fetch(`${import.meta.env.BASE_URL}supporters.json`)
+        safeFetch(`${import.meta.env.BASE_URL}supporters.json`)
             .then(res => res.json())
             .then(data => {
                 setSupporters(data);
@@ -18,7 +19,7 @@ export default function FAQ() {
             })
             .catch(() => setLoading(false));
 
-        fetch('https://api.github.com/repos/1vcian/fm/contributors')
+        safeFetch('https://api.github.com/repos/1vcian/fm/contributors')
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {

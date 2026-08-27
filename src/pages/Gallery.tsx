@@ -6,6 +6,7 @@ import { Search, Image as ImageIcon, Download, X, Maximize2, ExternalLink, Colum
 import { cn } from '../lib/utils';
 import { formatVersion } from '../lib/formatVersion';
 import { useGameDataContext } from '../context/GameDataContext';
+import { safeFetch } from '../utils/safeFetch';
 
 type DiffStatus = 'added' | 'removed' | 'changed' | null;
 
@@ -41,7 +42,7 @@ export default function Gallery() {
 
             // Fetch Texture list
             try {
-                const res = await fetch(`${import.meta.env.BASE_URL}parsed_configs/TextureManifest.json`);
+                const res = await safeFetch(`${import.meta.env.BASE_URL}parsed_configs/TextureManifest.json`);
                 if (res.ok) {
                     const contentType = res.headers.get("content-type");
                     if (contentType && contentType.includes("application/json")) {
@@ -57,7 +58,7 @@ export default function Gallery() {
 
             // Try to fetch MD5 Manifest if it exists
             try {
-                const md5Res = await fetch(`${import.meta.env.BASE_URL}parsed_configs/TextureMD5Manifest.json`);
+                const md5Res = await safeFetch(`${import.meta.env.BASE_URL}parsed_configs/TextureMD5Manifest.json`);
                 if (md5Res.ok) {
                     const contentType = md5Res.headers.get("content-type");
                     if (contentType && contentType.includes("application/json")) {

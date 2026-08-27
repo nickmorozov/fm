@@ -25,7 +25,9 @@
       in production — hard-coding `/fm/` instead would make the manifest invalid on the dev server
       ("scope URL is not a prefix of the document URL") and silently un-installable.
     -->
-    <link rel="manifest" href="./manifest.webmanifest" />
+    <!-- use-credentials: the manifest request carries the page's basic-auth session, so
+         password-protected hosting serves it instead of a 401. No effect on open hosting. -->
+    <link rel="manifest" href="./manifest.webmanifest" crossorigin="use-credentials" />
     <meta name="theme-color" content="#0d0d12" />
     <!-- iOS before 16.4 reads these instead of the manifest; harmless on later versions. -->
     <meta name="apple-mobile-web-app-capable" content="yes" />

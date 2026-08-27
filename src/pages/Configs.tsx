@@ -5,6 +5,7 @@ import { cn } from '../lib/utils';
 import { formatVersion } from '../lib/formatVersion';
 import { Search, FileJson, FolderOpen, RefreshCw, Copy, Download, Check, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '../components/UI/Button';
+import { safeFetch } from '../utils/safeFetch';
 
 export default function Configs() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -33,8 +34,8 @@ export default function Configs() {
         async function fetchData() {
             try {
                 const [versionsRes, manifestRes] = await Promise.all([
-                    fetch(`${import.meta.env.BASE_URL}parsed_configs/versions.json`),
-                    fetch(`${import.meta.env.BASE_URL}parsed_configs/config_manifest.json`)
+                    safeFetch(`${import.meta.env.BASE_URL}parsed_configs/versions.json`),
+                    safeFetch(`${import.meta.env.BASE_URL}parsed_configs/config_manifest.json`)
                 ]);
 
                 if (versionsRes.ok) {
@@ -111,7 +112,7 @@ export default function Configs() {
                     
                     await Promise.all(files.map(async (fileName: string) => {
                         try {
-                            const res = await fetch(`${import.meta.env.BASE_URL}parsed_configs/${v}/${fileName}`);
+                            const res = await safeFetch(`${import.meta.env.BASE_URL}parsed_configs/${v}/${fileName}`);
                             if (res.ok) {
                                 const json = await res.json();
                                 cache[fileName] = JSON.stringify(json, null, 2);

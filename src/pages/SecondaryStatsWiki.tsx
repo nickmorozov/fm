@@ -5,6 +5,7 @@ import { TrendingUp, ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { formatVersion } from '../lib/formatVersion';
 import { getStatName } from '../utils/statNames';
+import { safeFetch } from '../utils/safeFetch';
 
 interface SecondaryStat {
     Stat: string;
@@ -27,7 +28,7 @@ export default function SecondaryStatsWiki() {
     useEffect(() => {
         async function fetchVersions() {
             try {
-                const res = await fetch(`${import.meta.env.BASE_URL}parsed_configs/versions.json`);
+                const res = await safeFetch(`${import.meta.env.BASE_URL}parsed_configs/versions.json`);
                 if (res.ok) {
                     const v = await res.json();
                     v.sort((a: string, b: string) => b.localeCompare(a));
@@ -52,8 +53,8 @@ export default function SecondaryStatsWiki() {
             setLoading(true);
             try {
                 const [baseRes, targetRes] = await Promise.all([
-                    fetch(`${import.meta.env.BASE_URL}parsed_configs/${baseVersion}/SecondaryStatLibrary.json`),
-                    fetch(`${import.meta.env.BASE_URL}parsed_configs/${targetVersion}/SecondaryStatLibrary.json`)
+                    safeFetch(`${import.meta.env.BASE_URL}parsed_configs/${baseVersion}/SecondaryStatLibrary.json`),
+                    safeFetch(`${import.meta.env.BASE_URL}parsed_configs/${targetVersion}/SecondaryStatLibrary.json`)
                 ]);
 
                 if (baseRes.ok && targetRes.ok) {
